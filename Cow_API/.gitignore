@@ -1,0 +1,21 @@
+# Entornos virtuales
+venv/
+.env/
+env/
+.venv/
+entorono/
+
+# Archivos de configuración de IDEs
+.idea/
+.vscode/
+
+# Archivos de sistema
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+.DS_Store
+
+# Archivos de dependencias locales
+*.sqlite3
