@@ -1,0 +1,39 @@
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+from contextlib import asynccontextmanager
+from app.db import create_data_base
+
+# Import routers directly to avoid circular imports
+from app.routers import user_router
+from app.routers import chat_router
+from app.routers import web_router
+from app.routers import animal_router
+from app.routers import tratamiento_router
+from app.routers import eventos_router
+
+# en esta funcion se inicializa la base de datos, con todas las tablas en ella
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    print("Inicializando base de datos COW...")
+    create_data_base()
+    print("Db lista.")
+    yield
+    print("Apagando servidor COW...")
+
+app = FastAPI(
+    title="COW 0.1.0",
+    description="Gestión ganadera y comunicacion veterinaria.",
+    lifespan=lifespan
+)
+
+# Mount static files
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
+
+# Routers - web_router debe ir ANTES de veterinario_router para evitar conflictos de rutas
+app.include_router(web_router.router)
+app.include_router(user_router.router)
+app.include_router(chat_router.router)
+app.include_router(animal_router.router)
+app.include_router(tratamiento_router.router)
+app.include_router(eventos_router.router)
+

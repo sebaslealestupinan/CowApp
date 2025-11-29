@@ -1,0 +1,18 @@
+# Entornos virtuales
+.venv/
+venv/
+
+# Cache de Python
+__pycache__/
+*.pyc
+
+# Configuración de IDEs
+.idea/
+.vscode/
+
+# Base de datos SQLite
+*.db
+
+# Archivos del sistema
+.DS_Store
+__init__.py/

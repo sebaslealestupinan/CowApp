@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Veterinario Dashboard - Cow App{% endblock %}
+
+{% block content %}
+<h1 class="title has-text-danger">Panel de Veterinario</h1>
+<h2 class="subtitle">Gestión de salud animal</h2>
+
+<div class="columns is-multiline">
+    <div class="column is-half">
+        <div class="article">
+            <div class="message is-danger">
+                <div class="message-header">
+                    <p>Alertas Sanitarias</p>
+                </div>
+                <div class="message-body">
+                    <strong>3 vacas</strong> requieren atención inmediata.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="columns">
+    <div class="column">
+        <div class="card">
+            <header class="card-header">
+                <p class="card-header-title">
+                    Tratamientos Activos
+                </p>
+            </header>
+            <div class="card-content">
+                <div class="content">
+                    Lista de tratamientos en curso...
+                    <ul>
+                        <li>Vaca #102 - Antibióticos (Día 3/5)</li>
+                        <li>Vaca #55 - Vitaminas</li>
+                    </ul>
+                </div>
+            </div>
+            <footer class="card-footer">
+                <a href="#" class="card-footer-item">Nuevo Tratamiento</a>
+                <a href="#" class="card-footer-item">Historial Médico</a>
+            </footer>
+        </div>
+    </div>
+
+    <div class="column">
+        <div class="card">
+            <header class="card-header">
+                <p class="card-header-title">
+                    Visitas Programadas
+                </p>
+            </header>
+            <div class="card-content">
+                <div class="content">
+                    Próximas visitas a fincas.
+                </div>
+            </div>
+            <footer class="card-footer">
+                <a href="#" class="card-footer-item">Agendar Visita</a>
+            </footer>
+        </div>
+    </div>
+</div>
+{% endblock %}

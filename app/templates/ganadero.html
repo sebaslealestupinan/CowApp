@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Ganadero Dashboard - Cow App{% endblock %}
+
+{% block content %}
+<h1 class="title">Panel de Ganadero</h1>
+<h2 class="subtitle">Bienvenido a su gestión de ganado</h2>
+
+<div class="columns is-multiline">
+    <div class="column is-one-third">
+        <div class="card">
+            <div class="card-content">
+                <p class="title">Mis Vacas</p>
+                <p class="subtitle">Gestión de rebaño</p>
+                <div class="content">
+                    Ver y registrar nuevas vacas.
+                    <br>
+                    <a href="#" class="button is-link is-light mt-2">Ir a Vacas</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="column is-one-third">
+        <div class="card">
+            <div class="card-content">
+                <p class="title">Eventos</p>
+                <p class="subtitle">Registro de sucesos</p>
+                <div class="content">
+                    Registrar nacimientos, ventas, etc.
+                    <br>
+                    <a href="#" class="button is-info is-light mt-2">Ver Eventos</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="column is-one-third">
+        <div class="card">
+            <div class="card-content">
+                <p class="title">Producción</p>
+                <p class="subtitle">Leche y Peso</p>
+                <div class="content">
+                    Monitorear producción diaria.
+                    <br>
+                    <a href="#" class="button is-success is-light mt-2">Ver Producción</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
