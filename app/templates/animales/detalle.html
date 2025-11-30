@@ -1,10 +1,102 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block title %}Detalle de Animal - Cow App{% endblock %}
+
+{% block content %}
+<div class="columns">
+    <div class="column is-one-third">
+        <div class="card">
+            <header class="card-header">
+                <p class="card-header-title">Información del Animal</p>
+            </header>
+            <div class="card-content">
+                <div class="content" id="animalInfo">
+                    <p>Cargando...</p>
+                </div>
+            </div>
+            <footer class="card-footer">
+                <a href="#" class="card-footer-item has-text-info">Editar</a>
+                <a href="#" class="card-footer-item has-text-danger">Eliminar</a>
+            </footer>
+        </div>
+    </div>
+
+    <div class="column">
+        <div class="box">
+            <h2 class="title is-4">Historial de Tratamientos</h2>
+            <button class="button is-small is-primary mb-3">Nuevo Tratamiento</button>
+            <div id="tratamientosList">
+                <p>Cargando tratamientos...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden input to store animal ID from server-side render -->
+<input type="hidden" id="animalId" value="{{ animal_id }}">
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const animalId = document.getElementById('animalId').value;
+        loadAnimalDetails(animalId);
+        loadTratamientos(animalId);
+    });
+
+    async function loadAnimalDetails(id) {
+        try {
+            const response = await fetch(`/animales/${id}`);
+            if (!response.ok) throw new Error('Animal no encontrado');
+            const animal = await response.json();
+
+            const infoDiv = document.getElementById('animalInfo');
+            infoDiv.innerHTML = `
+                <p><strong>Tag ID:</strong> ${animal.tag_id}</p>
+                <p><strong>Nombre:</strong> ${animal.nombre}</p>
+                <p><strong>Especie:</strong> ${animal.especie}</p>
+                <p><strong>Raza:</strong> ${animal.raza || '-'}</p>
+                <p><strong>Sexo:</strong> ${animal.sexo}</p>
+                <p><strong>Estado:</strong> ${animal.activo ? 'Activo' : 'Inactivo'}</p>
+            `;
+        } catch (e) {
+            document.getElementById('animalInfo').innerHTML = '<p class="has-text-danger">Error al cargar información.</p>';
+            console.error(e);
+        }
+    }
+
+    async function loadTratamientos(animalId) {
+        try {
+            const response = await fetch(`/tratamientos/animal/${animalId}`);
+            const tratamientos = await response.json();
+
+            const listDiv = document.getElementById('tratamientosList');
+            if (tratamientos.length === 0) {
+                listDiv.innerHTML = '<p>No hay tratamientos registrados.</p>';
+                return;
+            }
+
+            let html = '<table class="table is-fullwidth"><thead><tr><th>Fecha</th><th>Tratamiento</th><th>Diagnóstico</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>';
+
+            tratamientos.forEach(t => {
+                html += `
+                    <tr>
+                        <td>${t.fecha_inicio}</td>
+                        <td>${t.nombre_tratamiento}</td>
+                        <td>${t.diagnostico}</td>
+                        <td><span class="tag ${t.estado === 'Activo' ? 'is-warning' : 'is-success'}">${t.estado}</span></td>
+                        <td><a href="/views/tratamientos/${t.id}" class="button is-small is-light">Ver</a></td>
+                    </tr>
+                `;
+            });
+            html += '</tbody></table>';
+            listDiv.innerHTML = html;
+
+        } catch (e) {
+            document.getElementById('tratamientosList').innerHTML = '<p>Error al cargar tratamientos.</p>';
+            console.error(e);
+        }
+    }
+</script>
+{% endblock %}

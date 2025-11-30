@@ -1,10 +1,53 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block title %}Iniciar Sesión{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="title">Iniciar Sesión</h1>
+        <form action="/login" method="post" class="box">
+            <div class="field">
+                <label class="label">Correo Electrónico</label>
+                <div class="control">
+                    <input class="input" type="email" name="email" placeholder="correo@ejemplo.com" required>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Contraseña</label>
+                <div class="control">
+                    <input class="input" type="password" name="password" placeholder="Contraseña" required>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Rol</label>
+                <div class="control">
+                    <label class="radio">
+                        <input type="radio" name="role" value="Ganadero" checked>
+                        Ganadero
+                    </label>
+                    <label class="radio">
+                        <input type="radio" name="role" value="Veterinario">
+                        Veterinario
+                    </label>
+                </div>
+            </div>
+
+            <div class="field is-grouped">
+                <div class="control">
+                    <button class="button is-primary" type="submit">Entrar</button>
+                </div>
+                <div class="control">
+                    <a class="button is-light" href="/register">Crear cuenta</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

@@ -1,10 +1,171 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block title %}Lista de Animales - Cow App{% endblock %}
+
+{% block content %}
+<h1 class="title">Mis Animales</h1>
+
+<div class="buttons">
+    <button class="button is-primary" id="btnNuevoAnimal">Registrar Nuevo Animal</button>
+</div>
+
+<div class="table-container">
+    <table class="table is-fullwidth is-striped is-hoverable">
+        <thead>
+            <tr>
+                <th>Tag ID</th>
+                <th>Nombre</th>
+                <th>Especie</th>
+                <th>Raza</th>
+                <th>Sexo</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="animalesTableBody">
+            <!-- Animales will be loaded here via JS -->
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal Nuevo Animal -->
+<div class="modal" id="modalNuevoAnimal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Registrar Animal</p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <!-- Formulario -->
+            <form id="formNuevoAnimal">
+                <div class="field">
+                    <label class="label">Tag ID</label>
+                    <div class="control">
+                        <input class="input" type="text" name="tag_id" required>
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="label">Nombre</label>
+                    <div class="control">
+                        <input class="input" type="text" name="nombre" required>
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="label">Especie</label>
+                    <div class="control">
+                        <div class="select">
+                            <select name="especie">
+                                <option value="Bovino">Bovino</option>
+                                <option value="Equino">Equino</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="label">Raza</label>
+                    <div class="control">
+                        <input class="input" type="text" name="raza">
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="label">Sexo</label>
+                    <div class="control">
+                        <div class="select">
+                            <select name="sexo">
+                                <option value="Hembra">Hembra</option>
+                                <option value="Macho">Macho</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <!-- Hidden Propietario ID (Hardcoded for demo or fetched from session) -->
+                <input type="hidden" name="propietario_id" value="2">
+            </form>
+        </section>
+        <footer class="modal-card-foot">
+            <button class="button is-success" id="btnGuardarAnimal">Guardar</button>
+            <button class="button">Cancelar</button>
+        </footer>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        loadAnimales();
+
+        // Modal logic
+        const modal = document.getElementById('modalNuevoAnimal');
+        const btnNuevo = document.getElementById('btnNuevoAnimal');
+        const btnClose = modal.querySelector('.delete');
+        const btnCancel = modal.querySelector('.modal-card-foot .button:last-child');
+        const btnGuardar = document.getElementById('btnGuardarAnimal');
+
+        btnNuevo.onclick = () => modal.classList.add('is-active');
+        btnClose.onclick = () => modal.classList.remove('is-active');
+        btnCancel.onclick = () => modal.classList.remove('is-active');
+
+        btnGuardar.onclick = async () => {
+            const form = document.getElementById('formNuevoAnimal');
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            // Convert types if needed
+            data.propietario_id = parseInt(data.propietario_id);
+
+            try {
+                const response = await fetch('/animales/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    modal.classList.remove('is-active');
+                    form.reset();
+                    loadAnimales();
+                } else {
+                    const error = await response.json();
+                    alert('Error: ' + error.detail);
+                }
+            } catch (e) {
+                console.error(e);
+                alert('Error de conexión');
+            }
+        };
+    });
+
+    async function loadAnimales() {
+        try {
+            // Fetching all animals (or filter by owner if logged in)
+            // For demo, fetching all or by specific owner if we had session info
+            const response = await fetch('/animales/');
+            const animales = await response.json();
+
+            const tbody = document.getElementById('animalesTableBody');
+            tbody.innerHTML = '';
+
+            animales.forEach(animal => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${animal.tag_id}</td>
+                    <td>${animal.nombre}</td>
+                    <td>${animal.especie}</td>
+                    <td>${animal.raza || '-'}</td>
+                    <td>${animal.sexo}</td>
+                    <td>
+                        <a href="/views/animales/${animal.id}" class="button is-small is-info">Ver</a>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } catch (e) {
+            console.error('Error loading animals:', e);
+        }
+    }
+</script>
+{% endblock %}
