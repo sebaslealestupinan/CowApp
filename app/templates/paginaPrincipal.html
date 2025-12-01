@@ -1,143 +1,129 @@
+{# templates/landing.html - Landing convertida a Jinja con Bulma #}
 {% extends "base.html" %}
 
-{% block title %}Cow App - Gestión Ganadera Inteligente{% endblock %}
+{% block title %}Cow App – Modernizando el Campo{% endblock %}
 
 {% block head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
 <link rel="stylesheet" href="{{ url_for('static', path='css/principalPage.css') }}">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-{% endblock %}
-
-{% block navbar %}
-<!-- Navbar removida según solicitud del usuario -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://kit.fontawesome.com/4f3b67a8bb.js" crossorigin="anonymous"></script>
 {% endblock %}
 
 {% block content %}
-<div class="landing-wrapper">
-    <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="hero-overlay"></div>
-        <div class="hero-content container">
-            <div class="hero-text-content">
-                <span class="hero-badge">Tecnología para el Campo</span>
-                <h1 class="hero-title">El Futuro de la <br> <span class="highlight-text">Gestión Ganadera</span></h1>
-                <p class="hero-subtitle">
-                    Conectamos veterinarios y ganaderos en una plataforma unificada.
-                    Optimice la salud de su rebaño y maximice su producción con datos en tiempo real.
-                </p>
-                <div class="hero-actions">
-                    <a href="/login" class="btn btn-primary">
-                        Iniciar Sesión <i class="fas fa-arrow-right"></i>
-                    </a>
-                    <a href="/register" class="btn btn-outline">
-                        Registrarse
-                    </a>
-                </div>
-                <div class="hero-stats">
-                    <div class="stat-item">
-                        <span class="stat-number">500+</span>
-                        <span class="stat-label">Fincas</span>
-                    </div>
-                    <div class="stat-separator"></div>
-                    <div class="stat-item">
-                        <span class="stat-number">10k+</span>
-                        <span class="stat-label">Animales</span>
-                    </div>
-                    <div class="stat-separator"></div>
-                    <div class="stat-item">
-                        <span class="stat-number">98%</span>
-                        <span class="stat-label">Satisfacción</span>
-                    </div>
-                </div>
-            </div>
-            <div class="hero-visual">
-                <div class="visual-card main-card">
-                    <div class="card-header">
-                        <i class="fas fa-chart-pie"></i>
-                        <span>Producción Mensual</span>
-                    </div>
-                    <div class="card-graph">
-                        <div class="graph-line"></div>
-                        <div class="graph-area"></div>
-                    </div>
-                </div>
-                <div class="visual-card float-card-1">
-                    <i class="fas fa-user-md"></i>
-                    <div>
-                        <strong>Dr. Juan Pérez</strong>
-                        <span>En camino • 15 min</span>
-                    </div>
-                </div>
-                <div class="visual-card float-card-2">
-                    <i class="fas fa-check-circle"></i>
-                    <div>
-                        <strong>Vacunación</strong>
-                        <span>Completada</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- Features Section -->
-    <section class="features-section">
-        <div class="container">
-            <div class="section-header">
-                <h2>Soluciones Integrales</h2>
-                <p>Herramientas diseñadas para cada rol en la cadena productiva</p>
-            </div>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon-wrapper">
-                        <i class="fas fa-tractor"></i>
-                    </div>
-                    <h3>Para Ganaderos</h3>
-                    <p>Gestione su inventario, controle la producción de leche y mantenga al día el calendario sanitario
-                        de su finca.</p>
-                    <ul class="feature-list">
-                        <li><i class="fas fa-check"></i> Inventario de animales</li>
-                        <li><i class="fas fa-check"></i> Registro de producción</li>
-                        <li><i class="fas fa-check"></i> Alertas sanitarias</li>
-                    </ul>
-                </div>
-                <div class="feature-card highlight">
-                    <div class="feature-icon-wrapper">
-                        <i class="fas fa-hand-holding-medical"></i>
-                    </div>
-                    <h3>Conexión Vital</h3>
-                    <p>El puente digital entre el campo y la ciencia veterinaria. Comunicación directa y expedientes
-                        compartidos.</p>
-                    <a href="/register" class="btn btn-sm">Únete Ahora</a>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon-wrapper">
-                        <i class="fas fa-user-doctor"></i>
-                    </div>
-                    <h3>Para Veterinarios</h3>
-                    <p>Lleve el historial clínico de sus pacientes, programe visitas y reciba actualizaciones de estado
-                        en tiempo real.</p>
-                    <ul class="feature-list">
-                        <li><i class="fas fa-check"></i> Historia clínica digital</li>
-                        <li><i class="fas fa-check"></i> Agenda de visitas</li>
-                        <li><i class="fas fa-check"></i> Reportes automáticos</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
+{# Defaults por si no se pasan variables desde el backend #}
+{% if hero_title is not defined %}
+{% set hero_title = "Conexión Real entre Ganadero y Veterinario" %}
+{% endif %}
+{% if hero_subtitle is not defined %}
+{% set hero_subtitle = "Comunicación instantánea, historial sanitario, tratamientos y seguimiento. Todo en un solo
+lugar, accesible desde cualquier parte de Boyacá." %}
+{% endif %}
+{% if features is not defined %}
+{% set features = [
+{'icon': 'fas fa-comments', 'title': 'Chat en Tiempo Real', 'desc': 'Ganadero y veterinario conectados con WebSocket
+para decisiones rápidas.'},
+{'icon': 'fas fa-heartbeat', 'title': 'Historial Sanitario', 'desc': 'Toda la información de cada animal unificada en un
+solo lugar.'},
+{'icon': 'fas fa-syringe', 'title': 'Tratamientos', 'desc': 'Registra procedimientos y aplica seguimiento
+automatizado.'},
+{'icon': 'fas fa-chart-pie', 'title': 'Indicadores', 'desc': 'Producción, salud, visitas y alertas al día.'}
+] %}
+{% endif %}
+{% if roles is not defined %}
+{% set roles = [
+{'img': 'ganadero.png', 'title': 'Ganadero', 'desc': 'Supervisa tu rebaño, recibe alertas y controla la producción desde
+el celular.'},
+{'img': 'veterinario.png', 'title': 'Veterinario', 'desc': 'Consulta historial, registra tratamientos y atiende a
+distancia con datos precisos.'}
+] %}
+{% endif %}
 
-    <!-- Call to Action -->
-    <section class="cta-section">
-        <div class="container">
-            <div class="cta-box">
-                <div class="cta-content">
-                    <h2>¿Listo para modernizar su finca?</h2>
-                    <p>Únase a la comunidad de ganaderos que ya están transformando su gestión.</p>
-                </div>
-                <div class="cta-action">
-                    <a href="/register" class="btn btn-white">Crear Cuenta Gratis</a>
-                </div>
+<nav class="landing-nav navbar is-fixed-top" role="navigation" aria-label="main navigation">
+    <div class="nav-container">
+        <div class="nav-logo navbar-brand">
+            <img src="{{ url_for('static', path='images/cow_logo.png') }}" alt="Cow Logo">
+            <span>Cow App</span>
+        </div>
+
+        {# Bulma no usará estas nav-links en móvil por el CSS media query #}
+        <ul class="nav-links is-hidden-mobile">
+            <li><a href="#funciones" class="navbar-item">Funciones</a></li>
+            <li><a href="#roles" class="navbar-item">Roles</a></li>
+            <li><a href="#contacto" class="navbar-item">Contacto</a></li>
+        </ul>
+
+        <a href="/login" class="nav-btn is-hidden-mobile">Entrar</a>
+
+        {# Botón para móvil (opcional si implementas un menú tipo hamburguesa de Bulma) #}
+        <a href="/login" class="nav-btn is-hidden-tablet">Entrar</a>
+    </div>
+</nav>
+
+<section class="hero is-medium">
+    <div class="hero-grid container">
+
+        <div class="hero-text">
+            <h1 class="hero-title is-size-1-desktop is-size-3-mobile">{{ hero_title }}</h1>
+            <p class="hero-subtitle is-size-5">{{ hero_subtitle }}</p>
+
+            <div class="hero-actions is-flex is-justify-content-center-mobile">
+                <a href="/registro" class="hero-btn-primary button is-medium">{{ 'Crear Cuenta' }}</a>
+            </div>
+
+            <div class="hero-info-bar is-flex is-flex-wrap-wrap is-justify-content-center-mobile">
+                <span><i class="fas fa-bolt"></i> Comunicación en tiempo real</span>
+                <span><i class="fas fa-stethoscope"></i> Gestión sanitaria</span>
+                <span><i class="fas fa-chart-line"></i> Datos inteligentes</span>
             </div>
         </div>
-    </section>
-</div>
+
+        <div class="hero-visual">
+            <img src="{{ url_for('static', path='images/landing_mockup.png') }}" alt="Mockup Dashboard">
+        </div>
+
+    </div>
+</section>
+
+<section id="funciones" class="feature-section">
+    <div class="container">
+        <h2 class="section-title is-size-2-desktop">{{ 'Lo que Cow App hace por ti' }}</h2>
+
+        <div class="features-grid">
+            {% for f in features %}
+            <div class="feature-card box">
+                <i class="{{ f.icon }} feature-icon"></i>
+                <h3 class="is-size-4">{{ f.title }}</h3>
+                <p>{{ f.desc }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section id="roles" class="roles">
+    <div class="container">
+        <h2 class="section-title is-size-2-desktop">{{ 'Diseñado para Ganaderos y Veterinarios' }}</h2>
+
+        <div class="roles-grid">
+            {% for r in roles %}
+            <div class="role-card box">
+                <img src="{{ url_for('static', path='images/' ~ r.img) }}" alt="{{ r.title }}" class="is-rounded">
+                <h3 class="is-size-4 has-text-weight-bold">{{ r.title }}</h3>
+                <p>{{ r.desc }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="cta-final" id="contacto">
+    <div class="container">
+        <h2>{{ 'Moderniza tu rebaño hoy' }}</h2>
+        <p class="is-size-5">{{ 'Únete a la plataforma que une personas con datos reales del rebaño.' }}</p>
+        <a href="/registro" class="cta-btn button is-large">{{ 'Comenzar' }}</a>
+    </div>
+</section>
+
 {% endblock %}

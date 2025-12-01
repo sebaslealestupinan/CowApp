@@ -29,21 +29,6 @@
 </head>
 
 <body>
-    {% block navbar %}
-    <nav class="navbar" role="navigation" aria-label="navegación principal">
-        <div class="navbar-brand">
-            <a class="navbar-item" href="/">
-                <strong>🐄 Cow App</strong>
-            </a>
-            <a role="button" class="navbar-burger" aria-label="menú" aria-expanded="false" data-target="navbarMenu">
-                <span aria-hidden="true"></span>
-                <span aria-hidden="true"></span>
-                <span aria-hidden="true"></span>
-            </a>
-        </div>
-        <!-- No extra items -->
-    </nav>
-    {% endblock %}
     <main class="main-content">
         <section class="section">
             <div class="container">
@@ -53,22 +38,11 @@
     </main>
     <footer class="footer">
         <div class="content has-text-centered">
-            <p><strong>Cow App</strong> - Gestión Ganadera</p>
+            <p><strong>Cow App</strong> - Gestión Ganadera
+            <p>By: Sebastian Leal & Motoa</p>
+            </p>
         </div>
     </footer>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
-            $navbarBurgers.forEach(el => {
-                el.addEventListener('click', () => {
-                    const target = el.dataset.target;
-                    const $target = document.getElementById(target);
-                    el.classList.toggle('is-active');
-                    $target.classList.toggle('is-active');
-                });
-            });
-        });
-    </script>
     {% block scripts %}{% endblock %}
 </body>
 
