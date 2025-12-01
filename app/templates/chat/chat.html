@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Chat</title>
@@ -13,7 +14,7 @@
 
         <div id="messages">
             {% for msg in mensajes %}
-                <div class="msg">{{ msg.texto }}</div>
+            <div class="msg">{{ msg.texto }}</div>
             {% endfor %}
         </div>
 
@@ -23,36 +24,35 @@
         </div>
     </div>
 
-<script>
-    const userId = document.getElementById("user_id").value;
+    <script>
+        const userId = document.getElementById("user_id").value;
+        const ws = new WebSocket("ws://" + window.location.host + "/ws/chat?user_id=" + userId);
 
-    // CORREGIDO 1: Incluir user_id en la URL de conexión
-    const ws = new WebSocket("ws://" + window.location.host + "/ws/chat?user_id=" + userId);
+        const messagesDiv = document.getElementById("messages");
+        const input = document.getElementById("messageInput");
+        const sendBtn = document.getElementById("sendBtn");
 
-    const messagesDiv = document.getElementById("messages");
-    const input = document.getElementById("messageInput");
-    const sendBtn = document.getElementById("sendBtn");
+        ws.onmessage = function (event) {
+            const div = document.createElement("div");
+            div.classList.add("msg");
+            div.innerText = event.data;
+            messagesDiv.appendChild(div);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        };
 
-    ws.onmessage = function(event) {
-        const div = document.createElement("div");
-        div.classList.add("msg");
-        div.innerText = event.data;
-        messagesDiv.appendChild(div);
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    };
+        sendBtn.onclick = enviar;
+        input.onkeypress = (e) => { if (e.key === "Enter") enviar(); };
 
-    sendBtn.onclick = enviar;
-    input.onkeypress = (e) => { if (e.key === "Enter") enviar(); };
-
-    function enviar() {
-        if (input.value.trim() !== "") {
-            // CORREGIDO 2: Solo enviar el contenido en el JSON
-            ws.send(JSON.stringify({
-                content: input.value // <-- ¡Solo el contenido!
-            }));
-            input.value = "";
+        function enviar() {
+            if (input.value.trim() !== "") {
+                // CORREGIDO 2: Solo enviar el contenido en el JSON
+                ws.send(JSON.stringify({
+                    content: input.value // <-- ¡Solo el contenido!
+                }));
+                input.value = "";
+            }
         }
-    }
-</script>
+    </script>
 </body>
+
 </html>

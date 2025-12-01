@@ -1,94 +1,143 @@
 {% extends "base.html" %}
 
-{% block title %}Cow App - Gestión Ganadera Profesional{% endblock %}
+{% block title %}Cow App - Gestión Ganadera Inteligente{% endblock %}
 
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', path='css/principalPage.css') }}">
-<style>
-    /* Custom override for the navbar on the landing page */
-    .landing-navbar {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        padding: 1rem 2rem;
-        z-index: 10;
-        display: flex;
-        align-items: center;
-    }
-
-    .landing-logo {
-        height: 60px;
-        /* Adjust size as needed */
-        width: auto;
-        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-    }
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 {% endblock %}
 
 {% block navbar %}
-<!-- Custom minimal navbar for landing page -->
-<nav class="landing-navbar">
-    <a href="/">
-        <img src="/static/images/cow_logo.png" alt="Cow Logo" class="landing-logo">
-    </a>
-</nav>
+<!-- Navbar removida según solicitud del usuario -->
 {% endblock %}
 
 {% block content %}
-<div class="hero-section">
-    <div class="hero-content">
-        <div class="hero-text">
-            <h1 class="hero-title">Conectando el Campo Colombiano</h1>
-            <p class="hero-subtitle">
-                La plataforma integral que une a <strong>Veterinarios</strong> y <strong>Ganaderos</strong> para
-                optimizar la salud animal y la productividad de su finca. Tecnología de punta al servicio del agro.
-            </p>
-            <div class="cta-buttons">
-                <a href="/login" class="button is-primary is-medium cta-button">
-                    <span class="icon"><i class="fas fa-sign-in-alt"></i></span>
-                    <span>Iniciar Sesión</span>
-                </a>
-                <a href="/register" class="button is-link is-light is-medium cta-button">
-                    <span class="icon"><i class="fas fa-user-plus"></i></span>
-                    <span>Crear Cuenta</span>
-                </a>
+<div class="landing-wrapper">
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="hero-content container">
+            <div class="hero-text-content">
+                <span class="hero-badge">Tecnología para el Campo</span>
+                <h1 class="hero-title">El Futuro de la <br> <span class="highlight-text">Gestión Ganadera</span></h1>
+                <p class="hero-subtitle">
+                    Conectamos veterinarios y ganaderos en una plataforma unificada.
+                    Optimice la salud de su rebaño y maximice su producción con datos en tiempo real.
+                </p>
+                <div class="hero-actions">
+                    <a href="/login" class="btn btn-primary">
+                        Iniciar Sesión <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <a href="/register" class="btn btn-outline">
+                        Registrarse
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">500+</span>
+                        <span class="stat-label">Fincas</span>
+                    </div>
+                    <div class="stat-separator"></div>
+                    <div class="stat-item">
+                        <span class="stat-number">10k+</span>
+                        <span class="stat-label">Animales</span>
+                    </div>
+                    <div class="stat-separator"></div>
+                    <div class="stat-item">
+                        <span class="stat-number">98%</span>
+                        <span class="stat-label">Satisfacción</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="visual-card main-card">
+                    <div class="card-header">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Producción Mensual</span>
+                    </div>
+                    <div class="card-graph">
+                        <div class="graph-line"></div>
+                        <div class="graph-area"></div>
+                    </div>
+                </div>
+                <div class="visual-card float-card-1">
+                    <i class="fas fa-user-md"></i>
+                    <div>
+                        <strong>Dr. Juan Pérez</strong>
+                        <span>En camino • 15 min</span>
+                    </div>
+                </div>
+                <div class="visual-card float-card-2">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>Vacunación</strong>
+                        <span>Completada</span>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="hero-image-container">
-            <img src="/static/images/cow_app_colombian_context.png" alt="Veterinario y Ganadero usando Cow App"
-                class="responsive-image">
-        </div>
-    </div>
-</div>
+    </section>
 
-<div class="features-section">
-    <div class="container">
-        <div class="columns is-multiline">
-            <div class="column is-4">
-                <div class="feature-card">
-                    <span class="icon feature-icon"><i class="fas fa-notes-medical"></i></span>
-                    <h3 class="title is-4">Historial Clínico Digital</h3>
-                    <p>Acceda a la información de salud de cada animal en tiempo real, desde cualquier lugar del campo.
-                    </p>
-                </div>
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Soluciones Integrales</h2>
+                <p>Herramientas diseñadas para cada rol en la cadena productiva</p>
             </div>
-            <div class="column is-4">
+            <div class="features-grid">
                 <div class="feature-card">
-                    <span class="icon feature-icon"><i class="fas fa-handshake"></i></span>
-                    <h3 class="title is-4">Conexión Directa</h3>
-                    <p>Comunicación fluida entre veterinarios y ganaderos para diagnósticos rápidos y tratamientos
-                        efectivos.</p>
+                    <div class="feature-icon-wrapper">
+                        <i class="fas fa-tractor"></i>
+                    </div>
+                    <h3>Para Ganaderos</h3>
+                    <p>Gestione su inventario, controle la producción de leche y mantenga al día el calendario sanitario
+                        de su finca.</p>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> Inventario de animales</li>
+                        <li><i class="fas fa-check"></i> Registro de producción</li>
+                        <li><i class="fas fa-check"></i> Alertas sanitarias</li>
+                    </ul>
                 </div>
-            </div>
-            <div class="column is-4">
+                <div class="feature-card highlight">
+                    <div class="feature-icon-wrapper">
+                        <i class="fas fa-hand-holding-medical"></i>
+                    </div>
+                    <h3>Conexión Vital</h3>
+                    <p>El puente digital entre el campo y la ciencia veterinaria. Comunicación directa y expedientes
+                        compartidos.</p>
+                    <a href="/register" class="btn btn-sm">Únete Ahora</a>
+                </div>
                 <div class="feature-card">
-                    <span class="icon feature-icon"><i class="fas fa-chart-line"></i></span>
-                    <h3 class="title is-4">Gestión Productiva</h3>
-                    <p>Monitoree el crecimiento, producción y eventos reproductivos para maximizar la rentabilidad.</p>
+                    <div class="feature-icon-wrapper">
+                        <i class="fas fa-user-doctor"></i>
+                    </div>
+                    <h3>Para Veterinarios</h3>
+                    <p>Lleve el historial clínico de sus pacientes, programe visitas y reciba actualizaciones de estado
+                        en tiempo real.</p>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> Historia clínica digital</li>
+                        <li><i class="fas fa-check"></i> Agenda de visitas</li>
+                        <li><i class="fas fa-check"></i> Reportes automáticos</li>
+                    </ul>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-box">
+                <div class="cta-content">
+                    <h2>¿Listo para modernizar su finca?</h2>
+                    <p>Únase a la comunidad de ganaderos que ya están transformando su gestión.</p>
+                </div>
+                <div class="cta-action">
+                    <a href="/register" class="btn btn-white">Crear Cuenta Gratis</a>
+                </div>
+            </div>
+        </div>
+    </section>
 </div>
 {% endblock %}

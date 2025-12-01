@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Ganadero - Cow App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/dashboard_ganadero.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-cow"></i>
+                </div>
+                <span class="logo-text">Cow App</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active">
+                    <i class="fa-solid fa-layer-group"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa-solid fa-cow"></i>
+                    <span>Mi Rebaño</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa-solid fa-flask"></i>
+                    <span>Producción</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa-solid fa-heart-pulse"></i>
+                    <span>Salud</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa-solid fa-user-doctor"></i>
+                    <span>Visitas</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa-solid fa-boxes-stacked"></i>
+                    <span>Suministros</span>
+                </a>
+            </nav>
+
+            <div class="user-profile">
+                <div class="avatar">G</div>
+                <div class="user-info">
+                    <span class="user-name">Ganadero</span>
+                    <span class="user-role">Propietario</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>Resumen General</h1>
+                <div class="date-display">
+                    <i class="fa-regular fa-calendar"></i>
+                    <span id="current-date">Hoy</span>
+                </div>
+            </header>
+
+            <!-- KPI Cards -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-icon green">
+                        <i class="fa-solid fa-cow"></i>
+                    </div>
+                    <div class="kpi-data">
+                        <h3>Total Cabezas</h3>
+                        <p class="value">142</p>
+                        <span class="trend positive">+4 este mes</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon blue">
+                        <i class="fa-solid fa-bottle-droplet"></i>
+                    </div>
+                    <div class="kpi-data">
+                        <h3>Producción Diaria</h3>
+                        <p class="value">2,450 L</p>
+                        <span class="trend positive">+12% vs ayer</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon orange">
+                        <i class="fa-solid fa-heart-pulse"></i>
+                    </div>
+                    <div class="kpi-data">
+                        <h3>Salud General</h3>
+                        <p class="value">98%</p>
+                        <span class="trend neutral">Estable</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-grid">
+                <!-- Chart Section -->
+                <div class="chart-section card">
+                    <div class="card-header">
+                        <h2>Tendencia de Producción</h2>
+                        <button class="btn-icon"><i class="fa-solid fa-ellipsis"></i></button>
+                    </div>
+                    <div class="chart-placeholder">
+                        <!-- Placeholder for chart -->
+                        <div class="chart-bars">
+                            <div class="bar" style="height: 60%"></div>
+                            <div class="bar" style="height: 80%"></div>
+                            <div class="bar" style="height: 75%"></div>
+                            <div class="bar" style="height: 90%"></div>
+                            <div class="bar" style="height: 85%"></div>
+                            <div class="bar" style="height: 95%"></div>
+                            <div class="bar" style="height: 70%"></div>
+                        </div>
+                        <div class="chart-labels">
+                            <span>Lun</span><span>Mar</span><span>Mie</span><span>Jue</span><span>Vie</span><span>Sab</span><span>Dom</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tasks Section -->
+                <div class="tasks-section card">
+                    <div class="card-header">
+                        <h2>Tareas del Día</h2>
+                        <button class="btn-text">Ver todas</button>
+                    </div>
+                    <ul class="task-list">
+                        <li class="task-item">
+                            <div class="task-check">
+                                <i class="fa-regular fa-circle"></i>
+                            </div>
+                            <div class="task-info">
+                                <span class="task-title">Vacunación Lote A</span>
+                                <span class="task-time">08:00 AM</span>
+                            </div>
+                            <span class="tag high">Alta</span>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-check">
+                                <i class="fa-regular fa-circle-check"></i>
+                            </div>
+                            <div class="task-info">
+                                <span class="task-title completed">Revisión de Suministros</span>
+                                <span class="task-time">10:30 AM</span>
+                            </div>
+                            <span class="tag medium">Media</span>
+                        </li>
+                        <li class="task-item">
+                            <div class="task-check">
+                                <i class="fa-regular fa-circle"></i>
+                            </div>
+                            <div class="task-info">
+                                <span class="task-title">Visita Veterinario</span>
+                                <span class="task-time">02:00 PM</span>
+                            </div>
+                            <span class="tag high">Alta</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Vets Section -->
+                <div class="vets-section card">
+                    <div class="card-header">
+                        <h2>Veterinarios</h2>
+                    </div>
+                    <div class="vet-list">
+                        <div class="vet-item">
+                            <div class="vet-avatar online">
+                                <img src="https://ui-avatars.com/api/?name=Dr+Smith&background=random" alt="Dr. Smith">
+                            </div>
+                            <div class="vet-info">
+                                <span class="vet-name">Dr. Juan Pérez</span>
+                                <span class="vet-status online-text">En línea</span>
+                            </div>
+                            <button class="btn-icon-small"><i class="fa-regular fa-message"></i></button>
+                        </div>
+                        <div class="vet-item">
+                            <div class="vet-avatar offline">
+                                <img src="https://ui-avatars.com/api/?name=Dra+Lopez&background=random"
+                                    alt="Dra. Lopez">
+                            </div>
+                            <div class="vet-info">
+                                <span class="vet-name">Dra. Ana López</span>
+                                <span class="vet-status offline-text">Ausente</span>
+                            </div>
+                            <button class="btn-icon-small"><i class="fa-regular fa-message"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Simple script to set current date
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('es-ES', options);
+    </script>
+</body>
+
+</html>

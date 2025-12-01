@@ -6,12 +6,8 @@ from contextlib import asynccontextmanager
 from app.db import create_data_base
 
 # Import routers directly to avoid circular imports
-from app.routers import user_router
-from app.routers import chat_router
-from app.routers import web_router
-from app.routers import animal_router
-from app.routers import tratamiento_router
-from app.routers import eventos_router
+from app.routers import (user_router, chat_router, web_router, 
+    animal_router, tratamiento_router, eventos_router, auth_router)
 
 # en esta funcion se inicializa la base de datos, con todas las tablas en ella
 @asynccontextmanager
@@ -31,6 +27,7 @@ app = FastAPI(
 # Mount static files
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
+
 templates = Jinja2Templates(directory="app/templates")
 
 @app.get("/", response_class=HTMLResponse)
@@ -38,6 +35,7 @@ async def read_root(request: Request):
     return templates.TemplateResponse("paginaPrincipal.html", {"request": request})
 
 # Routers - web_router debe ir ANTES de veterinario_router para evitar conflictos de rutas
+app.include_router(auth_router.router)
 app.include_router(web_router.router)
 app.include_router(user_router.router)
 app.include_router(chat_router.router)

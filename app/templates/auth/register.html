@@ -10,6 +10,14 @@
 <section class="section">
     <div class="container">
         <h1 class="title">Crear Cuenta</h1>
+
+        {% if error %}
+        <div class="notification is-warning is-light">
+            <button class="delete"></button>
+            <strong>⚠️ Aviso:</strong> {{ error }}
+        </div>
+        {% endif %}
+
         <form action="/register" method="post" class="box">
             <div class="field">
                 <label class="label">Nombre</label>
@@ -57,4 +65,16 @@
         </form>
     </div>
 </section>
+
+<script>
+    // Handle notification close button
+    document.addEventListener('DOMContentLoaded', () => {
+        const deleteButtons = document.querySelectorAll('.notification .delete');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                button.parentElement.remove();
+            });
+        });
+    });
+</script>
 {% endblock %}
