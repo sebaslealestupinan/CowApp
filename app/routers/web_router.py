@@ -27,13 +27,3 @@ async def view_tratamiento_detalle(request: Request, tratamiento_id: int):
 async def view_visitas(request: Request):
     """Vista de solicitudes de visitas"""
     return templates.TemplateResponse("visitas/solicitudes.html", {"request": request})
-
-@router.get("/login", response_class=HTMLResponse, name="view_login")
-async def view_login(request: Request):
-    """Vista de inicio de sesión"""
-    return templates.TemplateResponse("auth/login.html", {"request": request})
-
-@router.get("/register", response_class=HTMLResponse, name="view_register")
-async def view_register(request: Request):
-    """Vista de registro"""
-    return templates.TemplateResponse("auth/register.html", {"request": request})

@@ -4,50 +4,98 @@
 
 {% block head %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+<link rel="stylesheet" href="{{ url_for('static', path='css/registerPage.css') }}">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://kit.fontawesome.com/4f3b67a8bb.js" crossorigin="anonymous"></script>
 {% endblock %}
 
 {% block content %}
 <section class="section">
     <div class="container">
-        <h1 class="title">Iniciar Sesión</h1>
-        <form action="/login" method="post" class="box">
-            <div class="field">
-                <label class="label">Correo Electrónico</label>
-                <div class="control">
-                    <input class="input" type="email" name="email" placeholder="correo@ejemplo.com" required>
-                </div>
-            </div>
+        <div class="columns is-centered">
+            <div class="column is-full-mobile is-two-thirds-tablet auth-column">
 
-            <div class="field">
-                <label class="label">Contraseña</label>
-                <div class="control">
-                    <input class="input" type="password" name="password" placeholder="Contraseña" required>
+                <div class="register-header">
+                    <img src="{{ url_for('static', path='images/cow_logo.png') }}" alt="Cow Logo" class="register-logo">
+                    <h1 class="title is-3 register-title">Iniciar Sesión</h1>
+                    <h2 class="subtitle is-6 has-text-grey">Bienvenido de nuevo a Cow App.</h2>
                 </div>
-            </div>
 
-            <div class="field">
-                <label class="label">Rol</label>
-                <div class="control">
-                    <label class="radio">
-                        <input type="radio" name="role" value="Ganadero" checked>
-                        Ganadero
-                    </label>
-                    <label class="radio">
-                        <input type="radio" name="role" value="Veterinario">
-                        Veterinario
-                    </label>
+                {% if error %}
+                <div class="notification is-danger is-light">
+                    <button class="delete"></button>
+                    <strong>⚠️ Error:</strong> {{ error }}
                 </div>
-            </div>
+                {% endif %}
 
-            <div class="field is-grouped">
-                <div class="control">
-                    <button class="button is-primary" type="submit">Entrar</button>
-                </div>
-                <div class="control">
-                    <a class="button is-light" href="/register">Crear cuenta</a>
-                </div>
+                <form action="/login" method="post" class="box">
+
+                    <div class="field">
+                        <label class="label has-text-weight-semibold">Correo Electrónico</label>
+                        <div class="control">
+                            <input class="input" type="email" name="email" placeholder="correo@ejemplo.com" required>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label has-text-weight-semibold">Contraseña</label>
+                        <div class="control">
+                            <input class="input" type="password" name="password" placeholder="Contraseña" required>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label has-text-weight-semibold">Iniciar Sesión Como</label>
+                        <div class="control">
+                            <div class="role-selection">
+
+                                <label>
+                                    <input type="radio" name="role" value="Ganadero" class="radio-hidden" checked>
+                                    <div class="role-card">
+                                        <span class="icon role-icon"><i class="fas fa-tractor"></i></span>
+                                        <span class="role-label">Ganadero</span>
+                                    </div>
+                                </label>
+
+                                <label>
+                                    <input type="radio" name="role" value="Veterinario" class="radio-hidden">
+                                    <div class="role-card">
+                                        <span class="icon role-icon"><i class="fas fa-user-md"></i></span>
+                                        <span class="role-label">Veterinario</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="field is-grouped is-grouped-centered pt-5">
+                        <div class="control is-expanded">
+                            <button class="button is-primary is-fullwidth is-large" type="submit">Entrar</button>
+                        </div>
+                    </div>
+
+                    <hr class="mt-4 mb-4">
+
+                    <p class="has-text-centered">
+                        <a class="button is-text has-text-weight-semibold" href="/register">¿No tienes cuenta? Crea
+                            una</a>
+                    </p>
+
+                </form>
             </div>
-        </form>
+        </div>
     </div>
 </section>
+
+<script>
+    // Handle notification close button
+    document.addEventListener('DOMContentLoaded', () => {
+        const deleteButtons = document.querySelectorAll('.notification .delete');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                button.parentElement.remove();
+            });
+        });
+    });
+</script>
 {% endblock %}

@@ -2,6 +2,7 @@ from sqlmodel import SQLModel, Field
 from typing import List, Optional
 from pydantic import EmailStr
 from app.models.usuario import Role
+from fastapi import Form
 
 class CreateUser(SQLModel):
 

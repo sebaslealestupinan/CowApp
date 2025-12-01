@@ -47,7 +47,6 @@ distancia con datos precisos.'}
             <span>Cow App</span>
         </div>
 
-        {# Bulma no usará estas nav-links en móvil por el CSS media query #}
         <ul class="nav-links is-hidden-mobile">
             <li><a href="#funciones" class="navbar-item">Funciones</a></li>
             <li><a href="#roles" class="navbar-item">Roles</a></li>
@@ -56,8 +55,6 @@ distancia con datos precisos.'}
 
         <a href="/login" class="nav-btn is-hidden-mobile">Entrar</a>
 
-        {# Botón para móvil (opcional si implementas un menú tipo hamburguesa de Bulma) #}
-        <a href="/login" class="nav-btn is-hidden-tablet">Entrar</a>
     </div>
 </nav>
 
@@ -69,7 +66,7 @@ distancia con datos precisos.'}
             <p class="hero-subtitle is-size-5">{{ hero_subtitle }}</p>
 
             <div class="hero-actions is-flex is-justify-content-center-mobile">
-                <a href="/registro" class="hero-btn-primary button is-medium">{{ 'Crear Cuenta' }}</a>
+                <a href="/register" class="hero-btn-primary button is-medium">{{ 'Crear Cuenta' }}</a>
             </div>
 
             <div class="hero-info-bar is-flex is-flex-wrap-wrap is-justify-content-center-mobile">
@@ -122,7 +119,7 @@ distancia con datos precisos.'}
     <div class="container">
         <h2>{{ 'Moderniza tu rebaño hoy' }}</h2>
         <p class="is-size-5">{{ 'Únete a la plataforma que une personas con datos reales del rebaño.' }}</p>
-        <a href="/registro" class="cta-btn button is-large">{{ 'Comenzar' }}</a>
+        <a href="/register" class="cta-btn button is-large">{{ 'Comenzar' }}</a>
     </div>
 </section>
 

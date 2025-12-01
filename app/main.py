@@ -7,7 +7,7 @@ from app.db import create_data_base
 
 # Import routers directly to avoid circular imports
 from app.routers import (user_router, chat_router, web_router, 
-    animal_router, tratamiento_router, eventos_router, auth_router)
+    animal_router, tratamiento_router, eventos_router, auth_router, views_router)
 
 # en esta funcion se inicializa la base de datos, con todas las tablas en ella
 @asynccontextmanager
@@ -35,6 +35,8 @@ async def read_root(request: Request):
     return templates.TemplateResponse("paginaPrincipal.html", {"request": request})
 
 # Routers - web_router debe ir ANTES de veterinario_router para evitar conflictos de rutas
+
+app.include_router(views_router.router)
 app.include_router(auth_router.router)
 app.include_router(web_router.router)
 app.include_router(user_router.router)
