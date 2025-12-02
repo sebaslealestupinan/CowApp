@@ -2,11 +2,17 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Request, Depends,
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from typing import List
+import json
 
 from app.websocket.connection_manager import manager
 from app.db import SessionDep
-from app.schemas.chat_schemas import CreateMensaje, ReadMensaje
-from app.crud.chat_crud import create_mensaje, get_chat_history
+from app.schemas.chat_schemas import CreateMensaje, ReadMensaje, ConversationSummary
+from app.crud.chat_crud import (
+    create_mensaje, 
+    get_chat_history, 
+    get_user_conversations,
+    mark_messages_as_read
+)
 
 router = APIRouter(prefix="/chat", tags=["Chat"])
 
@@ -19,9 +25,21 @@ async def chat_page(request: Request):
         {"request": request}
     )
 
+@router.get("/conversations/{user_id}", response_model=List[ConversationSummary])
+def get_conversations_endpoint(user_id: int, session: SessionDep):
+    """Obtiene la lista de conversaciones del usuario"""
+    return get_user_conversations(user_id, session)
+
 @router.get("/history/{user1_id}/{user2_id}", response_model=List[ReadMensaje])
 def get_history_endpoint(user1_id: int, user2_id: int, session: SessionDep):
+    """Obtiene el historial de mensajes entre dos usuarios"""
     return get_chat_history(user1_id, user2_id, session)
+
+@router.post("/mark-read/{user_id}/{other_user_id}")
+def mark_read_endpoint(user_id: int, other_user_id: int, session: SessionDep):
+    """Marca todos los mensajes de other_user_id como leídos"""
+    count = mark_messages_as_read(user_id, other_user_id, session)
+    return {"marked_as_read": count}
 
 @router.websocket("/ws/{user_id}")
 async def websocket_endpoint(websocket: WebSocket, user_id: int, session: SessionDep):
@@ -30,26 +48,51 @@ async def websocket_endpoint(websocket: WebSocket, user_id: int, session: Sessio
     try:
         while True:
             data = await websocket.receive_text()
-            # Assuming data format: "receiver_id:message_content" for simplicity in this basic implementation
-            # In a real app, you'd send JSON
+            
             try:
-                receiver_id_str, content = data.split(":", 1)
-                receiver_id = int(receiver_id_str)
+                # Esperar JSON con formato: {"receiver_id": int, "content": str}
+                message_data = json.loads(data)
+                receiver_id = message_data.get("receiver_id")
+                content = message_data.get("content")
                 
-                # Persist message
+                if not receiver_id or not content:
+                    await websocket.send_text(json.dumps({
+                        "error": "Formato inválido. Se requiere receiver_id y content"
+                    }))
+                    continue
+                
+                # Persistir mensaje
                 mensaje_data = CreateMensaje(
                     contenido=content,
                     sender_id=user_id,
                     receiver_id=receiver_id
                 )
-                create_mensaje(mensaje_data, session)
+                db_mensaje = create_mensaje(mensaje_data, session)
                 
-                # Send to receiver if connected
-                await manager.send_personal(receiver_id, f"Usuario {user_id}: {content}")
+                # Preparar respuesta con el mensaje completo
+                message_response = {
+                    "id": db_mensaje.id,
+                    "sender_id": user_id,
+                    "receiver_id": receiver_id,
+                    "content": content,
+                    "timestamp": db_mensaje.timestamp.isoformat(),
+                    "read": db_mensaje.read
+                }
                 
-            except ValueError:
-                # Fallback to broadcast or error handling if format is wrong
-                await manager.broadcast(f"Usuario {user_id}: {data}")
+                # Enviar al remitente (confirmación)
+                await websocket.send_text(json.dumps(message_response))
+                
+                # Enviar al receptor si está conectado
+                await manager.send_personal(receiver_id, json.dumps(message_response))
+                
+            except json.JSONDecodeError:
+                await websocket.send_text(json.dumps({
+                    "error": "Formato JSON inválido"
+                }))
+            except ValueError as e:
+                await websocket.send_text(json.dumps({
+                    "error": f"Error en los datos: {str(e)}"
+                }))
 
     except WebSocketDisconnect:
         manager.disconnect(user_id)

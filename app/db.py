@@ -1,9 +1,13 @@
+import os
+from dotenv import load_dotenv
 from sqlalchemy.orm import sessionmaker
 from sqlmodel import Session, SQLModel, create_engine
 from typing import Annotated
 from fastapi import Depends
 
-url_data_base= "sqlite:///dB.db"
+load_dotenv()
+
+url_data_base = os.getenv("DATABASE_URL")
 
 engine = create_engine(url_data_base)
 
