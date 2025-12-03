@@ -9,6 +9,7 @@ from app.utils.kind_animal import Kind
 class Animal(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
 
+    imagen: Optional[str] = None
     tag_id: str = Field(index=True)
     nombre: Optional[str] = None
     especie: Kind = Field(description="Kind of the animal", default=Kind.Bovino)

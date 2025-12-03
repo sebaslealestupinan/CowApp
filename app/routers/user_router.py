@@ -3,7 +3,7 @@ from typing import List, Optional
 
 from app.db import SessionDep
 from app.schemas.user_schemas import CreateUser, UpdateUser
-from app.models.usuario import Usuario, Role
+from app.models.usuario import Usuario
 from app.crud.user_crud import (
     create_user,
     get_users,
@@ -24,7 +24,7 @@ def create_user_endpoint(data: CreateUser, session: SessionDep):
 
 
 @router.get("/", response_model=List[Usuario])
-def read_users_endpoint(session: SessionDep, role: Optional[Role] = Query(None, description="Filtrar por rol")):
+def read_users_endpoint(session: SessionDep, role: Optional[str] = Query(None, description="Filtrar por rol")):
     return get_users(session, role)
 
 

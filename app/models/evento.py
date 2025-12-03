@@ -13,7 +13,7 @@ class Evento(SQLModel, table= True):
 
     fecha: datetime = Field(default_factory=datetime.now)
     estado: str
-
+    imagen: Optional[str] = Field(default=None, description="Event image url")
     tipo: str
     observaciones: str
     responsable: str

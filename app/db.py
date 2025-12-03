@@ -13,7 +13,7 @@ engine = create_engine(url_data_base)
 
 def create_data_base():
     from app.models.animal import Animal
-    from app.models.usuario import Usuario, Telefono
+    from app.models.usuario import Usuario
     from app.models.mensaje import Mensaje
     from app.models.tratamiento import Tratamiento
     from app.models.evento import Evento

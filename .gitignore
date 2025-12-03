@@ -16,3 +16,5 @@ __pycache__/
 # Archivos del sistema
 .DS_Store
 __init__.py/
+
+.env

@@ -1,7 +1,6 @@
 from sqlmodel import SQLModel, Field
 from typing import List, Optional
 from pydantic import EmailStr
-from app.models.usuario import Role
 from fastapi import Form
 
 class CreateUser(SQLModel):
@@ -12,15 +11,14 @@ class CreateUser(SQLModel):
     email: EmailStr = Field(
         description="Dirección de correo electrónico única y válida."
     )
-    role: Role = Field(description="Solo se tienen dos opciones: ser ganadero o veterinario",
-                     default = Role.Ganadero)
+    role: str = Field(description="Solo se tienen dos opciones: ser ganadero o veterinario",
+                     default = "ganadero")
     password: str = Field(min_length=5)
 
     status: bool = True
 
-    telefonos: List[str] = Field(
-        default=[],
-        description="Lista de números de teléfono asociados al veterinario."
+    telefonos: str = Field(
+        description="numero de telefono."
     )
 
 
@@ -43,23 +41,20 @@ class UpdateUser(SQLModel):
         description="Nueva contraseña (si se desea cambiar)."
     )
 
-    telefonos: Optional[List[str]] = Field(
+    telefonos: Optional[str] = Field(
         gt= 10, 
         le=11,
         default=None,
-        description="Lista opcional de números de teléfono nuevos."
+        description="telefono nuevo."
     )
 
 class ReadUser(SQLModel):
 
     name: str
     email: str
-
-    class TelefonoRead(SQLModel):
-        id: int
-        numero: str
-
-    telefonos: List[TelefonoRead]
+    role: str
+    status: bool
+    telefonos: str
 
     class Config:
         from_attributes = True

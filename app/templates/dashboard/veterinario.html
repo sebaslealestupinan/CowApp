@@ -1,245 +1,127 @@
-<!DOCTYPE html>
-<html lang="es">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Veterinario - Cow App</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/static/css/dashboard_veterinario.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-</head>
+{% block title %}veterinario{% endblock %}
 
-<body>
-    <div class="dashboard-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="logo-container">
+{% block head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+<link rel="stylesheet" href="{{ url_for('static', path='css/dashboard_veterinario.css') }}">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://kit.fontawesome.com/4f3b67a8bb.js" crossorigin="anonymous"></script>
+{% endblock %}
+
+{% block content %}
+{% if show_link| Default(True) %}
+<a href="veterinario/{{ vet.id }}">
+    {% endif%}
+
+
+    <nav class="landing-nav navbar is-fixed-top" role="navigation" aria-label="main navigation">
+        <div class="nav-container">
+            <div class="nav-logo navbar-brand">
+                <img src="{{ url_for('static', path='images/cow_logo.png') }}" alt="Cow Logo">
+                <span>Cow App</span>
+            </div>
+
+            <ul class="nav-links is-hidden-mobile">
+                <li><a href="#funciones" class="navbar-item">Funciones</a></li>
+                <li><a href="#roles" class="navbar-item">Roles</a></li>
+                <li><a href="#contacto" class="navbar-item">Contacto</a></li>
+            </ul>
+
+            <a href="/login" class="nav-btn is-hidden-mobile">Entrar</a>
+
+        </div>
+    </nav>
+
+    <div class="app-container">
+        <header class="navbar">
+            <div class="nav-left">
                 <div class="logo-box">
                     <i class="fa-solid fa-cow"></i>
-                    <div class="chip-icon"><i class="fa-solid fa-microchip"></i></div>
                 </div>
-                <span class="logo-text">COW APP</span>
+                <span class="brand-name">COW APP</span>
             </div>
 
-            <nav class="sidebar-nav">
-                <a href="#" class="nav-item">
-                    <i class="fa-solid fa-clipboard-list"></i>
-                    <span>Historiales</span>
-                </a>
-                <a href="#" class="nav-item">
-                    <i class="fa-solid fa-cow"></i>
-                    <span>Animales</span>
-                </a>
-                <a href="#" class="nav-item">
-                    <i class="fa-regular fa-comments"></i>
-                    <span>Consultas</span>
-                </a>
-                <a href="#" class="nav-item">
-                    <i class="fa-regular fa-envelope"></i>
-                    <span>Mensajes</span>
-                </a>
-                <a href="#" class="nav-item">
-                    <i class="fa-solid fa-syringe"></i>
-                    <span>Tratamientos</span>
-                </a>
-                <a href="#" class="nav-item">
+            <div class="nav-right">
+                <div class="notification-wrapper">
                     <i class="fa-regular fa-bell"></i>
-                    <span>Alertas</span>
+                    {% if notifications > 0 %}
+                    <span class="notification-badge">{{ notifications }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="user-profile">
+                    <img src="https://ui-avatars.com/api/?name={{ vet.name|replace(' ', '+') }}&background=4B5320&color=fff"
+                        alt="Profile">
+                    <span class="user-name">{{ vet.name }}</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Inbox -->
+        <main class="inbox-container">
+            <div class="inbox-header">
+                <h1>Gestión de Tratamientos</h1>
+                <div class="filter-tabs">
+                    <button class="tab active">Todos</button>
+                    <button class="tab">Atención Requerida</button>
+                    <button class="tab">En Seguimiento</button>
+                </div>
+            </div>
+
+            <div class="treatment-list">
+
+                {% for t in tratamientos %}
+                <a href="/veterinario/{{ vet.id }}/tratamiento/{{ t.id }}"
+                    class="treatment-card {{ 'attention' if t.estado == 'atencion' else '' }}">
+
+                    <div class="card-image">
+                        <img src="{{ t.animal.photo_url }}" alt="Foto del animal">
+                    </div>
+
+                    <div class="card-content">
+                        <div class="card-header-row">
+                            <span class="animal-id">ID: #{{ t.animal.id }}</span>
+
+                            {% if t.estado == "atencion" %}
+                            <span class="status-badge attention">Atención Requerida</span>
+                            {% elif t.estado == "nuevo" %}
+                            <span class="status-badge new-event">Evento Nuevo</span>
+                            {% else %}
+                            <span class="status-badge normal">En Seguimiento</span>
+                            {% endif %}
+                        </div>
+
+                        <h3 class="diagnosis">{{ t.diagnostico }}</h3>
+                        <p class="farmer-name">
+                            <i class="fa-regular fa-user"></i>
+                            Gan. {{ t.animal.ganadero.nombre }}
+                        </p>
+                    </div>
+
+                    <div class="card-action">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </div>
+
                 </a>
-            </nav>
-        </aside>
+                {% endfor %}
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Row 1 -->
-            <div class="grid-row row-1">
-                <!-- Casos Pendientes -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Casos Pendientes</h3>
-                        <span class="badge">Pendientes: 4</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="list-item">
-                            <i class="fa-solid fa-crutch icon-blue"></i>
-                            <span>Fractured - Hoof</span>
-                        </div>
-                        <div class="list-item">
-                            <i class="fa-solid fa-temperature-three-quarters icon-blue"></i>
-                            <span>Fiebre - Condición</span>
-                        </div>
-                        <button class="btn-primary">Ver Casos</button>
-                    </div>
-                </div>
-
-                <!-- Últimas Consultas -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Últimas Consultas</h3>
-                        <span class="badge">Recientes: 12</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="list-item">
-                            <strong>Gan. José L.</strong>
-                            <span class="text-muted">(Vaca #452 - Mastitis)</span>
-                        </div>
-                        <div class="list-item">
-                            <strong>Gan. María P.</strong>
-                            <span class="text-muted">(Novilla #123 - Cojera)</span>
-                        </div>
-                        <button class="btn-success">Revisar</button>
-                    </div>
-                </div>
-
-                <!-- Alertas Sanitarias -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Alertas Sanitarias</h3>
-                        <span class="badge">Activas: 2</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="list-item">
-                            <i class="fa-solid fa-triangle-exclamation icon-red"></i>
-                            <span>Brote de Fiebre Aftosa (Zona A)</span>
-                        </div>
-                        <div class="list-item">
-                            <i class="fa-solid fa-triangle-exclamation icon-red"></i>
-                            <span>Alerta de Brucelosis (Finca El Roble)</span>
-                        </div>
-                        <button class="btn-primary">Detalles</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Row 2 -->
-            <div class="grid-row row-2">
-                <!-- Vacunaciones Próximas -->
-                <div class="card calendar-card">
-                    <div class="card-header">
-                        <h3>Vacunaciones Próximas</h3>
-                        <span class="badge">Este Mes: 15</span>
-                    </div>
-                    <div class="card-body flex-row">
-                        <div class="mini-calendar">
-                            <div class="cal-header">
-                                <i class="fa-regular fa-calendar"></i>
-                            </div>
-                            <div class="cal-grid">
-                                <span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span
-                                    class="active">11</span>
-                                <span>13</span><span>14</span><span>15</span><span class="highlight">16</span><span
-                                    class="highlight">17</span><span>18</span>
-                                <span>20</span><span>21</span><span>22</span><span>23</span><span>24</span><span>25</span>
-                            </div>
-                        </div>
-                        <div class="event-list">
-                            <div class="event-item">
-                                <strong>15/11</strong> <span>Vaca #890 - IBR</span>
-                            </div>
-                            <div class="event-item">
-                                <strong>18/11</strong> <span>Novilla #331 - Fiebre Aftosa</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Pacientes Recientes -->
-                <div class="card patients-card">
-                    <div class="card-header">
-                        <h3>Pacientes Recientes con Seguimiento Activo</h3>
-                        <span class="badge">Activos: 8</span>
-                    </div>
-                    <div class="card-body flex-row gap-2">
-                        <div class="patient-card">
-                            <img src="https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?w=100&h=100&fit=crop"
-                                alt="Vaca">
-                            <div class="patient-info">
-                                <strong>Vaca #774</strong>
-                                <span class="text-sm">Último tratamiento:</span>
-                                <span class="status-tag success">Recuperación</span>
-                            </div>
-                        </div>
-                        <div class="patient-card">
-                            <img src="https://images.unsplash.com/photo-1546445317-29f4545e9d53?w=100&h=100&fit=crop"
-                                alt="Toro">
-                            <div class="patient-info">
-                                <strong>Toro #512</strong>
-                                <span class="text-sm">Último tratamiento:</span>
-                                <span class="status-tag warning">Tratamiento en curso</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Row 3 -->
-            <div class="grid-row row-3">
-                <!-- Sección de Mensajería -->
-                <div class="card messages-card">
-                    <div class="card-header">
-                        <h3>Sección de Mensajería</h3>
-                        <span class="status-text success">Conectado</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="message-item">
-                            <div class="msg-content">
-                                <strong>Gan. Carlos M.</strong>
-                                <span class="text-muted">(Vaca #201, Estable, 14:30 Hoy)</span>
-                            </div>
-                            <i class="fa-solid fa-comments icon-blue"></i>
-                        </div>
-                        <div class="message-item">
-                            <div class="msg-content">
-                                <strong>Gan. Ana R.</strong>
-                                <span class="text-muted">(Ternero #098, Crítico, 10:15 Ayer)</span>
-                            </div>
-                            <i class="fa-solid fa-comments icon-blue"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Vista Detallada del Animal -->
-                <div class="card detail-card">
-                    <div class="card-header">
-                        <h3>Vista Detallada del Animal</h3>
-                    </div>
-                    <div class="card-body flex-row">
-                        <div class="animal-preview">
-                            <img src="https://images.unsplash.com/photo-1527153857715-3908f2bae5e8?w=150&h=100&fit=crop"
-                                alt="Vaca Holstein">
-                            <strong>Vaca Holstein #559</strong>
-                        </div>
-                        <div class="animal-history">
-                            <h4>Historial Sanitario Básico</h4>
-                            <div class="history-row">
-                                <span>Vacunaciones</span>
-                            </div>
-                            <div class="history-row">
-                                <span>Partos</span>
-                            </div>
-                            <div class="history-section">
-                                <h4>Tratamientos Recientes</h4>
-                                <div class="history-row">
-                                    <span>Antibióticos</span>
-                                    <span>28/10</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="vet-notes">
-                            <h4>Notas del Veterinario</h4>
-                            <p class="handwritten">Observación sobre condición... <br> Observación sobre condición...
-                            </p>
-                            <div class="action-buttons">
-                                <button class="btn-success">Añadir Nota</button>
-                                <button class="btn-primary">Ver Expediente</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </main>
-    </div>
-</body>
 
-</html>
+        <!-- Floating Buttons -->
+        <div class="floating-actions">
+            <button class="magic-btn secondary" title="Mensaje al Ganadero">
+                <i class="fa-regular fa-envelope"></i>
+            </button>
+
+            <button class="magic-btn primary" title="Nuevo Tratamiento"
+                onclick="window.location.href='/veterinario/{{ vet.id }}/tratamiento/nuevo'">
+                <i class="fa-solid fa-plus"></i>
+                <span>Nuevo Tratamiento</span>
+            </button>
+        </div>
+
+    </div>
+
+    {% endblock %}

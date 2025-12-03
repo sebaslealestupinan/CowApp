@@ -1,4 +1,4 @@
-from .usuario import Usuario, Telefono
+from .usuario import Usuario
 from .animal import Animal
 from .tratamiento import Tratamiento
 from .evento import Evento

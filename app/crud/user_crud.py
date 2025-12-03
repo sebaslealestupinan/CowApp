@@ -1,7 +1,7 @@
 from sqlmodel import Session, select
 from typing import List, Optional
 
-from app.models.usuario import Usuario, Telefono, Role
+from app.models.usuario import Usuario
 from app.schemas.user_schemas import CreateUser, UpdateUser
 
 
@@ -52,7 +52,7 @@ def get_user(user_id: int, session: Session) -> Optional[Usuario]:
     return session.get(Usuario, user_id)
 
 
-def get_users(session: Session, role: Optional[Role] = None) -> List[Usuario]:
+def get_users(session: Session, role: Optional[str] = None) -> List[Usuario]:
     """
     Obtiene la lista de todos los Usuarios, opcionalmente filtrados por rol.
     """

@@ -17,7 +17,6 @@ class Tratamiento(SQLModel, table=True):
     medicamento: Optional[str] = None
     dosis: Optional[float] = None
 
-    # Relaciones
     veterinario_id: int = Field(foreign_key="usuario.id")
     veterinario: Optional["Usuario"] = Relationship(back_populates="reportes")
 
