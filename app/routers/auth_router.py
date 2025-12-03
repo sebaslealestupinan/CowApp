@@ -16,8 +16,8 @@ templates = Jinja2Templates(directory="app/templates")
 
 def redirec(role: str, usuario: Usuario):
     routes = {
-        "ganadero": f"/ganadero/{usuario}",
-        "veterinario": f"/veterinario/{usuario}",
+        "ganadero": f"/ganadero/{usuario.id}",
+        "veterinario": f"/veterinario/{usuario.id}",
     }
     url = routes.get(role.lower())
     return RedirectResponse(url=url, status_code=status.HTTP_302_FOUND)

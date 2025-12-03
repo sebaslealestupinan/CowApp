@@ -1,127 +1,73 @@
-{% extends "base.html" %}
+{% include "dashboard/header.html" %}
 
-{% block title %}veterinario{% endblock %}
+{% include "dashboard/navbar.html" %}
 
-{% block head %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-<link rel="stylesheet" href="{{ url_for('static', path='css/dashboard_veterinario.css') }}">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://kit.fontawesome.com/4f3b67a8bb.js" crossorigin="anonymous"></script>
-{% endblock %}
-
-{% block content %}
-{% if show_link| Default(True) %}
-<a href="veterinario/{{ vet.id }}">
-    {% endif%}
-
-
-    <nav class="landing-nav navbar is-fixed-top" role="navigation" aria-label="main navigation">
-        <div class="nav-container">
-            <div class="nav-logo navbar-brand">
-                <img src="{{ url_for('static', path='images/cow_logo.png') }}" alt="Cow Logo">
-                <span>Cow App</span>
-            </div>
-
-            <ul class="nav-links is-hidden-mobile">
-                <li><a href="#funciones" class="navbar-item">Funciones</a></li>
-                <li><a href="#roles" class="navbar-item">Roles</a></li>
-                <li><a href="#contacto" class="navbar-item">Contacto</a></li>
-            </ul>
-
-            <a href="/login" class="nav-btn is-hidden-mobile">Entrar</a>
-
+<!-- Main Inbox -->
+<main class="inbox-container">
+    <div class="inbox-header">
+        <h1>Gestión de Tratamientos</h1>
+        <div class="filter-tabs">
+            <button class="tab active"
+                onclick="window.location.href='/views/tratamientos?veterinario_id={{ user.id }}&user_id={{ user.id }}'">Todos</button>
         </div>
-    </nav>
+    </div>
 
-    <div class="app-container">
-        <header class="navbar">
-            <div class="nav-left">
-                <div class="logo-box">
-                    <i class="fa-solid fa-cow"></i>
-                </div>
-                <span class="brand-name">COW APP</span>
+    <div class="treatment-list">
+
+        {% for t in tratamientos %}
+        {% if t.fecha_fin != current_date and t.veterinario_id == user.id %}
+        <a href="/veterinario/{{ user.id }}/tratamiento/{{ t.id }}"
+            class="treatment-card {{ 'attention' if t.estado == 'atencion' else '' }}">
+
+            <div class="card-image">
+                <img src="{{ t.animal.photo_url }}" alt="Foto del animal">
             </div>
 
-            <div class="nav-right">
-                <div class="notification-wrapper">
-                    <i class="fa-regular fa-bell"></i>
-                    {% if notifications > 0 %}
-                    <span class="notification-badge">{{ notifications }}</span>
+            <div class="card-content">
+                <div class="card-header-row">
+                    <span class="animal-id">ID: #{{ t.animal.id }}</span>
+
+                    {% if t.estado == "atencion" %}
+                    <span class="status-badge attention">Atención Requerida</span>
+                    {% elif t.estado == "nuevo" %}
+                    <span class="status-badge new-event">Evento Nuevo</span>
+                    {% else %}
+                    <span class="status-badge normal">En Seguimiento</span>
                     {% endif %}
                 </div>
 
-                <div class="user-profile">
-                    <img src="https://ui-avatars.com/api/?name={{ vet.name|replace(' ', '+') }}&background=4B5320&color=fff"
-                        alt="Profile">
-                    <span class="user-name">{{ vet.name }}</span>
-                </div>
-            </div>
-        </header>
-
-        <!-- Main Inbox -->
-        <main class="inbox-container">
-            <div class="inbox-header">
-                <h1>Gestión de Tratamientos</h1>
-                <div class="filter-tabs">
-                    <button class="tab active">Todos</button>
-                    <button class="tab">Atención Requerida</button>
-                    <button class="tab">En Seguimiento</button>
-                </div>
+                <h3 class="diagnosis">{{ t.diagnostico }}</h3>
+                <p class="farmer-name">
+                    <i class="fa-regular fa-user"></i>
+                    Gan. {{ t.animal.ganadero.nombre }}
+                </p>
             </div>
 
-            <div class="treatment-list">
-
-                {% for t in tratamientos %}
-                <a href="/veterinario/{{ vet.id }}/tratamiento/{{ t.id }}"
-                    class="treatment-card {{ 'attention' if t.estado == 'atencion' else '' }}">
-
-                    <div class="card-image">
-                        <img src="{{ t.animal.photo_url }}" alt="Foto del animal">
-                    </div>
-
-                    <div class="card-content">
-                        <div class="card-header-row">
-                            <span class="animal-id">ID: #{{ t.animal.id }}</span>
-
-                            {% if t.estado == "atencion" %}
-                            <span class="status-badge attention">Atención Requerida</span>
-                            {% elif t.estado == "nuevo" %}
-                            <span class="status-badge new-event">Evento Nuevo</span>
-                            {% else %}
-                            <span class="status-badge normal">En Seguimiento</span>
-                            {% endif %}
-                        </div>
-
-                        <h3 class="diagnosis">{{ t.diagnostico }}</h3>
-                        <p class="farmer-name">
-                            <i class="fa-regular fa-user"></i>
-                            Gan. {{ t.animal.ganadero.nombre }}
-                        </p>
-                    </div>
-
-                    <div class="card-action">
-                        <i class="fa-solid fa-chevron-right"></i>
-                    </div>
-
-                </a>
-                {% endfor %}
-
+            <div class="card-action">
+                <i class="fa-solid fa-chevron-right"></i>
             </div>
-        </main>
 
-        <!-- Floating Buttons -->
-        <div class="floating-actions">
-            <button class="magic-btn secondary" title="Mensaje al Ganadero">
-                <i class="fa-regular fa-envelope"></i>
-            </button>
-
-            <button class="magic-btn primary" title="Nuevo Tratamiento"
-                onclick="window.location.href='/veterinario/{{ vet.id }}/tratamiento/nuevo'">
-                <i class="fa-solid fa-plus"></i>
-                <span>Nuevo Tratamiento</span>
-            </button>
-        </div>
+        </a>
+        {% endif %}
+        {% endfor %}
 
     </div>
+</main>
 
-    {% endblock %}
+<!-- Floating Buttons -->
+<div class="floating-actions">
+    <button class="magic-btn secondary" title="Mensaje al Ganadero">
+        <i class="fa-regular fa-envelope"></i>
+    </button>
+
+    <button class="magic-btn primary" title="Nuevo Tratamiento"
+        onclick="window.location.href='/veterinario/{{ user.id }}/tratamiento/nuevo'">
+        <i class="fa-solid fa-plus"></i>
+        <span>Nuevo Tratamiento</span>
+    </button>
+</div>
+
+</div>
+
+
+{%include "dashboard/footer.html" %}

@@ -1,0 +1,60 @@
+{% include 'dashboard/header.html' %}
+
+<section class="section">
+    <div class="container">
+        <h1 class="title has-text-centered is-3 mb-6">Tratamientos</h1>
+
+        {% if tratamientos %}
+        <div class="columns is-multiline">
+            {% for tratamiento in tratamientos %}
+            <div class="column is-one-third-desktop is-half-tablet">
+                <div class="card">
+                    <div class="card-image">
+                        <figure class="image is-4by3">
+                            <!-- Placeholder image since Tratamiento model doesn't have an image field yet -->
+                            <img src="https://placehold.co/600x400?text=Tratamiento" alt="Imagen Tratamiento">
+                        </figure>
+                    </div>
+                    <div class="card-content">
+                        <div class="media">
+                            <div class="media-content">
+                                <p class="title is-4">{{ tratamiento.nombre_tratamiento }}</p>
+                                <div class="tags">
+                                    <span class="tag is-info">{{ tratamiento.estado }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="content">
+                            <!-- Logic to display Tag ID or Vet Name based on user role -->
+                            {% if user and user.role == 'Veterinario' %}
+                            <p><strong>Tag ID Animal:</strong> {{ tratamiento.animal.tag_id if tratamiento.animal else
+                                'N/A' }}</p>
+                            {% else %}
+                            <p><strong>Veterinario:</strong> {{ tratamiento.veterinario.name if tratamiento.veterinario
+                                else 'Desconocido' }}</p>
+                            {% endif %}
+
+                            <p><strong>Fecha:</strong> {{ tratamiento.fecha_inicio }}</p>
+
+                            <div class="mt-4">
+                                <a href="/views/tratamientos/{{ tratamiento.id }}"
+                                    class="button is-primary is-fullwidth is-outlined">
+                                    Ver Detalles
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="notification is-info is-light has-text-centered">
+            <p>No se encontraron tratamientos registrados.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+{% include 'dashboard/footer.html' %}

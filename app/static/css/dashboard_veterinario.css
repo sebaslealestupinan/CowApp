@@ -1,33 +1,45 @@
 /* RESPONSIVE */
-@media (max-width: 600px) {
-    .navbar {
-        padding: 0 1rem;
-    }
+:root {
+    /* Tierra Principal / Fondo Suave */
+    --color-primary-earth: #4B5320;
+    /* Verde Olivo Oscuro */
+    --color-secondary-soft: #F5F5DC;
+    /* Beige Muy Claro */
 
-    .inbox-container {
-        padding: 1rem;
-    }
+    /* Clínico / Status / Acento Principal */
+    --color-accent-clinical: #00A9E0;
+    /* Azul Celeste Brillante */
 
-    .treatment-card {
-        gap: 1rem;
-        padding: 0.8rem;
-    }
+    /* Texto y Minimalismo (Estilo Apple) */
+    --text-dark: #2A2A2A;
+    --white: #ffffff;
+    --shadow-soft: 0 8px 30px rgba(0, 0, 0, 0.08);
+    /* Sombra suave para el estatus */
+}
 
-    .card-image {
-        width: 60px;
-        height: 60px;
-    }
+body {
+    font-family: "Inter", sans-serif;
+    background: var(--color-secondary-soft);
+    /* Fondo Beige Suave */
+    color: var(--text-dark);
+    min-height: 100vh;
+    /* CENTRADO CLAVE PARA RESPONSIVIDAD COMPLETA */
+    display: block;
+    align-items: center;
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+    /* Centrado vertical */
+    /* Centrado horizontal */
+}
 
-    .diagnosis {
-        font-size: 1rem;
+@media screen and (max-width: 768px) {
+    body {
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
     }
+}
 
-    .magic-btn.primary {
-        padding: 0.8rem 1rem;
-        font-size: 0.9rem;
-    }
-
-    .user-name {
-        display: none;
-    }
+.section {
+    padding: 2rem 1.5rem;
+    width: 100%;
 }

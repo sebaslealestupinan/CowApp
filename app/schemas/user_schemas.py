@@ -24,6 +24,11 @@ class CreateUser(SQLModel):
 
 
 class UpdateUser(SQLModel):
+
+    image: Optional[str] = Field(
+        default=None,
+        description="URL de la imagen del usuario."
+    )
     name: Optional[str] = Field(
         min_length=2,
         default=None,
@@ -49,10 +54,9 @@ class UpdateUser(SQLModel):
     )
 
 class ReadUser(SQLModel):
-
+    imag: str
     name: str
     email: str
-    role: str
     status: bool
     telefonos: str
 

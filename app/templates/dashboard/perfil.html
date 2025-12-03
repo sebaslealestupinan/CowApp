@@ -1,0 +1,128 @@
+{% include "dashboard/header.html" %}
+{% include "dashboard/navbar.html" %}
+
+<section class="section">
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="column is-half">
+                <div class="box">
+                    <h1 class="title has-text-centered">Perfil de Usuario</h1>
+
+                    <div class="has-text-centered mb-5">
+                        <figure class="image is-128x128 is-inline-block">
+                            <img class="is-rounded"
+                                src="{{ user.imag or 'https://bulma.io/images/placeholders/128x128.png' }}"
+                                alt="Imagen de perfil">
+                        </figure>
+                    </div>
+
+                    <form id="formPerfil">
+                        <div class="field">
+                            <label class="label">Nombre Completo</label>
+                            <div class="control has-icons-left">
+                                <input class="input" type="text" name="name" value="{{ user.name }}" required
+                                    minlength="2">
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Correo Electrónico</label>
+                            <div class="control has-icons-left">
+                                <input class="input" type="email" name="email" value="{{ user.email }}" required>
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-envelope"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Teléfono</label>
+                            <div class="control has-icons-left">
+                                <input class="input" type="tel" name="telefonos" value="{{ user.telefonos or '' }}"
+                                    placeholder="Ingrese su teléfono">
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-phone"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Imagen de Perfil (URL)</label>
+                            <div class="control has-icons-left">
+                                <input class="input" type="text" name="image" value="{{ user.imag or '' }}"
+                                    placeholder="URL de la imagen">
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-image"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Nueva Contraseña (Opcional)</label>
+                            <div class="control has-icons-left">
+                                <input class="input" type="password" name="password"
+                                    placeholder="Dejar en blanco para mantener la actual">
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-lock"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <input type="hidden" id="userId" value="{{ user.id }}">
+
+                        <div class="field is-grouped is-grouped-centered mt-5">
+                            <div class="control">
+                                <button type="submit" class="button is-primary">Actualizar Perfil</button>
+                            </div>
+                            <div class="control">
+                                <button type="button" class="button is-light" onclick="history.back()">Cancelar</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% include "dashboard/footer.html" %}
+
+<script>
+    document.getElementById('formPerfil').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const userId = document.getElementById('userId').value;
+        const form = e.target;
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        // Clean up empty fields
+        if (!data.password) delete data.password;
+        if (!data.image) delete data.image;
+        if (!data.telefonos) delete data.telefonos;
+
+        try {
+            const response = await fetch(`/users/${userId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                alert('Perfil actualizado exitosamente');
+                location.reload();
+            } else {
+                const error = await response.json();
+                alert('Error: ' + (error.detail || 'Error al actualizar perfil'));
+            }
+        } catch (e) {
+            console.error(e);
+            alert('Error de conexión');
+        }
+    });
+</script>

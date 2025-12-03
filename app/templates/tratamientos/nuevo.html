@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}Nuevo Tratamiento - Cow App{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="column is-half">
+                <div class="box">
+                    <h1 class="title has-text-centered">Registrar Nuevo Tratamiento</h1>
+
+                    <form id="formNuevoTratamiento">
+                        <div class="field">
+                            <label class="label">ID del Animal</label>
+                            <div class="control">
+                                <input class="input" type="number" name="animal_id" required
+                                    placeholder="Ingrese ID del animal">
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Nombre del Tratamiento</label>
+                            <div class="control">
+                                <input class="input" type="text" name="nombre_tratamiento" required
+                                    placeholder="Ej: Tratamiento de Mastitis">
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Diagnóstico</label>
+                            <div class="control">
+                                <textarea class="textarea" name="diagnostico" required
+                                    placeholder="Descripción del diagnóstico..."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="columns">
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Medicamento</label>
+                                    <div class="control">
+                                        <input class="input" type="text" name="medicamento"
+                                            placeholder="Nombre del medicamento">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Dosis</label>
+                                    <div class="control">
+                                        <input class="input" type="number" step="0.01" name="dosis"
+                                            placeholder="Cantidad">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="columns">
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Fecha Inicio</label>
+                                    <div class="control">
+                                        <input class="input" type="date" name="fecha_inicio" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Fecha Fin</label>
+                                    <div class="control">
+                                        <input class="input" type="date" name="fecha_fin" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Estado</label>
+                            <div class="control">
+                                <div class="select is-fullwidth">
+                                    <select name="estado">
+                                        <option value="activo">Activo</option>
+                                        <option value="atencion">Atención Requerida</option>
+                                        <option value="finalizado">Finalizado</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hidden Veterinario ID (Passed from context) -->
+                        <input type="hidden" name="veterinario_id" value="{{ user.id }}">
+
+                        <div class="field is-grouped is-grouped-centered mt-5">
+                            <div class="control">
+                                <button type="submit" class="button is-primary">Registrar Tratamiento</button>
+                            </div>
+                            <div class="control">
+                                <a href="javascript:history.back()" class="button is-light">Cancelar</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById('formNuevoTratamiento').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const form = e.target;
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        // Convert types
+        data.animal_id = parseInt(data.animal_id);
+        data.veterinario_id = parseInt(data.veterinario_id);
+        if (data.dosis) data.dosis = parseFloat(data.dosis);
+
+        try {
+            const response = await fetch('/tratamientos/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                alert('Tratamiento registrado exitosamente');
+                window.location.href = `/veterinario/${data.veterinario_id}`;
+            } else {
+                const error = await response.json();
+                alert('Error: ' + (error.detail || 'Error al registrar tratamiento'));
+            }
+        } catch (e) {
+            console.error(e);
+            alert('Error de conexión');
+        }
+    });
+</script>
+{% endblock %}
