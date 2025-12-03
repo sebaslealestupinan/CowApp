@@ -55,6 +55,9 @@ from datetime import date
 @router.get("/veterinario/{id_user}", response_class=HTMLResponse)
 async def dashboard_veterinario(request: Request, id_user: int, session: Session = Depends(get_session)):
     # Get Vet
+
+    alert = request.session.pop("alert", None)
+
     vet = session.get(Usuario, id_user)
     tratamientos = session.exec(select(Tratamiento).where(Tratamiento.veterinario_id == id_user, Tratamiento.estado == "activo")).all()
     notifications = session.exec(select(func.count(Mensaje.id)).where(Mensaje.receiver_id == id_user, Mensaje.read == False)).one()
@@ -66,7 +69,8 @@ async def dashboard_veterinario(request: Request, id_user: int, session: Session
         "user": vet,
         "tratamientos": tratamientos,
         "notifications": notifications,
-        "current_date": current_date
+        "current_date": current_date,
+        "alert": alert
     })
 
 @router.get("/veterinario/{id_user}/tratamiento/nuevo", response_class=HTMLResponse)

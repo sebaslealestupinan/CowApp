@@ -41,11 +41,11 @@ def create_tratamiento(data: CreateTratamiento, session: Session) -> Tratamiento
 
     return db_tratamiento
 
-def get_tratamiento(tratamiento_id: int, session: Session) -> Optional[Tratamiento]:
+def get_tratamiento(tratamiento_name: str, session: Session) -> Optional[Tratamiento]:
     """
     Obtiene un tratamiento por su ID.
     """
-    return session.get(Tratamiento, tratamiento_id)
+    return session.get(Tratamiento, tratamiento_name)
 
 def get_tratamientos_by_animal(animal_id: int, session: Session) -> List[Tratamiento]:
     """

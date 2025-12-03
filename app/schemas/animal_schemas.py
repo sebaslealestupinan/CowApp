@@ -12,7 +12,7 @@ class CreateAnimal(SQLModel):
     fecha_nacimiento: Optional[datetime] = Field(default=None, description="Fecha de nacimiento")
     propietario_id: int = Field(description="ID del ganadero propietario")
     activo: bool = Field(default=True, description="Estado del animal")
-
+    imag: Optional[str] = Field(default=None, description="Imagen del animal")
 class UpdateAnimal(SQLModel):
     tag_id: Optional[str] = None
     nombre: Optional[str] = None

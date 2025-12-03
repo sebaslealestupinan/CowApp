@@ -2,7 +2,6 @@
 
 {% include "dashboard/navbar.html" %}
 
-<!-- Main Inbox -->
 <main class="inbox-container">
     <div class="inbox-header">
         <h1>Gestión de Tratamientos</h1>
@@ -19,9 +18,11 @@
         <a href="/veterinario/{{ user.id }}/tratamiento/{{ t.id }}"
             class="treatment-card {{ 'attention' if t.estado == 'atencion' else '' }}">
 
+            {% if t.animal.imagen %}
             <div class="card-image">
-                <img src="{{ t.animal.photo_url }}" alt="Foto del animal">
+                <img src="{{ t.animal.imagen }}" alt="Foto del animal">
             </div>
+            {% endif %}
 
             <div class="card-content">
                 <div class="card-header-row">
@@ -39,7 +40,7 @@
                 <h3 class="diagnosis">{{ t.diagnostico }}</h3>
                 <p class="farmer-name">
                     <i class="fa-regular fa-user"></i>
-                    Gan. {{ t.animal.ganadero.nombre }}
+                    Gan. {{ t.animal.propietario.nombre }}
                 </p>
             </div>
 
@@ -68,6 +69,12 @@
 </div>
 
 </div>
+
+{% if alert %}
+<script>
+    alert("{{ alert }}");
+</script>
+{% endif %}
 
 
 {%include "dashboard/footer.html" %}

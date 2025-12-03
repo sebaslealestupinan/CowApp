@@ -4,12 +4,11 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from contextlib import asynccontextmanager
 from app.db import create_data_base
-
-# Import routers directly to avoid circular imports
+from starlette.middleware.sessions import SessionMiddleware
 from app.routers import (user_router, chat_router, web_router, 
     animal_router, tratamiento_router, eventos_router, auth_router, views_router)
+from app.service_and_config.cloudinary import MIDDLEWARE
 
-# en esta funcion se inicializa la base de datos, con todas las tablas en ella
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("Inicializando base de datos COW...")
@@ -22,6 +21,12 @@ app = FastAPI(
     title="COW 0.1.0",
     description="Gestión ganadera y comunicacion veterinaria.",
     lifespan=lifespan
+)
+
+# Add SessionMiddleware
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=MIDDLEWARE
 )
 
 # Mount static files

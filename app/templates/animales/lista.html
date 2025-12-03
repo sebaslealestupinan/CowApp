@@ -36,7 +36,7 @@
             <button class="delete" aria-label="close"></button>
         </header>
         <section class="modal-card-body">
-            <!-- Formulario -->
+            <!-- Formulario for create animal -->
             <form id="formNuevoAnimal">
                 <div class="field">
                     <label class="label">Tag ID</label>
@@ -78,7 +78,7 @@
                         </div>
                     </div>
                 </div>
-                <!-- Hidden Propietario ID (Hardcoded for demo or fetched from session) -->
+                <!-- end modal for create animal -->
                 <input type="hidden" name="propietario_id" value="2">
             </form>
         </section>
@@ -141,8 +141,6 @@
 
     async function loadAnimales() {
         try {
-            // Fetching all animals (or filter by owner if logged in)
-            // For demo, fetching all or by specific owner if we had session info
             const response = await fetch('/animales/');
             const animales = await response.json();
 
@@ -158,7 +156,7 @@
                     <td>${animal.raza || '-'}</td>
                     <td>${animal.sexo}</td>
                     <td>
-                        <a href="/views/animales/${animal.id}" class="button is-small is-info">Ver</a>
+                        <a href="/animal?animal_id=${animal.tag_id}" class="button is-small is-info">Ver</a>
                     </td>
                 `;
                 tbody.appendChild(tr);

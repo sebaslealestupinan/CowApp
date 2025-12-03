@@ -1,7 +1,9 @@
 from fastapi import APIRouter, HTTPException, status
 from typing import List
-
+from sqlmodel import select
+from app.crud.user_crud import get_user
 from app.db import SessionDep
+from app.models.usuario import Usuario
 from app.schemas.tratamiento_schemas import CreateTratamiento, ReadTratamiento, UpdateTratamiento
 from app.crud.tratamiento_crud import (
     create_tratamiento,
@@ -10,19 +12,38 @@ from app.crud.tratamiento_crud import (
     delete_tratamiento,
     update_tratamiento
 )
-
+from fastapi import Form
+from fastapi.responses import RedirectResponse
+from fastapi import Request
 router = APIRouter(prefix="/tratamientos", tags=["Tratamientos"])
 
 @router.post("/", response_model=ReadTratamiento, status_code=status.HTTP_201_CREATED)
-def create_tratamiento_endpoint(tratamiento: CreateTratamiento, session: SessionDep):
-    # Verify veterinarian exists and has Veterinario role
-    from app.crud.user_crud import get_user
-    vet = get_user(tratamiento.veterinario_id, session)
-    if not vet:
-        raise HTTPException(status_code=404, detail="Veterinario no encontrado")
-    if vet.role.value != "Veterinario":
-        raise HTTPException(status_code=403, detail="Solo usuarios con rol Veterinario pueden crear tratamientos")
-    return create_tratamiento(tratamiento, session)
+def create_tratamiento_endpoint(request: Request, session: SessionDep, 
+animal_id: int = Form(...),
+nombre_tratamiento: str = Form(...),
+diagnostico: str = Form(...),
+medicamento: str = Form(None),
+dosis: float = Form(None),
+fecha_inicio: str = Form(...),
+fecha_fin: str = Form(...),
+estado: str = Form(...),
+veterinario_id: int = Form(...)):
+
+    tratamiento = CreateTratamiento(
+        animal_id=animal_id,
+        nombre_tratamiento=nombre_tratamiento,
+        diagnostico=diagnostico,
+        medicamento=medicamento,
+        dosis=dosis,
+        fecha_inicio=fecha_inicio,
+        fecha_fin=fecha_fin,
+        estado=estado,
+        veterinario_id=veterinario_id
+    )
+
+    create_tratamiento(tratamiento, session)
+
+    return RedirectResponse(url=f"/veterinario/{veterinario_id}", status_code=303)
 
 @router.get("/animal/{animal_id}", response_model=List[ReadTratamiento])
 def read_tratamientos_by_animal_endpoint(animal_id: int, session: SessionDep):

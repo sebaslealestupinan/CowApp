@@ -20,7 +20,7 @@ async def view_animales_lista(request: Request):
     """Vista de lista de animales"""
     return templates.TemplateResponse("animales/lista.html", {"request": request})
 
-@router.get("/views/animal/{animal_id}", response_class=HTMLResponse, name="view_animal_detalle")
+@router.get("/views/animal", response_class=HTMLResponse, name="view_animal_detalle")
 async def view_animal_detalle(request: Request, animal_id: int):
     """Vista de detalle de animal"""
     return templates.TemplateResponse("animales/detalle.html", {"request": request, "animal_id": animal_id})

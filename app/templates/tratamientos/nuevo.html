@@ -8,9 +8,17 @@
         <div class="columns is-centered">
             <div class="column is-half">
                 <div class="box">
+
+                    {% if mensaje %}
+                    <div class="notification is-success">
+                        {{ mensaje }}
+                    </div>
+                    {% endif %}
+
                     <h1 class="title has-text-centered">Registrar Nuevo Tratamiento</h1>
 
-                    <form id="formNuevoTratamiento">
+                    <form method="post" action="/tratamientos/">
+
                         <div class="field">
                             <label class="label">ID del Animal</label>
                             <div class="control">
@@ -88,7 +96,6 @@
                             </div>
                         </div>
 
-                        <!-- Hidden Veterinario ID (Passed from context) -->
                         <input type="hidden" name="veterinario_id" value="{{ user.id }}">
 
                         <div class="field is-grouped is-grouped-centered mt-5">
@@ -99,48 +106,11 @@
                                 <a href="javascript:history.back()" class="button is-light">Cancelar</a>
                             </div>
                         </div>
+
                     </form>
                 </div>
             </div>
         </div>
     </div>
 </section>
-{% endblock %}
-
-{% block scripts %}
-<script>
-    document.getElementById('formNuevoTratamiento').addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const form = e.target;
-        const formData = new FormData(form);
-        const data = Object.fromEntries(formData.entries());
-
-        // Convert types
-        data.animal_id = parseInt(data.animal_id);
-        data.veterinario_id = parseInt(data.veterinario_id);
-        if (data.dosis) data.dosis = parseFloat(data.dosis);
-
-        try {
-            const response = await fetch('/tratamientos/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
-
-            if (response.ok) {
-                alert('Tratamiento registrado exitosamente');
-                window.location.href = `/veterinario/${data.veterinario_id}`;
-            } else {
-                const error = await response.json();
-                alert('Error: ' + (error.detail || 'Error al registrar tratamiento'));
-            }
-        } catch (e) {
-            console.error(e);
-            alert('Error de conexión');
-        }
-    });
-</script>
 {% endblock %}

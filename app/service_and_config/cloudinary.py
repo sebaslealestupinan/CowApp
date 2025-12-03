@@ -7,6 +7,7 @@ from fastapi import UploadFile
 import uuid
 load_dotenv()
 
+MIDDLEWARE = os.getenv("MIDDLEWARE")
 CLOUDINARY_CLOUD = os.getenv("CLOUDINARY_CLOUD")
 CLOUDINARY_KEY = os.getenv("CLOUDINARY_KEY")
 CLOUDINARY_SECRET = os.getenv("CLOUDINARY_SECRET")

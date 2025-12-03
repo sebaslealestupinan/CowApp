@@ -9,6 +9,11 @@
             <header class="card-header">
                 <p class="card-header-title">Información del Animal</p>
             </header>
+            <div class="card-image" id="animalImageContainer" style="display: none;">
+                <figure class="image is-4by3">
+                    <img id="animalImage" src="" alt="Imagen del animal">
+                </figure>
+            </div>
             <div class="card-content">
                 <div class="content" id="animalInfo">
                     <p>Cargando...</p>
@@ -23,8 +28,23 @@
 
     <div class="column">
         <div class="box">
-            <h2 class="title is-4">Historial de Tratamientos</h2>
-            <button class="button is-small is-primary mb-3">Nuevo Tratamiento</button>
+            <div class="level">
+                <div class="level-left">
+                    <div class="level-item">
+                        <h2 class="title is-4">Historial de Tratamientos</h2>
+                    </div>
+                </div>
+                <div class="level-right">
+                    <div class="level-item">
+                        <button class="button is-primary" id="btnVerTratamientos">
+                            <span class="icon">
+                                <i class="fas fa-list"></i>
+                            </span>
+                            <span>Ver Todos los Tratamientos</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
             <div id="tratamientosList">
                 <p>Cargando tratamientos...</p>
             </div>
@@ -43,6 +63,11 @@
         const animalId = document.getElementById('animalId').value;
         loadAnimalDetails(animalId);
         loadTratamientos(animalId);
+
+        // Button to view all treatments
+        document.getElementById('btnVerTratamientos').addEventListener('click', () => {
+            window.location.href = `/views/tratamientos?animal_id=${animalId}`;
+        });
     });
 
     async function loadAnimalDetails(id) {
@@ -51,14 +76,24 @@
             if (!response.ok) throw new Error('Animal no encontrado');
             const animal = await response.json();
 
+            // Show image if exists
+            if (animal.imagen) {
+                const imageContainer = document.getElementById('animalImageContainer');
+                const imageElement = document.getElementById('animalImage');
+                imageElement.src = animal.imagen;
+                imageContainer.style.display = 'block';
+            }
+
             const infoDiv = document.getElementById('animalInfo');
             infoDiv.innerHTML = `
                 <p><strong>Tag ID:</strong> ${animal.tag_id}</p>
-                <p><strong>Nombre:</strong> ${animal.nombre}</p>
+                <p><strong>Nombre:</strong> ${animal.nombre || '-'}</p>
                 <p><strong>Especie:</strong> ${animal.especie}</p>
                 <p><strong>Raza:</strong> ${animal.raza || '-'}</p>
                 <p><strong>Sexo:</strong> ${animal.sexo}</p>
-                <p><strong>Estado:</strong> ${animal.activo ? 'Activo' : 'Inactivo'}</p>
+                ${animal.fecha_nacimiento ? `<p><strong>Fecha de Nacimiento:</strong> ${new Date(animal.fecha_nacimiento).toLocaleDateString()}</p>` : ''}
+                <p><strong>Propietario ID:</strong> ${animal.propietario_id}</p>
+                <p><strong>Estado:</strong> <span class="tag ${animal.activo ? 'is-success' : 'is-danger'}">${animal.activo ? 'Activo' : 'Inactivo'}</span></p>
             `;
         } catch (e) {
             document.getElementById('animalInfo').innerHTML = '<p class="has-text-danger">Error al cargar información.</p>';
@@ -77,16 +112,16 @@
                 return;
             }
 
-            let html = '<table class="table is-fullwidth"><thead><tr><th>Fecha</th><th>Tratamiento</th><th>Diagnóstico</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>';
+            let html = '<table class="table is-fullwidth is-striped"><thead><tr><th>Fecha Inicio</th><th>Tratamiento</th><th>Diagnóstico</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>';
 
             tratamientos.forEach(t => {
                 html += `
                     <tr>
-                        <td>${t.fecha_inicio}</td>
+                        <td>${new Date(t.fecha_inicio).toLocaleDateString()}</td>
                         <td>${t.nombre_tratamiento}</td>
                         <td>${t.diagnostico}</td>
-                        <td><span class="tag ${t.estado === 'Activo' ? 'is-warning' : 'is-success'}">${t.estado}</span></td>
-                        <td><a href="/views/tratamientos/${t.id}" class="button is-small is-light">Ver</a></td>
+                        <td><span class="tag ${t.estado === 'activo' ? 'is-warning' : 'is-success'}">${t.estado}</span></td>
+                        <td><a href="/views/tratamientos/${t.id}" class="button is-small is-light">Ver Detalle</a></td>
                     </tr>
                 `;
             });

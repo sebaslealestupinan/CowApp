@@ -4,7 +4,7 @@ from sqlmodel import select
 
 from app.db import SessionDep
 from app.schemas.animal_schemas import CreateAnimal, ReadAnimal, UpdateAnimal
-from app.models.animal import Animal
+from app.models.animal import Animal, Usuario
 from app.crud.animal_crud import (
     create_animal,
     get_animal,
@@ -19,9 +19,10 @@ router = APIRouter(prefix="/animales", tags=["Animales"])
 @router.post("/", response_model=ReadAnimal, status_code=status.HTTP_201_CREATED)
 def create_animal_endpoint(animal: CreateAnimal, session: SessionDep):
     owner = get_user(animal.propietario_id, session)
+    ganadero = session.exec(select(Usuario).where(Usuario.id == animal.propietario_id)).first()
     if not owner:
         raise HTTPException(status_code=404, detail="Propietario no encontrado")
-    if owner.role.value != "Ganadero":
+    if ganadero.role != "Ganadero":
         raise HTTPException(status_code=403, detail="Solo usuarios con rol Ganadero pueden crear animales")
     return create_animal(animal, session)
 

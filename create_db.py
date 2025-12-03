@@ -5,18 +5,15 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Get credentials from .env
-# We need to connect to 'postgres' db first to create the new db
-user = os.getenv("DATABASE_USER", "SebasLealE") # Fallback or parse from URL
+user = os.getenv("DATABASE_USER", "SebasLealE")
 password = os.getenv("DATABASE_PASSWORD", "primerDotenv")
 host = os.getenv("DATABASE_HOST", "localhost")
 port = os.getenv("DATABASE_PORT", "5432")
 dbname = "cow_app"
 
-# Parse DATABASE_URL if available
 database_url = os.getenv("DATABASE_URL")
 if database_url:
-    # Basic parsing logic or just use the hardcoded ones if they match
+
     pass
 
 try:
