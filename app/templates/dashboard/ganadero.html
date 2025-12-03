@@ -1,204 +1,97 @@
-{% extends "base.html" %}
+{% include "dashboard/header.html" %}
+{% include "dashboard/navbar.html" %}
 
-{% block title %}Dashboard Ganadero{% endblock %}
+<!-- Main Dashboard for Ganadero -->
+<main class="inbox-container">
+    <div class="inbox-header">
+        <h1>Gestión de Ganadero</h1>
+    </div>
 
-{% block head %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://kit.fontawesome.com/4f3b67a8bb.js" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-{% endblock %}
-
-{% block content %}
-<section class="section is-main-content">
-    <div class="container">
-
-        <h1 class="title is-2 register-title mb-4">Dashboard Principal</h1>
-        <h2 class="subtitle is-5 has-text-grey-light">Resumen General de Finca: {{ datos.id_finca }}</h2>
-
-        <div class="columns is-multiline">
-
-            <div class="column is-two-thirds-desktop is-full-tablet">
-
-                <div class="columns is-mobile is-multiline">
-
-                    <div class="column is-half-mobile is-one-third-tablet is-one-quarter-desktop">
-                        <div class="box has-text-centered dashboard-kpi-card">
-                            <p class="heading">Total Animales</p>
-                            <p class="title is-3 has-text-primary-dark">{{ datos.total_animales }}</p>
-                        </div>
-                    </div>
-
-                    <div class="column is-half-mobile is-one-third-tablet is-one-quarter-desktop">
-                        <div class="box has-text-centered dashboard-kpi-card">
-                            <p class="heading">En Tratamiento</p>
-                            <p class="title is-3 has-text-danger">{{ datos.en_tratamiento }}</p>
-                        </div>
-                    </div>
-
-                    <div class="column is-half-mobile is-one-third-tablet is-one-quarter-desktop">
-                        <div class="box has-text-centered dashboard-kpi-card">
-                            <p class="heading">Próximo Parto</p>
-                            <p class="title is-5">{{ datos.proximo_parto_fecha }}</p>
-                        </div>
-                    </div>
-
-                    <div class="column is-half-mobile is-one-third-tablet is-one-quarter-desktop">
-                        <div class="box has-text-centered dashboard-kpi-card">
-                            <p class="heading">Veterinario</p>
-                            <p class="title is-3 has-text-info">{{ datos.mensajes_sin_leer }}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="columns is-multiline">
-
-                    <div class="column is-half-desktop is-full-tablet">
-                        <div class="box dashboard-chart-box">
-                            <p class="title is-5">Producción Semanal de Leche (Lts)</p>
-                            <canvas id="produccionChart"></canvas>
-                        </div>
-                    </div>
-
-                    <div class="column is-half-desktop is-full-tablet">
-                        <div class="box dashboard-chart-box">
-                            <p class="title is-5">Estado Sanitario del Rebaño</p>
-                            <canvas id="saludChart"></canvas>
-                        </div>
-                    </div>
+    <!-- Estadísticas principales -->
+    <section class="section">
+        <div class="columns">
+            <div class="column">
+                <div class="box">
+                    <h2 class="title is-5">Animales Muertos</h2>
+                    <p class="subtitle">Total: {{ muertos_count }}</p>
+                    <ul>
+                        {% for a in muertos %}
+                        <li>ID: {{ a.id }} - {{ a.nombre }} ({{ a.raza }})</li>
+                        {% else %}
+                        <li>No hay animales muertos.</li>
+                        {% endfor %}
+                    </ul>
                 </div>
             </div>
-
-            <div class="column is-one-third-desktop is-full-tablet">
-
-                <div class="box dashboard-activity-box">
-                    <p class="title is-5 mb-4">Actividad Reciente</p>
-
-                    {% if datos.eventos_recientes %}
-                    {% for evento in datos.eventos_recientes %}
-                    <div class="activity-item is-flex is-align-items-center mb-3">
-                        <span class="icon is-medium mr-3 has-text-{{ evento.color_clase }}">
-                            <i class="{{ evento.icono }}"></i>
-                        </span>
-                        <div class="is-flex-grow-1">
-                            <p class="is-size-6 has-text-weight-semibold">{{ evento.tipo }}</p>
-                            <p class="is-size-7 has-text-grey-light">{{ evento.animal_nombre }} - {{ evento.fecha }}</p>
-                        </div>
-                        <span class="tag is-light is-{{ evento.color_clase }}">{{ evento.status }}</span>
-                    </div>
-                    {% endfor %}
-                    {% else %}
-                    <div class="has-text-centered py-5">
-                        <span class="icon is-large has-text-grey-light">
-                            <i class="fas fa-inbox fa-3x"></i>
-                        </span>
-                        <p class="has-text-grey mt-3">No hay actividad reciente</p>
-                        <p class="has-text-grey-light is-size-7">Los eventos aparecerán aquí cuando registres animales
-                        </p>
-                    </div>
-                    {% endif %}
-
-                    <hr>
-                    <a href="/eventos" class="button is-text is-small has-text-weight-bold">Ver todo el historial</a>
+            <div class="column">
+                <div class="box">
+                    <h2 class="title is-5">Nacimientos</h2>
+                    <p class="subtitle">Total: {{ nacimientos_count }}</p>
+                    <ul>
+                        {% for a in nacimientos %}
+                        <li>ID: {{ a.id }} - {{ a.nombre }} ({{ a.fecha_nacimiento }})</li>
+                        {% else %}
+                        <li>No hay nacimientos registrados.</li>
+                        {% endfor %}
+                    </ul>
                 </div>
-
-                <div class="box mt-4 has-background-primary-earth has-text-white dashboard-quick-action">
-                    <p class="title is-5 has-text-white">Registro Rápido</p>
-                    <p class="subtitle is-6 has-text-white-ter mb-4">Registra nuevos animales o eventos sanitarios.</p>
-                    <a href="/registrar-animal" class="button is-white is-outlined is-fullwidth mb-2">
-                        <span class="icon"><i class="fas fa-cow"></i></span>
-                        <span>Registrar Nuevo Animal</span>
-                    </a>
-                    <a href="/registrar-evento" class="button is-white is-outlined is-fullwidth">
-                        <span class="icon"><i class="fas fa-syringe"></i></span>
-                        <span>Registrar Evento Sanitario</span>
-                    </a>
+            </div>
+            <div class="column">
+                <div class="box">
+                    <h2 class="title is-5">Total Animales Activos</h2>
+                    <p class="subtitle">{{ total_animales }}</p>
+                    <button class="button is-primary"
+                        onclick="window.location.href='/animales/nuevo?user_id={{ user.id }}'">Agregar
+                        Animal</button>
+                    <button class="button is-light" onclick="window.location.href='/views/animales'">Ver Todos los
+                        Animales</button>
                 </div>
-
-                <!-- Sección de Mensajería -->
-                <div class="box mt-4">
-                    <p class="title is-5 mb-4"><i class="fas fa-comments"></i> Mensajes</p>
-                    <div class="messaging-container">
-                        <div class="conversations-list" id="conversations-list">
-                            <div class="empty-state" style="padding: 40px 20px;">
-                                <i class="fas fa-spinner fa-spin" style="font-size: 2rem;"></i>
-                                <p style="color: #b5b5b5; margin-top: 12px;">Cargando...</p>
-                            </div>
-                        </div>
-                        <div class="chat-area" id="chat-area">
-                            <div class="empty-state">
-                                <i class="fas fa-comment-dots"></i>
-                                <p>Selecciona una conversación para comenzar</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<script>
-    // ----------------------------------------------------------------------
-    // CÓDIGO DE GRÁFICOS (Chart.js)
-    // ----------------------------------------------------------------------
-    document.addEventListener('DOMContentLoaded', function () {
-        const datos = JSON.parse('{{ datos | tojson | safe }}');
+    <!-- Lista de Animales del Ganadero -->
+    <section class="section">
+        <h2 class="title is-4">Mis Animales</h2>
+        <div class="columns is-multiline">
+            {% for a in all_animales %}
+            <div class="column is-one-third-desktop is-half-tablet">
+                <div class="card">
+                    <div class="card-image">
+                        <figure class="image is-4by3">
+                            <img src="{{ a.photo_url or 'https://placehold.co/600x400?text=Animal' }}"
+                                alt="Foto del animal">
+                        </figure>
+                    </div>
+                    <div class="card-content">
+                        <p class="title is-5">{{ a.nombre }}</p>
+                        <p>ID: #{{ a.id }}</p>
+                        <p>Raza: {{ a.raza }}</p>
+                        <a href="/views/animales/{{ a.id }}" class="button is-small is-info mt-2">Ver Detalle</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
 
-        // --- GRÁFICO 1: PRODUCCIÓN SEMANAL ---
-        const produccionCtx = document.getElementById('produccionChart').getContext('2d');
-        new Chart(produccionCtx, {
-            type: 'bar',
-            data: {
-                labels: datos.produccion_labels,
-                datasets: [{
-                    label: 'Litros de Leche',
-                    data: datos.produccion_valores,
-                    backgroundColor: 'rgba(75, 83, 32, 0.8)',
-                    borderColor: 'rgba(75, 83, 32, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: { beginAtZero: true }
-                },
-                plugins: {
-                    legend: { display: false }
-                }
-            }
-        });
+    <!-- Tratamientos con eventos pendientes -->
+    <section class="section">
+        <h2 class="title is-4">Tratamientos con Eventos Pendientes</h2>
+        <div class="treatment-list">
+            {% for t in tratamientos %}
+            <a href="/views/tratamientos/{{ t.id }}" class="treatment-card">
+                <div class="card-content">
+                    <p class="title is-5">{{ t.nombre_tratamiento }}</p>
+                    <p>Animal: {{ t.animal.nombre }} (ID: {{ t.animal.id }})</p>
+                    <p>Estado: {{ t.estado }}</p>
+                </div>
+            </a>
+            {% else %}
+            <p>No hay tratamientos con eventos pendientes.</p>
+            {% endfor %}
+        </div>
+    </section>
+</main>
 
-        // --- GRÁFICO 2: ESTADO DE SALUD ---
-        const saludCtx = document.getElementById('saludChart').getContext('2d');
-        new Chart(saludCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Sanos', 'En Tratamiento', 'Críticos'],
-                datasets: [{
-                    data: [datos.salud_sanos, datos.salud_tratamiento, datos.salud_criticos],
-                    backgroundColor: [
-                        'rgba(144, 238, 144, 0.8)',
-                        'rgba(255, 165, 0, 0.8)',
-                        'rgba(255, 99, 132, 0.8)'
-                    ],
-                    hoverOffset: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { position: 'bottom' }
-                }
-            }
-        });
-
-        // --- INICIALIZAR MENSAJERÍA ---
-        // TODO: Obtener el user_id real desde la sesión/cookie
-        const userId = 1; // Por ahora hardcodeado, debe venir de la sesión
-        messagingApp = new MessagingApp(userId);
-    });
-</script>
-{% endblock %}
+{% include "dashboard/footer.html" %}

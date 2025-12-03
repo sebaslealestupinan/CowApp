@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Crear Animal{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="title has-text-centered">Nuevo Animal</h1>
+
+        <form id="formNuevoAnimal">
+            <div class="field">
+                <label class="label">Nombre</label>
+                <div class="control">
+                    <input class="input" type="text" name="nombre" required placeholder="Ej: Vaca 1">
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Tag ID</label>
+                <div class="control">
+                    <input class="input" type="text" name="tag_id" required placeholder="Ej: 12345">
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Especie</label>
+                <div class="control">
+                    <div class="select">
+                        <select name="especie" required>
+                            <option value="Bovino">Bovino</option>
+                            <option value="Equino">Equino</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Raza</label>
+                <div class="control">
+                    <input class="input" type="text" name="raza" placeholder="Ej: Holstein">
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Sexo</label>
+                <div class="control">
+                    <div class="select">
+                        <select name="sexo" required>
+                            <option value="Hembra">Hembra</option>
+                            <option value="Macho">Macho</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Propietario (Ganadero) -->
+            <input type="hidden" name="propietario_id" value="{{ user.id }}">
+
+            <div class="field is-grouped is-grouped-centered mt-5">
+                <div class="control">
+                    <button type="submit" class="button is-primary">Crear Animal</button>
+                </div>
+                <div class="control">
+                    <button type="button" class="button is-light" onclick="history.back()">Cancelar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById('formNuevoAnimal').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const form = e.target;
+        const data = Object.fromEntries(new FormData(form).entries());
+
+        // Convertir tipos si es necesario
+        data.propietario_id = parseInt(data.propietario_id);
+
+        try {
+            const resp = await fetch('/animales/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (resp.ok) {
+                alert('Animal creado correctamente');
+                window.location.href = '/views/animales';
+            } else {
+                const err = await resp.json();
+                alert('Error: ' + (err.detail || 'No se pudo crear el animal'));
+            }
+        } catch (e) {
+            console.error(e);
+            alert('Error de conexión');
+        }
+    });
+</script>
+{% endblock %}
