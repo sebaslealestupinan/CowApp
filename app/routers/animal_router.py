@@ -40,6 +40,14 @@ async def nuevo_animal(request: Request, user_id: int, session: SessionDep):
     user = session.get(Usuario, user_id)
     return templates.TemplateResponse("animales/nuevo.html", {"request": request, "user": user})
 
+@router.get("/editar/{animal_id}", response_class=HTMLResponse)
+async def editar_animal(request: Request, animal_id: int, session: SessionDep):
+    animal = get_animal(animal_id, session)
+    if not animal:
+        raise HTTPException(status_code=404, detail="Animal no encontrado")
+    user = session.get(Usuario, animal.propietario_id)
+    return templates.TemplateResponse("animales/editar.html", {"request": request, "animal": animal, "user": user})
+
 @router.get("/ganadero/{ganadero_id}", response_model=List[ReadAnimal])
 def read_animales_by_ganadero_endpoint(ganadero_id: int, session: SessionDep):
     return get_animals_by_owner(ganadero_id, session)

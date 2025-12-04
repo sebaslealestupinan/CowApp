@@ -60,6 +60,14 @@ async def view_tratamiento_detalle(request: Request, tratamiento_id: int, sessio
     eventos = get_eventos_by_tratamiento(tratamiento_id, session)
     return templates.TemplateResponse("tratamientos/detalle.html", {"request": request, "tratamiento": tratamiento, "eventos": eventos})
 
+@router.get("/editar/{tratamiento_id}", response_class=HTMLResponse)
+async def editar_tratamiento(request: Request, tratamiento_id: int, session: SessionDep):
+    """Vista para editar un tratamiento"""
+    tratamiento = get_tratamiento(tratamiento_id, session)
+    if not tratamiento:
+        raise HTTPException(status_code=404, detail="Tratamiento no encontrado")
+    veterinario = session.get(Usuario, tratamiento.veterinario_id)
+    return templates.TemplateResponse("tratamientos/editar.html", {"request": request, "tratamiento": tratamiento, "user": veterinario})
 
 @router.get("/all", response_class=HTMLResponse, name="view_tratamientos_lista")
 async def view_tratamientos_lista(
@@ -104,8 +112,9 @@ def update_tratamiento_endpoint(tratamiento_id: int, tratamiento_update: UpdateT
     return tratamiento
 
 @router.delete("/delete/{tratamiento_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_tratamiento_endpoint(tratamiento_id: int,ganadero_id: int, session: SessionDep):
+def delete_tratamiento_endpoint(tratamiento_id: int, session: SessionDep):
     success = delete_tratamiento(tratamiento_id, session)
     if not success:
         raise HTTPException(status_code=404, detail="Tratamiento no encontrado")
-    return RedirectResponse(url=f"ganadero/{ganadero_id}", status_code=status.HTTP_302_FOUND)
+    return None
+

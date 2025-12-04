@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Animal{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="column is-half-desktop is-two-thirds-tablet">
+                <div class="box p-6">
+                    <h1 class="title has-text-centered mb-6">Editar Animal</h1>
+
+                    <form id="formEditarAnimal">
+                        <div class="field mb-5">
+                            <label class="label">Nombre</label>
+                            <div class="control">
+                                <input class="input" type="text" name="nombre" value="{{ animal.nombre or '' }}"
+                                    required placeholder="Ej: Vaca 1">
+                            </div>
+                        </div>
+
+                        <div class="field mb-5">
+                            <label class="label">Tag ID</label>
+                            <div class="control">
+                                <input class="input" type="text" name="tag_id" value="{{ animal.tag_id }}" required
+                                    placeholder="Ej: 12345">
+                            </div>
+                        </div>
+
+                        <div class="columns mb-4">
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Especie</label>
+                                    <div class="control">
+                                        <div class="select is-fullwidth">
+                                            <select name="especie" required>
+                                                <option value="Bovino" {% if animal.especie=="Bovino" %}selected{% endif
+                                                    %}>Bovino</option>
+                                                <option value="Equino" {% if animal.especie=="Equino" %}selected{% endif
+                                                    %}>Equino</option>
+                                                <option value="Caprino" {% if animal.especie=="Caprino" %}selected{%
+                                                    endif %}>Caprino</option>
+                                                <option value="Ovino" {% if animal.especie=="Ovino" %}selected{% endif
+                                                    %}>Ovino</option>
+                                                <option value="Porcino" {% if animal.especie=="Porcino" %}selected{%
+                                                    endif %}>Porcino</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Raza</label>
+                                    <div class="control">
+                                        <input class="input" type="text" name="raza" value="{{ animal.raza or '' }}"
+                                            placeholder="Ej: Holstein">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="columns mb-4">
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Sexo</label>
+                                    <div class="control">
+                                        <div class="select is-fullwidth">
+                                            <select name="sexo" required>
+                                                <option value="Hembra" {% if animal.sexo=="Hembra" %}selected{% endif
+                                                    %}>Hembra</option>
+                                                <option value="Macho" {% if animal.sexo=="Macho" %}selected{% endif %}>
+                                                    Macho</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Fecha de Nacimiento</label>
+                                    <div class="control">
+                                        <input class="input" type="date" name="fecha_nacimiento"
+                                            value="{% if animal.fecha_nacimiento %}{{ animal.fecha_nacimiento.strftime('%Y-%m-%d') }}{% endif %}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field is-grouped is-grouped-centered mt-6">
+                            <div class="control">
+                                <button type="submit" class="button is-primary is-medium">Guardar Cambios</button>
+                            </div>
+                            <div class="control">
+                                <button type="button" class="button is-light is-medium"
+                                    onclick="history.back()">Cancelar</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById('formEditarAnimal').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const form = e.target;
+        const data = Object.fromEntries(new FormData(form).entries());
+
+        // Convertir propietario_id
+        data.propietario_id = {{ animal.propietario_id }
+    };
+
+    // Convertir activo a boolean
+    data.activo = {{ 'true' if animal.activo else 'false' }};
+
+    try {
+        const resp = await fetch('/animales/{{ animal.id }}', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        if (resp.ok) {
+            alert('Animal actualizado correctamente');
+            window.location.href = '/animales/vista/{{ animal.id }}';
+        } else {
+            const err = await resp.json();
+            alert('Error: ' + (err.detail || 'No se pudo actualizar el animal'));
+        }
+    } catch (e) {
+        console.error(e);
+        alert('Error de conexión');
+    }
+    });
+</script>
+{% endblock %}
