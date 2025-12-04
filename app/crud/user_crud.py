@@ -23,24 +23,13 @@ def create_user(data: CreateUser, session: Session) -> Usuario:
         password=data.password,
         role=data.role,
         status=data.status,
+        number_phone=data.number_phone,
+        imagen=data.imagen
     )
 
     session.add(db_user)
     session.commit()
     session.refresh(db_user)
-
-    telefonos_a_crear = []
-    if data.telefonos:
-        for numero in data.telefonos:
-            db_telefono = Telefono(
-                numero=numero,
-                user_id=db_user.id
-            )
-            telefonos_a_crear.append(db_telefono)
-
-        session.add_all(telefonos_a_crear)
-        session.commit()
-        session.refresh(db_user)
 
     return db_user
 
@@ -77,32 +66,11 @@ def update_user(
         return None
 
     update_data = user_update.model_dump(exclude_unset=True)
-    telefonos_update = update_data.pop("telefonos", None)
 
     for key, value in update_data.items():
         setattr(db_user, key, value)
 
     session.add(db_user)
-
-    if telefonos_update is not None:
-        # Delete old phones
-        telefonos_antiguos = session.exec(
-            select(Telefono).where(Telefono.user_id == db_user.id)
-        ).all()
-        for t in telefonos_antiguos:
-            session.delete(t)
-
-        # Add new phones
-        telefonos_a_crear = []
-        for numero in telefonos_update:
-            db_telefono = Telefono(
-                numero=numero,
-                user_id=db_user.id
-            )
-            telefonos_a_crear.append(db_telefono)
-
-        session.add_all(telefonos_a_crear)
-
     session.commit()
     session.refresh(db_user)
 

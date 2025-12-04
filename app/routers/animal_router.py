@@ -22,6 +22,7 @@ templates = Jinja2Templates(directory="app/templates")
 @router.post("/", response_model=ReadAnimal, status_code=status.HTTP_201_CREATED)
 def create_animal_endpoint(animal: CreateAnimal, session: SessionDep):
     owner = get_user(animal.propietario_id, session)
+    
     ganadero = session.exec(select(Usuario).where(Usuario.id == animal.propietario_id)).first()
     if not owner:
         raise HTTPException(status_code=404, detail="Propietario no encontrado")

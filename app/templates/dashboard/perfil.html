@@ -82,43 +82,42 @@
                 </div>
             </div>
         </div>
-    </div>
-</section>
 
-{% include "dashboard/footer.html" %}
+        {% include "dashboard/footer.html" %}
 
-<script>
-    document.getElementById('formPerfil').addEventListener('submit', async (e) => {
-        e.preventDefault();
+        <script>
+            document.getElementById('formPerfil').addEventListener('submit', async (e) => {
+                e.preventDefault();
 
-        const userId = document.getElementById('userId').value;
-        const form = e.target;
-        const formData = new FormData(form);
-        const data = Object.fromEntries(formData.entries());
+                const userId = document.getElementById('userId').value;
+                const form = e.target;
+                const formData = new FormData(form);
 
-        if (!data.password) delete data.password;
-        if (!data.image) delete data.image;
-        if (!data.telefonos) delete data.telefonos;
+                // Remove empty fields to avoid sending "null" strings or empty files
+                for (const [key, value] of formData.entries()) {
+                    if (value instanceof File && value.size === 0) {
+                        formData.delete(key);
+                    } else if (typeof value === 'string' && value.trim() === '') {
+                        formData.delete(key);
+                    }
+                }
 
-        try {
-            const response = await fetch(`/users/${userId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
+                try {
+                    const response = await fetch(`/users/${userId}`, {
+                        method: 'PUT',
+                        body: formData
+                    });
+
+                    if (response.ok) {
+                        alert('Perfil actualizado exitosamente');
+                        location.reload();
+                    } else {
+                        const error = await response.json();
+                        alert('Error: ' + (error.detail || 'Error al actualizar perfil'));
+                    }
+                } catch (e) {
+                    console.error(e);
+                    alert('Error de conexión');
+                }
             });
-
-            if (response.ok) {
-                alert('Perfil actualizado exitosamente');
-                location.reload();
-            } else {
-                const error = await response.json();
-                alert('Error: ' + (error.detail || 'Error al actualizar perfil'));
-            }
-        } catch (e) {
-            console.error(e);
-            alert('Error de conexión');
-        }
-    });
-</script>
+        </script>

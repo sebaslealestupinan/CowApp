@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status, HTTPException, Query
+from fastapi import APIRouter, status, HTTPException, Query, UploadFile, File, Form
 from typing import List, Optional
 
 from app.db import SessionDep
@@ -12,6 +12,7 @@ from app.crud.user_crud import (
     delete_user,
     get_user_by_email
 )
+from app.service_and_config.cloudinary import upload_to_cloudinary
 
 router = APIRouter(tags=["Users"], prefix="/users")
 
@@ -37,8 +38,36 @@ def read_user_endpoint(user_id: int, session: SessionDep):
 
 
 @router.put("/{user_id}", response_model=Usuario)
-def update_user_endpoint(user_id: int, new_data: UpdateUser, session: SessionDep):
-    updated_user = update_user(user_id, new_data, session)
+async def update_user_endpoint(
+    user_id: int,
+    session: SessionDep,
+    name: Optional[str] = Form(None),
+    email: Optional[str] = Form(None),
+    password: Optional[str] = Form(None),
+    number_phone: Optional[str] = Form(None),
+    imagen: Optional[UploadFile] = File(None)
+):
+    imag = None
+    if imagen:
+        upload_result = await upload_to_cloudinary(imagen)
+        imag = upload_result.get("url")
+
+    # Filter out None values to avoid overwriting existing data with None
+    update_dict = {}
+    if name is not None:
+        update_dict["name"] = name
+    if email is not None:
+        update_dict["email"] = email
+    if password is not None:
+        update_dict["password"] = password
+    if number_phone is not None:
+        update_dict["number_phone"] = number_phone
+    if imag is not None:
+        update_dict["imagen"] = imag
+
+    update_data = UpdateUser(**update_dict)
+    
+    updated_user = update_user(user_id, update_data, session)
     if not updated_user:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
     return updated_user

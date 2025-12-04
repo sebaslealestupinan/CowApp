@@ -25,7 +25,7 @@ class CreateUser(SQLModel):
 
 class UpdateUser(SQLModel):
 
-    image: Optional[str] = Field(
+    imag: Optional[str] = Field(
         default=None,
         description="URL de la imagen del usuario."
     )
@@ -46,9 +46,9 @@ class UpdateUser(SQLModel):
         description="Nueva contraseña (si se desea cambiar)."
     )
 
-    telefonos: Optional[str] = Field(
-        gt= 10, 
-        le=11,
+    number_phone: Optional[str] = Field(
+        min_length= 10, 
+        max_length=11,
         default=None,
         description="telefono nuevo."
     )
