@@ -17,42 +17,52 @@
             <div class="column">
                 <div class="box">
                     <h2 class="title is-5">Animales Muertos</h2>
-                    <p class="subtitle">Total: {{ muertos_count }}</p>
-                    <ul>
-                        {% for animal in muertos %}
-                        <li>ID: {{ animal.id }} - {{ animal.nombre }} ({{ animal.raza }})</li>
-                        {% else %}
-                        <li>No hay animales muertos.</li>
-                        {% endfor %}
-                    </ul>
+                    <div class="content">
+                        <p class="subtitle">Total: {{ muertos_count }}</p>
+                        <ul>
+                            {% for animal in muertos %}
+                            <li>ID: {{ animal.id }} - {{ animal.nombre }} ({{ animal.raza }})</li>
+                            {% else %}
+                            <li>No hay animales muertos.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </div>
             </div>
 
             <div class="column">
                 <div class="box">
                     <h2 class="title is-5">Nacimientos</h2>
-                    <p class="subtitle">Total: {{ nacimientos_count }}</p>
-                    <ul>
-                        {% for nacimiento in nacimientos %}
-                        <li>ID: {{ nacimiento.id }} - {{ nacimiento.nombre }} ({{ nacimiento.fecha_nacimiento }})</li>
-                        {% else %}
-                        <li>No hay nacimientos registrados.</li>
-                        {% endfor %}
-                    </ul>
+                    <div class="content">
+                        <p class="subtitle">Total: {{ nacimientos_count }}</p>
+                        <ul>
+                            {% for nacimiento in nacimientos %}
+                            <li>ID: {{ nacimiento.id }} - {{ nacimiento.nombre }} ({{ nacimiento.fecha_nacimiento }})
+                            </li>
+                            {% else %}
+                            <li>No hay nacimientos registrados.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </div>
             </div>
 
             <div class="column">
                 <div class="box">
                     <h2 class="title is-5">Total Animales Activos</h2>
-                    <p class="subtitle">{{ total_animales }}</p>
-                    <button class="button is-primary"
-                        onclick="window.location.href='/animales/nuevo?user_id={{ user.id }}'">
-                        Agregar Animal
-                    </button>
-                    <button class="button is-light" onclick="window.location.href='/views/animales/{{ user.id }}'">
-                        Ver Todos los Animales
-                    </button>
+                    <div class="content">
+                        <p class="subtitle">{{ total_animales }}</p>
+                        <div class="buttons">
+                            <button class="button is-primary"
+                                onclick="window.location.href='/animales/nuevo?user_id={{ user.id }}'">
+                                Agregar Animal
+                            </button>
+                            <button class="button is-light"
+                                onclick="window.location.href='/views/animales/{{ user.id }}'">
+                                Ver Todos los Animales
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
