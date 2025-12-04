@@ -3,6 +3,7 @@ from typing import List, Optional
 from datetime import datetime
 
 from app.models.animal import Animal
+from app.models.tratamiento import Tratamiento
 from app.schemas.animal_schemas import CreateAnimal, UpdateAnimal
 
 def create_animal(data: CreateAnimal, session: Session) -> Animal:
@@ -58,3 +59,19 @@ def delete_animal(animal_id: int, session: Session) -> bool:
     session.delete(db_animal)
     session.commit()
     return True
+
+def get_animal_with_tratamientos(animal_id: int, session: Session) -> Optional[Animal]:
+    """
+    Obtiene un animal por su ID con sus tratamientos.
+    """
+    data = {"animal": None, "tratamientos": None}
+
+    animal = session.exec(select(Animal).where(Animal.id == animal_id)).first()
+    if animal:
+        data["animal"] = animal
+    tratamientos = session.exec(select(Tratamiento).where(Tratamiento.animal_id == animal_id)).all()
+    if tratamientos:
+        data["tratamientos"] = tratamientos
+
+    return data
+

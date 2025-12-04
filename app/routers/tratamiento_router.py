@@ -104,8 +104,8 @@ def update_tratamiento_endpoint(tratamiento_id: int, tratamiento_update: UpdateT
     return tratamiento
 
 @router.delete("/delete/{tratamiento_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_tratamiento_endpoint(tratamiento_id: int, session: SessionDep):
+def delete_tratamiento_endpoint(tratamiento_id: int,ganadero_id: int, session: SessionDep):
     success = delete_tratamiento(tratamiento_id, session)
     if not success:
         raise HTTPException(status_code=404, detail="Tratamiento no encontrado")
-    return None
+    return RedirectResponse(url=f"ganadero/{ganadero_id}", status_code=status.HTTP_302_FOUND)

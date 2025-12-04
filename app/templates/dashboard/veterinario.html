@@ -52,9 +52,11 @@
 
 <!-- Floating Actions -->
 <div class="floating-actions">
+    <!-- CHAT DESHABILITADO
     <button class="magic-btn secondary" title="Chat" onclick="openChatModal()">
         <i class="fa-regular fa-comments"></i>
     </button>
+    -->
     <button class="magic-btn primary" title="Nuevo Tratamiento"
         onclick="window.location.href='/veterinario/{{ user.id }}/tratamiento/nuevo'">
         <i class="fa-solid fa-plus"></i>
@@ -62,7 +64,7 @@
     </button>
 </div>
 
-<!-- Chat Modal -->
+<!-- Chat Modal - CHAT DESHABILITADO
 <div id="chatModal" class="modal">
     <div class="modal-background" onclick="closeChatModal()"></div>
     <div class="modal-card">
@@ -89,6 +91,7 @@
         </section>
     </div>
 </div>
+-->
 
 <link rel="stylesheet" href="/static/css/dashboard.css">
 <link rel="stylesheet" href="/static/css/chat.css">
@@ -100,7 +103,10 @@
     if (message) {
         alert(message);
     }
+</script>
 
+<!-- CHAT FUNCTIONS DESHABILITADAS
+<script>
     function startChat(receiverId) {
         window.location.href = `/chat/${CURRENT_USER_ID}/${receiverId}`;
     }
@@ -200,8 +206,8 @@
             console.error('Error loading recent chats:', err);
         }
     }
-
 </script>
+-->
 
 
 

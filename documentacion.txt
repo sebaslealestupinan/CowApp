@@ -1,0 +1,410 @@
+================================================================================
+                         DOCUMENTACIÓN - COW APP v0.1.0
+                    Sistema de Gestión Ganadera y Veterinaria
+================================================================================
+
+Última actualización: 2025-12-04
+Tecnologías: FastAPI, SQLModel, Jinja2, PostgreSQL, Cloudinary, Bulma CSS
+
+================================================================================
+                              1. DESCRIPCIÓN GENERAL
+================================================================================
+
+COW es una aplicación web para la gestión ganadera que permite a ganaderos y 
+veterinarios administrar animales, tratamientos y eventos médicos. El sistema
+cuenta con dos roles de usuario principales, cada uno con su propio dashboard
+y funcionalidades específicas.
+
+================================================================================
+                              2. ESTRUCTURA DEL PROYECTO
+================================================================================
+
+fastApiProject1/
+├── app/
+│   ├── main.py                 # Punto de entrada de la aplicación
+│   ├── db.py                   # Configuración de base de datos
+│   ├── models/                 # Modelos SQLModel
+│   │   ├── usuario.py          # Modelo de Usuario
+│   │   ├── animal.py           # Modelo de Animal
+│   │   ├── tratamiento.py      # Modelo de Tratamiento
+│   │   └── evento.py           # Modelo de Evento
+│   ├── routers/                # Endpoints de la API
+│   │   ├── auth_router.py      # Autenticación (login/register)
+│   │   ├── views_router.py     # Vistas HTML (dashboards)
+│   │   ├── animal_router.py    # CRUD de animales
+│   │   ├── tratamiento_router.py # CRUD de tratamientos
+│   │   ├── eventos_router.py   # CRUD de eventos
+│   │   └── user_router.py      # CRUD de usuarios
+│   ├── crud/                   # Operaciones de base de datos
+│   ├── schemas/                # Esquemas Pydantic/SQLModel
+│   ├── templates/              # Templates Jinja2
+│   └── static/                 # Archivos estáticos (CSS, JS, imágenes)
+├── requirements.txt
+└── documentacion.txt
+
+================================================================================
+                              3. MODELOS DE DATOS
+================================================================================
+
+3.1 USUARIO (usuario.py)
+------------------------
+Representa a los usuarios del sistema (ganaderos y veterinarios).
+
+Campos:
+  - id: int (PK, auto-generado)
+  - name: str (nombre del usuario)
+  - email: str (único, indexado)
+  - password: str
+  - status: bool (activo/inactivo)
+  - role: str ("Ganadero" | "Veterinario")
+  - imag: str (URL de imagen de perfil, opcional)
+  - number_phone: str (teléfono, opcional)
+  - created_at: datetime
+
+Relaciones:
+  - animales → Lista de Animal (solo para Ganaderos)
+  - reportes → Lista de Tratamiento (solo para Veterinarios)
+
+--------------------------------------------------------------------------------
+
+3.2 ANIMAL (animal.py)
+----------------------
+Representa a los animales registrados en el sistema.
+
+Campos:
+  - id: int (PK, auto-generado)
+  - tag_id: str (identificador único del animal - arete/chip)
+  - nombre: str (opcional)
+  - especie: Kind (Bovino, Porcino, Ovino, Caprino, Equino)
+  - raza: str (opcional)
+  - sexo: str ("Macho" | "Hembra")
+  - fecha_nacimiento: datetime (opcional)
+  - propietario_id: int (FK → Usuario)
+  - activo: bool (True = vivo, False = muerto)
+  - imagen: str (URL de imagen, opcional)
+  - created_at: datetime
+  - updated_at: datetime
+
+Relaciones:
+  - propietario → Usuario (Ganadero dueño)
+  - tratamientos → Lista de Tratamiento
+
+--------------------------------------------------------------------------------
+
+3.3 TRATAMIENTO (tratamiento.py)
+--------------------------------
+Representa los tratamientos médicos aplicados a los animales.
+
+Campos:
+  - id: int (PK, auto-generado)
+  - fecha_inicio: str
+  - fecha_fin: str
+  - estado: str ("activo" | "completado" | "atencion")
+  - nombre_tratamiento: str
+  - diagnostico: str
+  - medicamento: str (opcional)
+  - dosis: float (opcional)
+  - veterinario_id: int (FK → Usuario)
+  - animal_id: int (FK → Animal)
+  - created_at: datetime
+
+Relaciones:
+  - veterinario → Usuario (Veterinario responsable)
+  - animal → Animal
+  - eventos → Lista de Evento
+
+--------------------------------------------------------------------------------
+
+3.4 EVENTO (evento.py)
+----------------------
+Representa eventos o seguimientos dentro de un tratamiento.
+
+Campos:
+  - id: int (PK, auto-generado)
+  - tratamiento_id: int (FK → Tratamiento)
+  - fecha: datetime
+  - estado: str ("Pendiente" | "Completado")
+  - tipo: str (tipo de evento)
+  - observaciones: str
+  - responsable: str
+  - imagen: str (URL de imagen, opcional)
+
+Relaciones:
+  - tratamiento → Tratamiento
+
+================================================================================
+                              4. ENDPOINTS DE LA API
+================================================================================
+
+4.1 AUTENTICACIÓN (/auth_router.py)
+-----------------------------------
+
+GET  /login
+  - Muestra la página de inicio de sesión
+  - Respuesta: HTML (login.html)
+
+POST /login
+  - Autentica usuario
+  - Parámetros Form: email, password, role
+  - Redirige a: /ganadero/{id} o /veterinario/{id}
+
+GET  /register
+  - Muestra la página de registro
+  - Respuesta: HTML (register.html)
+
+POST /register
+  - Registra nuevo usuario
+  - Parámetros Form: name, email, password, number_phone, role, image (opcional)
+  - Sube imagen a Cloudinary si se proporciona
+  - Redirige a: dashboard según rol
+
+--------------------------------------------------------------------------------
+
+4.2 VISTAS/DASHBOARDS (/views_router.py)
+----------------------------------------
+
+GET  /ganadero/{id_user}
+  - Dashboard del ganadero
+  - Muestra: estadísticas de animales, animales muertos, nacimientos,
+             total activos, lista de animales, tratamientos con eventos pendientes
+  - Respuesta: HTML (dashboard/ganadero.html)
+
+GET  /veterinario/{id_user}
+  - Dashboard del veterinario
+  - Muestra: lista de tratamientos activos, notificaciones
+  - Respuesta: HTML (dashboard/veterinario.html)
+
+GET  /veterinario/{id_user}/tratamiento/nuevo
+  - Formulario para crear nuevo tratamiento
+  - Respuesta: HTML (tratamientos/nuevo.html)
+
+GET  /perfil/{user_id}
+  - Vista del perfil del usuario
+  - Respuesta: HTML (dashboard/perfil.html)
+
+GET  /views/animales/{ganadero_id}
+  - Lista de animales del ganadero
+  - Respuesta: HTML (animales/lista.html)
+
+GET  /animales/vista/{animal_id}
+  - Detalle completo del animal con sus tratamientos
+  - Respuesta: HTML (animales/detalles_animal.html)
+
+--------------------------------------------------------------------------------
+
+4.3 ANIMALES (/animales - animal_router.py)
+-------------------------------------------
+
+POST /animales/
+  - Crea un nuevo animal
+  - Body JSON: CreateAnimal schema
+  - Validación: Solo usuarios con rol "Ganadero" pueden crear
+  - Respuesta: ReadAnimal (201 Created)
+
+GET  /animales/
+  - Lista todos los animales
+  - Respuesta: Lista de ReadAnimal
+
+GET  /animales/nuevo?user_id={id}
+  - Formulario para crear nuevo animal
+  - Respuesta: HTML (animales/nuevo.html)
+
+GET  /animales/ganadero/{ganadero_id}
+  - Lista animales de un ganadero específico
+  - Respuesta: Lista de ReadAnimal
+
+GET  /animales/{animal_id}
+  - Obtiene un animal por ID
+  - Respuesta: ReadAnimal
+
+PUT  /animales/{animal_id}
+  - Actualiza un animal
+  - Body JSON: UpdateAnimal schema
+  - Respuesta: ReadAnimal
+
+DELETE /animales/delete/{animal_id}/{ganadero_id}
+  - Elimina un animal
+  - Respuesta: 204 No Content
+
+--------------------------------------------------------------------------------
+
+4.4 TRATAMIENTOS (/tratamientos - tratamiento_router.py)
+--------------------------------------------------------
+
+POST /tratamientos/
+  - Crea un nuevo tratamiento
+  - Parámetros Form: animal_id, nombre_tratamiento, diagnostico, medicamento,
+                     dosis, fecha_inicio, fecha_fin, estado, veterinario_id
+  - Redirige a: /veterinario/{veterinario_id}
+
+GET  /tratamientos/read/{tratamiento_id}
+  - Vista detalle del tratamiento con sus eventos
+  - Respuesta: HTML (tratamientos/detalle.html)
+
+GET  /tratamientos/all
+  - Lista tratamientos (filtrables)
+  - Query params: animal_id, veterinario_id, user_id (todos opcionales)
+  - Respuesta: HTML (tratamientos/tratamientos.html)
+
+GET  /tratamientos/{tratamiento_id}/evento/nuevo
+  - Formulario para crear nuevo evento
+  - Respuesta: HTML (tratamientos/evento.html)
+
+PUT  /tratamientos/update/{tratamiento_id}
+  - Actualiza un tratamiento
+  - Body JSON: UpdateTratamiento schema
+  - Respuesta: ReadTratamiento
+
+DELETE /tratamientos/delete/{tratamiento_id}
+  - Elimina un tratamiento
+  - Respuesta: 204 No Content con redirección
+
+--------------------------------------------------------------------------------
+
+4.5 EVENTOS (/eventos - eventos_router.py)
+------------------------------------------
+
+POST /eventos/
+  - Crea un nuevo evento
+  - Parámetros Form: tratamiento_id, fecha, estado, tipo, observaciones,
+                     responsable, imagen (opcional)
+  - Sube imagen a Cloudinary si se proporciona
+  - Redirige a: /tratamientos/read/{tratamiento_id}
+
+GET  /eventos/detalle/{evento_id}
+  - Vista detalle del evento
+  - Respuesta: HTML (tratamientos/detalleEvento.html)
+
+PUT  /eventos/update/{evento_id}
+  - Actualiza un evento
+  - Body JSON: UpdateEvento schema
+  - Respuesta: ReadEvento
+
+================================================================================
+                              5. FLUJOS DE USUARIO
+================================================================================
+
+5.1 FLUJO DEL GANADERO
+----------------------
+
+1. Registro/Login → Dashboard Ganadero
+2. Dashboard muestra:
+   - Estadísticas: animales muertos, nacimientos, total activos
+   - Cards de animales con opción "Ver Detalle"
+   - Tratamientos con eventos pendientes
+3. Desde Dashboard puede:
+   - Agregar nuevo animal → /animales/nuevo
+   - Ver lista de animales → /views/animales/{id}
+   - Ver detalle de animal → /animales/vista/{animal_id}
+   - Editar/Eliminar animal desde su detalle
+   - Ver tratamientos de sus animales
+
+5.2 FLUJO DEL VETERINARIO
+-------------------------
+
+1. Registro/Login → Dashboard Veterinario
+2. Dashboard muestra:
+   - Lista de tratamientos activos asignados
+   - Estado de cada tratamiento (Atención, Nuevo Evento, En Seguimiento)
+3. Desde Dashboard puede:
+   - Crear nuevo tratamiento → /veterinario/{id}/tratamiento/nuevo
+   - Ver todos los tratamientos → /tratamientos/all
+   - Ver detalle de tratamiento → /tratamientos/read/{id}
+   - Agregar eventos a tratamientos
+   - Ver historial de eventos
+
+================================================================================
+                              6. TEMPLATES HTML
+================================================================================
+
+Estructura de templates:
+  templates/
+  ├── base.html                    # Template base con estructura común
+  ├── paginaPrincipal.html         # Página principal (landing)
+  ├── auth/
+  │   ├── login.html               # Formulario de login
+  │   └── register.html            # Formulario de registro
+  ├── dashboard/
+  │   ├── header.html              # Header común
+  │   ├── navbar.html              # Navbar para ganadero
+  │   ├── nav_vet.html             # Navbar para veterinario
+  │   ├── footer.html              # Footer común
+  │   ├── ganadero.html            # Dashboard del ganadero
+  │   ├── veterinario.html         # Dashboard del veterinario
+  │   └── perfil.html              # Perfil de usuario
+  ├── animales/
+  │   ├── lista.html               # Lista de animales
+  │   ├── nuevo.html               # Formulario nuevo animal
+  │   └── detalles_animal.html     # Detalle del animal
+  └── tratamientos/
+      ├── nuevo.html               # Formulario nuevo tratamiento
+      ├── tratamientos.html        # Lista de tratamientos
+      ├── detalle.html             # Detalle del tratamiento
+      ├── evento.html              # Formulario nuevo evento
+      └── detalleEvento.html       # Detalle del evento
+
+================================================================================
+                              7. CONFIGURACIÓN
+================================================================================
+
+7.1 VARIABLES DE ENTORNO (.env)
+-------------------------------
+DATABASE_URL=postgresql://...      # URL de conexión a PostgreSQL
+CLOUDINARY_CLOUD_NAME=...          # Nombre del cloud de Cloudinary
+CLOUDINARY_API_KEY=...             # API Key de Cloudinary
+CLOUDINARY_API_SECRET=...          # API Secret de Cloudinary
+MIDDLEWARE=...                     # Secret key para sesiones
+
+7.2 REQUISITOS (requirements.txt)
+---------------------------------
+- fastapi
+- uvicorn
+- sqlmodel
+- psycopg2-binary (PostgreSQL)
+- jinja2
+- python-multipart
+- cloudinary
+- httpx
+
+7.3 EJECUTAR LA APLICACIÓN
+--------------------------
+  # Desarrollo
+  uvicorn app.main:app --reload
+
+  # Producción
+  uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+================================================================================
+                              8. SERVICIOS EXTERNOS
+================================================================================
+
+8.1 CLOUDINARY
+--------------
+Usado para almacenar imágenes de:
+  - Perfil de usuarios
+  - Animales
+  - Eventos de tratamientos
+
+La subida se realiza mediante la función upload_to_cloudinary() en
+app/service_and_config/cloudinary.py
+
+8.2 BASE DE DATOS
+-----------------
+PostgreSQL como base de datos principal.
+SQLModel (SQLAlchemy + Pydantic) como ORM.
+La creación de tablas se ejecuta automáticamente al iniciar la aplicación.
+
+================================================================================
+                              9. NOTAS IMPORTANTES
+================================================================================
+
+- El sistema usa sesiones de FastAPI para manejar alertas y mensajes flash
+- Las imágenes son opcionales en todas las entidades
+- Los animales tienen un campo "activo" para soft-delete (muertos)
+- Los tratamientos tienen estados: "activo", "completado", "atencion"
+- Los eventos tienen estados: "Pendiente", "Completado"
+- El Chat está actualmente DESHABILITADO (comentado en el código)
+
+================================================================================
+                         FIN DE LA DOCUMENTACIÓN
+================================================================================

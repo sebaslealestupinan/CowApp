@@ -46,7 +46,8 @@
                 <div class="box">
                     <h2 class="title is-5">Total Animales Activos</h2>
                     <p class="subtitle">{{ total_animales }}</p>
-                    <button class="button is-primary" onclick="window.location.href='/animales/nuevo/{{ user.id }}'">
+                    <button class="button is-primary"
+                        onclick="window.location.href='/animales/nuevo?user_id={{ user.id }}'">
                         Agregar Animal
                     </button>
                     <button class="button is-light" onclick="window.location.href='/views/animales/{{ user.id }}'">
@@ -74,7 +75,7 @@
                         <p class="title is-5">{{ animal.nombre }}</p>
                         <p>ID: #{{ animal.id }}</p>
                         <p>Raza: {{ animal.raza }}</p>
-                        <a href="/vista/animales/{{ animal.id }}" class="button is-small is-info mt-2">Ver
+                        <a href="/animales/vista/{{ animal.id }}" class="button is-small is-info mt-2">Ver
                             Detalle</a>
                     </div>
                 </div>
@@ -92,7 +93,7 @@
         <h2 class="title is-4">Tratamientos con Eventos Pendientes</h2>
         <div class="treatment-list">
             {% for t in tratamientos %}
-            <a href="/views/tratamientos/{{ t.id }}" class="treatment-card">
+            <a href="/tratamientos/read/{{ t.id }}" class="treatment-card">
                 <div class="card-content">
                     <p class="title is-5">{{ t.nombre_tratamiento }}</p>
                     <p>Animal: {{ t.animal.nombre }} (ID: {{ t.animal.id }})</p>
@@ -106,14 +107,15 @@
     </section>
 </main>
 
-<!-- Floating Actions (único, fuera de loops) -->
+<!-- Floating Actions (único, fuera de loops) - CHAT DESHABILITADO
 <div class="floating-actions">
     <button class="magic-btn secondary" title="Chat" onclick="openChatModal()">
         <i class="fa-regular fa-comments"></i>
     </button>
 </div>
+-->
 
-<!-- Chat Modal (único) -->
+<!-- Chat Modal (único) - CHAT DESHABILITADO
 <div id="chatModal" class="modal">
     <div class="modal-background" onclick="closeChatModal()"></div>
     <div class="modal-card">
@@ -139,9 +141,11 @@
         </section>
     </div>
 </div>
+-->
 
 <link rel="stylesheet" href="/static/css/dashboard.css">
 
+<!-- CHAT FUNCTIONS DESHABILITADAS
 <script>
     // variable JS segura con id del usuario actual (serializada)
     const CURRENT_USER_ID = {{ user.id | tojson }};
@@ -246,5 +250,6 @@
         }
     }
 </script>
+-->
 
 {% include "dashboard/footer.html" %}

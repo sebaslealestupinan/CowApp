@@ -1,51 +1,47 @@
-// Esperar a que el DOM esté listo
-document.addEventListener('DOMContentLoaded', function () {
-
+document.addEventListener('DOMContentLoaded', function() {
+    
     const chatConfig = window.CHAT_CONFIG;
-
-    // Validar configuración
-    if (!chatConfig) {
-        console.error("Error: CHAT_CONFIG no está definido");
-        return;
-    }
-
-    console.log("Chat Config:", chatConfig);
-
+    if (!chatConfig) return;
+    
     const senderId = chatConfig.senderId;
     const receiverId = chatConfig.receiverId;
 
     const messagesDiv = document.getElementById("message-list");
     const input = document.getElementById("message-input");
     const sendBtn = document.getElementById("send-btn");
+    const attachBtn = document.getElementById("attach-btn");
+    const imageInput = document.getElementById("image-input");
+    const typingIndicator = document.getElementById("typing-indicator");
+    const statusText = document.getElementById("status-text");
 
     let ws = null;
+    let typingTimeout = null;
+    let isTyping = false;
+
+    // --- WebSocket ---
 
     function connectWS() {
-        console.log("Intentando conectar WebSocket a:", chatConfig.wsUrl);
-
-        try {
-            ws = new WebSocket(chatConfig.wsUrl);
-        } catch (error) {
-            console.error("Error creando WebSocket:", error);
-            return;
-        }
+        ws = new WebSocket(chatConfig.wsUrl);
 
         ws.onopen = () => {
-            console.log("✅ WebSocket conectado!");
+            console.log("✅ WebSocket conectado");
             loadHistory();
         };
 
         ws.onmessage = (event) => {
-            console.log("Mensaje recibido:", event.data);
             const msg = JSON.parse(event.data);
 
-            // Si hay error, mostrarlo
-            if (msg.error) {
-                console.error("Error del servidor:", msg.error);
+            if (msg.type === "typing") {
+                handleTyping(msg.sender_id);
                 return;
             }
 
-            // Verificar si el mensaje pertenece a esta conversación
+            if (msg.error) {
+                console.error("Error:", msg.error);
+                return;
+            }
+
+            // Verificar conversación
             const esConversacionActual =
                 (msg.sender_id === senderId && msg.receiver_id === receiverId) ||
                 (msg.sender_id === receiverId && msg.receiver_id === senderId);
@@ -55,39 +51,45 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         };
 
-        ws.onerror = (error) => {
-            console.error("❌ Error en WebSocket:", error);
-        };
-
-        ws.onclose = (event) => {
-            console.warn("WebSocket cerrado. Código:", event.code, "Razón:", event.reason);
+        ws.onclose = () => {
+            console.warn("WS desconectado. Reintentando...");
             setTimeout(connectWS, 3000);
         };
     }
 
+    // --- Funciones Core ---
+
     async function loadHistory() {
         try {
-            console.log(`Cargando historial: /chat/history/${senderId}/${receiverId}`);
             const response = await fetch(`/chat/history/${senderId}/${receiverId}`);
             const messages = await response.json();
-            console.log("Historial cargado:", messages.length, "mensajes");
-
             messagesDiv.innerHTML = '';
             messages.forEach(appendMessage);
             scrollToBottom();
         } catch (error) {
-            console.error("Error cargando historial:", error);
+            console.error("Error historial:", error);
         }
     }
 
     function appendMessage(msg) {
         const div = document.createElement("div");
-
         const enviado = msg.sender_id === senderId;
         div.className = `message-bubble ${enviado ? "message-sent" : "message-received"}`;
 
         const date = new Date(msg.timestamp || Date.now());
         const time = date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+        // Detectar si es imagen
+        const content = msg.content || msg.contenido;
+        let messageContent = `<div class="message-text">${content}</div>`;
+
+        if (isImageUrl(content)) {
+            messageContent = `
+                <div class="message-image">
+                    <img src="${content}" alt="Imagen enviada" onclick="window.open(this.src, '_blank')">
+                </div>
+            `;
+        }
 
         const checkIcon = enviado ? `
             <span class="message-check">
@@ -96,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function () {
         ` : '';
 
         div.innerHTML = `
-            <div class="message-text">${msg.content || msg.contenido}</div>
+            ${messageContent}
             <div class="message-time">
                 ${time}
                 ${checkIcon}
@@ -107,32 +109,116 @@ document.addEventListener('DOMContentLoaded', function () {
         scrollToBottom();
     }
 
+    function isImageUrl(url) {
+        if (!url) return false;
+        return (url.match(/\.(jpeg|jpg|gif|png|webp)$/i) != null) || url.includes('cloudinary.com');
+    }
+
     function scrollToBottom() {
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
+
+    // --- Enviar Mensajes ---
 
     function sendMessage() {
         const content = input.value.trim();
         if (!content) return;
 
-        if (!ws || ws.readyState !== WebSocket.OPEN) {
-            console.error("WebSocket no está conectado");
-            alert("No hay conexión. Reintentando...");
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({
+                receiver_id: receiverId,
+                content: content,
+                type: "text"
+            }));
+            input.value = "";
+            input.style.height = 'auto';
+        } else {
+            alert("Conexión perdida. Reintentando...");
             connectWS();
-            return;
         }
-
-        console.log("Enviando mensaje:", content);
-        ws.send(JSON.stringify({
-            receiver_id: receiverId,
-            content: content
-        }));
-
-        input.value = "";
-        input.style.height = 'auto';
     }
 
-    // Event listeners
+    // --- Imágenes ---
+
+    attachBtn.addEventListener('click', () => imageInput.click());
+
+    imageInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        // Mostrar loading o algo visual podría ser bueno aquí
+        attachBtn.disabled = true;
+        attachBtn.style.opacity = "0.5";
+
+        try {
+            const response = await fetch('/chat/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) throw new Error('Error subiendo imagen');
+
+            const data = await response.json();
+            
+            // Enviar URL como mensaje
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({
+                    receiver_id: receiverId,
+                    content: data.url,
+                    type: "text" // Lo tratamos como texto para persistencia simple
+                }));
+            }
+
+        } catch (error) {
+            console.error(error);
+            alert("Error al enviar imagen");
+        } finally {
+            attachBtn.disabled = false;
+            attachBtn.style.opacity = "1";
+            imageInput.value = ''; // Reset
+        }
+    });
+
+    // --- Typing Indicator ---
+
+    input.addEventListener('input', () => {
+        // Auto resize
+        input.style.height = 'auto';
+        input.style.height = Math.min(input.scrollHeight, 100) + 'px';
+
+        // Send typing event
+        if (!isTyping) {
+            isTyping = true;
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({
+                    receiver_id: receiverId,
+                    type: "typing"
+                }));
+            }
+            // Reset flag after 2s to allow sending again
+            setTimeout(() => isTyping = false, 2000);
+        }
+    });
+
+    function handleTyping(senderId) {
+        if (senderId !== receiverId) return; // Solo si es el otro usuario
+
+        statusText.style.display = 'none';
+        typingIndicator.style.display = 'block';
+
+        if (typingTimeout) clearTimeout(typingTimeout);
+
+        typingTimeout = setTimeout(() => {
+            typingIndicator.style.display = 'none';
+            statusText.style.display = 'block';
+        }, 3000);
+    }
+
+    // --- Event Listeners ---
+
     sendBtn.addEventListener("click", sendMessage);
 
     input.addEventListener("keypress", (e) => {
@@ -142,12 +228,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Auto-resize textarea
-    input.addEventListener('input', function () {
-        this.style.height = 'auto';
-        this.style.height = Math.min(this.scrollHeight, 100) + 'px';
-    });
-
-    // Iniciar conexión
+    // Iniciar
     connectWS();
 });

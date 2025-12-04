@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 
 {% block title %}Detalle de Animal - Cow App{% endblock %}
+{%block header%}
+<link rel="stylesheet" href="static/css/detalle_cow.css">
+{%endblock%}
 
 {% block content %}
 
@@ -53,7 +56,8 @@
 
                     <footer class="card-footer">
                         <a href="#" class="card-footer-item has-text-info">Editar</a>
-                        <a href="/tratamientos/delete/{{ animal.id }}" class="card-footer-item has-text-danger">
+                        <a href="/animales/delete/{{ animal.id }}/{{ animal.propietario_id }}"
+                            class="card-footer-item has-text-danger">
                             Eliminar
                         </a>
                     </footer>
@@ -68,11 +72,6 @@
                     <div class="level">
                         <div class="level-left">
                             <h2 class="title is-4">Historial de Tratamientos</h2>
-                        </div>
-                        <div class="level-right">
-                            <a href="/views/tratamientos/{{ animal.id }}" class="button is-primary">
-                                Ver Todos
-                            </a>
                         </div>
                     </div>
 
@@ -90,7 +89,7 @@
                         <tbody>
                             {% for t in tratamientos %}
                             <tr>
-                                <td>{{ t.fecha_inicio.strftime("%d/%m/%Y") }}</td>
+                                <td>{{ t.fecha_inicio }}</td>
                                 <td>{{ t.nombre_tratamiento }}</td>
                                 <td>{{ t.diagnostico }}</td>
                                 <td>
@@ -104,7 +103,7 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <a href="/views/tratamientos/{{ t.id }}" class="button is-small is-light">
+                                    <a href="/tratamientos/read/{{ t.id }}" class="button is-small is-info">
                                         Ver Detalle
                                     </a>
                                 </td>
