@@ -17,17 +17,17 @@ minuts = 14
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    #async def keep_awake():
-    #    while True:
-    #        try:
-    #            async with httpx.AsyncClient() as client:
-    #                await client.get(ping_url, timeout=10)
-    #                print("Deeeeeeees pieeeeeertaaaaaaaa.")
-    #        except Exception as e:
-    #            print("y se durmio pero esto fue el culpable:", e)
-    #        await asyncio.sleep(minuts * 60)
+    async def keep_awake():
+        while True:
+            try:
+                async with httpx.AsyncClient() as client:
+                    await client.get(ping_url, timeout=10)
+                    print("Deeeeeeees pieeeeeertaaaaaaaa.")
+            except Exception as e:
+                print("y se durmio pero esto fue el culpable:", e)
+            await asyncio.sleep(minuts * 60)
     
-    #asyncio.create_task(keep_awake())
+    asyncio.create_task(keep_awake())
     print("Inicializando base de datos COW...")
     create_data_base()
     print("Db lista.")
