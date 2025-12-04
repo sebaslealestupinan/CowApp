@@ -5,82 +5,115 @@
 {% block content %}
 <section class="section">
     <div class="container">
-        <h1 class="title has-text-centered">Nuevo Animal</h1>
+        <div class="columns is-centered">
+            <div class="column is-half-desktop is-two-thirds-tablet">
+                <div class="box p-6">
+                    <h1 class="title has-text-centered mb-6">Nuevo Animal</h1>
 
-        <form id="formNuevoAnimal">
-            <div class="field">
-                <label class="label">Nombre</label>
-                <div class="control">
-                    <input class="input" type="text" name="nombre" required placeholder="Ej: Vaca 1">
+                    <form id="formNuevoAnimal">
+                        <div class="field mb-5">
+                            <label class="label">Nombre</label>
+                            <div class="control">
+                                <input class="input" type="text" name="nombre" required placeholder="Ej: Vaca 1">
+                            </div>
+                        </div>
+
+                        <div class="field mb-5">
+                            <label class="label">Tag ID</label>
+                            <div class="control">
+                                <input class="input" type="text" name="tag_id" required placeholder="Ej: 12345">
+                            </div>
+                        </div>
+
+                        <div class="columns mb-4">
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Especie</label>
+                                    <div class="control">
+                                        <div class="select is-fullwidth">
+                                            <select name="especie" required>
+                                                <option value="Bovino">Bovino</option>
+                                                <option value="Equino">Equino</option>
+                                                <option value="Caprino">Caprino</option>
+                                                <option value="Ovino">Ovino</option>
+                                                <option value="Porcino">Porcino</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Raza</label>
+                                    <div class="control">
+                                        <input class="input" type="text" name="raza" placeholder="Ej: Holstein">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="columns mb-4">
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Sexo</label>
+                                    <div class="control">
+                                        <div class="select is-fullwidth">
+                                            <select name="sexo" required>
+                                                <option value="Hembra">Hembra</option>
+                                                <option value="Macho">Macho</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Fecha de Nacimiento</label>
+                                    <div class="control">
+                                        <input class="input" type="date" name="fecha_nacimiento">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field mb-6">
+                            <label class="label has-text-weight-semibold">Foto del ejemplar</label>
+                            <div class="control">
+                                <div class="file has-name is-fullwidth">
+                                    <label class="file-label">
+                                        <input class="file-input" type="file" name="image">
+                                        <span class="file-cta">
+                                            <span class="file-icon">
+                                                <i class="fas fa-upload"></i>
+                                            </span>
+                                            <span class="file-label">
+                                                Seleccionar archivo…
+                                            </span>
+                                        </span>
+                                        <span class="file-name">
+                                            Sin archivo seleccionado
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Propietario (Ganadero) -->
+                        <input type="hidden" name="propietario_id" value="{{ user.id }}">
+
+                        <div class="field is-grouped is-grouped-centered mt-6">
+                            <div class="control">
+                                <button type="submit" class="button is-primary is-medium">Crear Animal</button>
+                            </div>
+                            <div class="control">
+                                <button type="button" class="button is-light is-medium"
+                                    onclick="history.back()">Cancelar</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
-
-            <div class="field">
-                <label class="label">Tag ID</label>
-                <div class="control">
-                    <input class="input" type="text" name="tag_id" required placeholder="Ej: 12345">
-                </div>
-            </div>
-
-            <div class="field">
-                <label class="label">Especie</label>
-                <div class="control">
-                    <div class="select">
-                        <select name="especie" required>
-                            <option value="Bovino">Bovino</option>
-                            <option value="Equino">Equino</option>
-                            <option value="Caprino">Caprino</option>
-                            <option value="Ovino">Ovino</option>
-                            <option value="Porcino">Porcino</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <div class="field">
-                <label class="label">Raza</label>
-                <div class="control">
-                    <input class="input" type="text" name="raza" placeholder="Ej: Holstein">
-                </div>
-            </div>
-
-            <div class="field">
-                <label class="label">Sexo</label>
-                <div class="control">
-                    <div class="select">
-                        <select name="sexo" required>
-                            <option value="Hembra">Hembra</option>
-                            <option value="Macho">Macho</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <div class="field">
-                <label class="label">Fecha de Nacimiento</label>
-                <div class="control">
-                    <input class="input" type="date" name="fecha_nacimiento">
-                </div>
-            </div>
-            <div class="field">
-                <label class="label has-text-weight-semibold">Foto de el ejemplar</label>
-                <div class="control">
-                    <input class="input" type="file" name="image">
-                </div>
-            </div>
-
-            <!-- Propietario (Ganadero) -->
-            <input type="hidden" name="propietario_id" value="{{ user.id }}">
-
-            <div class="field is-grouped is-grouped-centered mt-5">
-                <div class="control">
-                    <button type="submit" class="button is-primary">Crear Animal</button>
-                </div>
-                <div class="control">
-                    <button type="button" class="button is-light" onclick="history.back()">Cancelar</button>
-                </div>
-            </div>
-        </form>
+        </div>
     </div>
 </section>
 {% endblock %}
@@ -114,5 +147,16 @@
             alert('Error de conexión');
         }
     });
+
+    // Script para mostrar nombre de archivo seleccionado
+    const fileInput = document.querySelector('.file-input');
+    if (fileInput) {
+        fileInput.onchange = () => {
+            if (fileInput.files.length > 0) {
+                const fileName = document.querySelector('.file-name');
+                fileName.textContent = fileInput.files[0].name;
+            }
+        }
+    }
 </script>
 {% endblock %}
