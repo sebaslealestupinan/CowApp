@@ -40,6 +40,7 @@ role: str = Form(...), session: Session = Depends(get_session)):
    
     return redirec(role, user)
     
+    
 @router.post("/register", response_class=HTMLResponse)
 async def post_register(request: Request, name: str = Form(...), email: str = Form(...), 
 password: str = Form(...), number_phone: str = Form(...), image: Optional[UploadFile] = File(None), role: str = Form(...), 

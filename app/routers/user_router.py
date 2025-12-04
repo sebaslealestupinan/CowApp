@@ -45,12 +45,12 @@ async def update_user_endpoint(
     email: Optional[str] = Form(None),
     password: Optional[str] = Form(None),
     number_phone: Optional[str] = Form(None),
-    imagen: Optional[UploadFile] = File(None)
+    image: Optional[UploadFile] = File(None)
 ):
     imag = None
-    if imagen:
-        upload_result = await upload_to_cloudinary(imagen)
-        imag = upload_result.get("url")
+    if image:
+        upload_result = await upload_to_cloudinary(image)
+        imag = upload_result["url"]
 
     # Filter out None values to avoid overwriting existing data with None
     update_dict = {}
@@ -63,7 +63,7 @@ async def update_user_endpoint(
     if number_phone is not None:
         update_dict["number_phone"] = number_phone
     if imag is not None:
-        update_dict["imagen"] = imag
+        update_dict["imag"] = imag
 
     update_data = UpdateUser(**update_dict)
     
