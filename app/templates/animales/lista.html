@@ -6,164 +6,60 @@
 <h1 class="title">Mis Animales</h1>
 
 <div class="buttons">
-    <button class="button is-primary" id="btnNuevoAnimal">Registrar Nuevo Animal</button>
+    <a href="/animales/nuevo?user_id={{ user.id }}" class="button is-primary">Registrar Nuevo Animal</a>
+    <a href="/ganadero/{{ user.id }}" class="button is-light">Volver al Dashboard</a>
 </div>
 
 <div class="table-container">
     <table class="table is-fullwidth is-striped is-hoverable">
         <thead>
             <tr>
+                <th>Imagen</th>
                 <th>Tag ID</th>
                 <th>Nombre</th>
                 <th>Especie</th>
                 <th>Raza</th>
                 <th>Sexo</th>
+                <th>Estado</th>
                 <th>Acciones</th>
             </tr>
         </thead>
-        <tbody id="animalesTableBody">
-            <!-- Animales will be loaded here via JS -->
+        <tbody>
+            {% if animales %}
+            {% for animal in animales %}
+            <tr>
+                <td><img src="{{ animal.imagen or 'https://placehold.co/600x400?text=Animal' }}" class="image is-64x64">
+                </td>
+                <td>{{ animal.tag_id }}</td>
+                <td>{{ animal.nombre }}</td>
+                <td>{{ animal.especie }}</td>
+                <td>{{ animal.raza or '-' }}</td>
+                <td>{{ animal.sexo }}</td>
+                <td>
+                    {% if animal.activo %}
+                    <span class="tag is-success">Activo</span>
+                    {% else %}
+                    <span class="tag is-danger">Inactivo</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="/views/animal?animal_id={{ animal.id }}" class="button is-small is-info">Ver Detalle</a>
+                </td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            <tr>
+                <td colspan="7" class="has-text-centered">
+                    <p class="has-text-grey">No hay animales registrados</p>
+                </td>
+            </tr>
+            {% endif %}
         </tbody>
     </table>
 </div>
 
-<!-- Modal Nuevo Animal -->
-<div class="modal" id="modalNuevoAnimal">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-        <header class="modal-card-head">
-            <p class="modal-card-title">Registrar Animal</p>
-            <button class="delete" aria-label="close"></button>
-        </header>
-        <section class="modal-card-body">
-            <!-- Formulario for create animal -->
-            <form id="formNuevoAnimal">
-                <div class="field">
-                    <label class="label">Tag ID</label>
-                    <div class="control">
-                        <input class="input" type="text" name="tag_id" required>
-                    </div>
-                </div>
-                <div class="field">
-                    <label class="label">Nombre</label>
-                    <div class="control">
-                        <input class="input" type="text" name="nombre" required>
-                    </div>
-                </div>
-                <div class="field">
-                    <label class="label">Especie</label>
-                    <div class="control">
-                        <div class="select">
-                            <select name="especie">
-                                <option value="Bovino">Bovino</option>
-                                <option value="Equino">Equino</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="field">
-                    <label class="label">Raza</label>
-                    <div class="control">
-                        <input class="input" type="text" name="raza">
-                    </div>
-                </div>
-                <div class="field">
-                    <label class="label">Sexo</label>
-                    <div class="control">
-                        <div class="select">
-                            <select name="sexo">
-                                <option value="Hembra">Hembra</option>
-                                <option value="Macho">Macho</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <!-- end modal for create animal -->
-                <input type="hidden" name="propietario_id" value="2">
-            </form>
-        </section>
-        <footer class="modal-card-foot">
-            <button class="button is-success" id="btnGuardarAnimal">Guardar</button>
-            <button class="button">Cancelar</button>
-        </footer>
-    </div>
+<div class="box mt-4">
+    <p><strong>Total de animales:</strong> {{ animales|length }}</p>
 </div>
 
-{% endblock %}
-
-{% block scripts %}
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        loadAnimales();
-
-        // Modal logic
-        const modal = document.getElementById('modalNuevoAnimal');
-        const btnNuevo = document.getElementById('btnNuevoAnimal');
-        const btnClose = modal.querySelector('.delete');
-        const btnCancel = modal.querySelector('.modal-card-foot .button:last-child');
-        const btnGuardar = document.getElementById('btnGuardarAnimal');
-
-        btnNuevo.onclick = () => modal.classList.add('is-active');
-        btnClose.onclick = () => modal.classList.remove('is-active');
-        btnCancel.onclick = () => modal.classList.remove('is-active');
-
-        btnGuardar.onclick = async () => {
-            const form = document.getElementById('formNuevoAnimal');
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
-
-            // Convert types if needed
-            data.propietario_id = parseInt(data.propietario_id);
-
-            try {
-                const response = await fetch('/animales/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
-
-                if (response.ok) {
-                    modal.classList.remove('is-active');
-                    form.reset();
-                    loadAnimales();
-                } else {
-                    const error = await response.json();
-                    alert('Error: ' + error.detail);
-                }
-            } catch (e) {
-                console.error(e);
-                alert('Error de conexión');
-            }
-        };
-    });
-
-    async function loadAnimales() {
-        try {
-            const response = await fetch('/animales/');
-            const animales = await response.json();
-
-            const tbody = document.getElementById('animalesTableBody');
-            tbody.innerHTML = '';
-
-            animales.forEach(animal => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${animal.tag_id}</td>
-                    <td>${animal.nombre}</td>
-                    <td>${animal.especie}</td>
-                    <td>${animal.raza || '-'}</td>
-                    <td>${animal.sexo}</td>
-                    <td>
-                        <a href="/animal?animal_id=${animal.tag_id}" class="button is-small is-info">Ver</a>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        } catch (e) {
-            console.error('Error loading animals:', e);
-        }
-    }
-</script>
 {% endblock %}

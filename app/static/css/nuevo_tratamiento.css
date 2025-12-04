@@ -1,0 +1,68 @@
+/* Contenedor principal */
+.cow-form-wrapper {
+    max-width: 620px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Caja principal */
+.cow-box {
+    border-radius: 16px;
+    padding: 25px;
+    background: #ffffff;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.2s ease;
+}
+
+.cow-box:hover {
+    box-shadow: 0 5px 16px rgba(0, 0, 0, 0.12);
+}
+
+/* Título */
+.cow-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #2e3a59;
+    margin-bottom: 20px;
+}
+
+/* Inputs */
+.cow-box .input,
+.cow-box .textarea,
+.cow-box .select select {
+    border-radius: 10px;
+    border: 1px solid #d6d6d6;
+}
+
+.cow-box .input:focus,
+.cow-box .textarea:focus,
+.cow-box .select select:focus {
+    border-color: #3273dc;
+    box-shadow: 0 0 0 0.15rem rgba(50, 115, 220, 0.2);
+}
+
+/* Notificación */
+.notification {
+    border-radius: 10px;
+    font-size: 0.9rem;
+}
+
+/* Botones */
+.button.is-primary {
+    border-radius: 10px;
+}
+
+.button.is-light {
+    border-radius: 10px;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+    .cow-box {
+        padding: 18px;
+    }
+
+    .cow-title {
+        font-size: 1.5rem;
+    }
+}

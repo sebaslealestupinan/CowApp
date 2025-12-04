@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle del Evento{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="columns is-centered">
+        <div class="column is-8">
+            <div class="card">
+                <header class="card-header has-background-info">
+                    <p class="card-header-title has-text-white">
+                        <span class="icon mr-2">
+                            <i class="fas fa-calendar-check"></i>
+                        </span>
+                        Detalle del Evento
+                    </p>
+                </header>
+                <div class="card-content">
+                    <form id="updateEventoForm">
+                        <div class="columns is-multiline">
+
+                            <div class="column is-6">
+                                <div class="field">
+                                    <label class="label">Tipo</label>
+                                    <div class="control">
+                                        <div class="select is-fullwidth">
+                                            <select id="tipo" disabled>
+                                                <option value="{{ evento.tipo }}" selected>{{ evento.tipo }}</option>
+                                                <option value="Aplicación de medicamento">Aplicación de medicamento
+                                                </option>
+                                                <option value="Revisión">Revisión</option>
+                                                <option value="Vacunación">Vacunación</option>
+                                                <option value="Desparasitación">Desparasitación</option>
+                                                <option value="Cirugía">Cirugía</option>
+                                                <option value="Seguimiento">Seguimiento</option>
+                                                <option value="Otro">Otro</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="column is-6">
+                                <div class="field">
+                                    <label class="label">Estado</label>
+                                    <div class="control">
+                                        <div class="select is-fullwidth">
+                                            <select id="estado" disabled>
+                                                <option value="{{ evento.estado }}" selected>{{ evento.estado }}
+                                                </option>
+                                                <option value="Pendiente">Pendiente</option>
+                                                <option value="Completado">Completado</option>
+                                                <option value="En Progreso">En Progreso</option>
+                                                <option value="Cancelado">Cancelado</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="column is-6">
+                                <div class="field">
+                                    <label class="label">Fecha</label>
+                                    <div class="control">
+                                        <input class="input" type="datetime-local" id="fecha" value="{{ evento.fecha }}"
+                                            disabled>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="column is-6">
+                                <div class="field">
+                                    <label class="label">Responsable</label>
+                                    <div class="control">
+                                        <input class="input" type="text" id="responsable"
+                                            value="{{ evento.responsable }}" disabled>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="column is-12">
+                                <div class="field">
+                                    <label class="label">Observaciones</label>
+                                    <div class="control">
+                                        <textarea class="textarea" id="observaciones" rows="3"
+                                            disabled>{{ evento.observaciones }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Imagen -->
+                            {% if evento.imagen %}
+                            <div class="column is-12 has-text-centered">
+                                <figure class="image is-inline-block" style="max-width: 300px;">
+                                    <img src="{{ evento.imagen }}" alt="Imagen del evento" class="is-rounded">
+                                </figure>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="field is-grouped is-grouped-centered mt-5">
+                            <div class="control">
+                                <a href="/tratamientos/read/{{ evento.tratamiento_id }}" class="button is-light">
+                                    <span class="icon">
+                                        <i class="fas fa-arrow-left"></i>
+                                    </span>
+                                    <span>Volver</span>
+                                </a>
+                            </div>
+                            <div class="control">
+                                <button type="button" class="button is-primary" id="btnEditar" onclick="toggleEdit()">
+                                    <span class="icon">
+                                        <i class="fas fa-edit"></i>
+                                    </span>
+                                    <span>Actualizar</span>
+                                </button>
+                                <button type="button" class="button is-success is-hidden" id="btnGuardar"
+                                    onclick="guardarCambios()">
+                                    <span class="icon">
+                                        <i class="fas fa-save"></i>
+                                    </span>
+                                    <span>Guardar</span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let isEditing = false;
+    const eventoId = {{ evento.id }};
+
+    function toggleEdit() {
+        isEditing = !isEditing;
+        const inputs = document.querySelectorAll('#updateEventoForm input, #updateEventoForm select, #updateEventoForm textarea');
+        const btnEditar = document.getElementById('btnEditar');
+        const btnGuardar = document.getElementById('btnGuardar');
+
+        inputs.forEach(input => {
+            input.disabled = !isEditing;
+        });
+
+        if (isEditing) {
+            btnEditar.classList.add('is-hidden');
+            btnGuardar.classList.remove('is-hidden');
+        } else {
+            btnEditar.classList.remove('is-hidden');
+            btnGuardar.classList.add('is-hidden');
+        }
+    }
+
+    async function guardarCambios() {
+        const data = {
+            tipo: document.getElementById('tipo').value,
+            estado: document.getElementById('estado').value,
+            fecha: document.getElementById('fecha').value,
+            responsable: document.getElementById('responsable').value,
+            observaciones: document.getElementById('observaciones').value
+        };
+
+        try {
+            const response = await fetch(`/eventos/update/${eventoId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                alert('Evento actualizado correctamente');
+                toggleEdit();
+                location.reload();
+            } else {
+                alert('Error al actualizar el evento');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error de conexión');
+        }
+    }
+</script>
+{% endblock %}

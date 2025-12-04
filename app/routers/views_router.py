@@ -54,8 +54,7 @@ from datetime import date
 
 @router.get("/veterinario/{id_user}", response_class=HTMLResponse)
 async def dashboard_veterinario(request: Request, id_user: int, session: Session = Depends(get_session)):
-    # Get Vet
-
+    
     alert = request.session.pop("alert", None)
 
     vet = session.get(Usuario, id_user)
@@ -78,13 +77,26 @@ async def nuevo_tratamiento_veterinario(request: Request, id_user: int, session:
     user = session.get(Usuario, id_user)
     return templates.TemplateResponse("tratamientos/nuevo.html", {"request": request, "user": user})
 
-@router.get("/perfil/{user_id}", response_class=HTMLResponse)
+@router.get("/perfil/{user_id}", response_class=HTMLResponse, tags=["Perfil"])
 async def view_perfil(request: Request, user_id: int, session: Session = Depends(get_session)):
     user = session.get(Usuario, user_id)
     return templates.TemplateResponse("dashboard/perfil.html", {"request": request, "user": user})
 
-@router.get("/animales/nuevo", response_class=HTMLResponse)
-async def nuevo_animal(request: Request, user_id: int, session: Session = Depends(get_session)):
 
-    user = session.get(Usuario, user_id)
-    return templates.TemplateResponse("animales/nuevo.html", {"request": request, "user": user})
+
+@router.get("/views/animal", response_class=HTMLResponse, name="view_animal_detalle")
+async def view_animal_detalle(request: Request, animal_id: int):
+    """Vista de detalle de animal"""
+    
+    return templates.TemplateResponse("animales/detalle.html", {"request": request, "animal_id": animal_id})
+
+@router.get("/views/animales/{ganadero_id}", response_class=HTMLResponse, name="view_animales")
+async def view_animales(request: Request, ganadero_id: int, session: Session = Depends(get_session)):
+    """Vista de lista de animales del ganadero"""
+    animales = session.exec(select(Animal).where(Animal.propietario_id == ganadero_id)).all()
+    ganadero = session.get(Usuario, ganadero_id)
+    return templates.TemplateResponse("animales/lista.html", {
+        "request": request, 
+        "animales": animales,
+        "user": ganadero
+    })

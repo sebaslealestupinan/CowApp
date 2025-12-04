@@ -1,5 +1,6 @@
-from fastapi import APIRouter, HTTPException, status, Form, UploadFile, File
-from fastapi.responses import RedirectResponse
+from fastapi import APIRouter, HTTPException, status, Form, UploadFile, File, Request
+from fastapi.responses import RedirectResponse, HTMLResponse
+from fastapi.templating import Jinja2Templates
 from typing import List, Optional
 from datetime import datetime
 
@@ -16,9 +17,11 @@ from app.models.tratamiento import Tratamiento
 from app.service_and_config.cloudinary import upload_to_cloudinary
 
 router = APIRouter(tags=["Evento"], prefix="/eventos")
+templates = Jinja2Templates(directory="app/templates")
 
 @router.post("/", response_model=ReadEvento, status_code=status.HTTP_201_CREATED)
 async def create_evento_endpoint(
+    request: Request,
     session: SessionDep,
     tratamiento_id: int = Form(...),
     fecha: str = Form(default=None),
@@ -64,12 +67,12 @@ async def create_evento_endpoint(
 
     return RedirectResponse(url=f"/tratamientos/read/{tratamiento.id}", status_code=status.HTTP_302_FOUND)
 
-@router.get("/detalle/{evento_id}", response_model=ReadEvento)
-def read_evento_endpoint(evento_id: int, session: SessionDep):
+@router.get("/detalle/{evento_id}", response_class=HTMLResponse)
+def read_evento_endpoint(request: Request, evento_id: int, session: SessionDep):
     evento = get_evento(evento_id, session)
     if not evento:
         raise HTTPException(status_code=404, detail="Evento no encontrado")
-    return evento
+    return templates.TemplateResponse("tratamientos/detalleEvento.html", {"request": request, "evento": evento})
 
 @router.put("/update/{evento_id}", response_model=ReadEvento)
 def update_evento_endpoint(evento_id: int, evento_update: UpdateEvento, session: SessionDep):

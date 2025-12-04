@@ -1,5 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.templating import Jinja2Templates
 from typing import List
+from fastapi.responses import HTMLResponse
+from fastapi import Request
 from sqlmodel import select
 
 from app.db import SessionDep
@@ -15,6 +18,7 @@ from app.crud.animal_crud import (
 from app.crud.user_crud import get_user
 
 router = APIRouter(prefix="/animales", tags=["Animales"])
+templates = Jinja2Templates(directory="app/templates")
 
 @router.post("/", response_model=ReadAnimal, status_code=status.HTTP_201_CREATED)
 def create_animal_endpoint(animal: CreateAnimal, session: SessionDep):
@@ -31,16 +35,23 @@ def read_animals_endpoint(session: SessionDep):
     # For now return all, later filter by user
     return session.exec(select(Animal)).all()
 
+# IMPORTANTE: Las rutas estáticas deben definirse ANTES de las rutas dinámicas
+@router.get("/nuevo", response_class=HTMLResponse)
+async def nuevo_animal(request: Request, user_id: int, session: SessionDep):
+    user = session.get(Usuario, user_id)
+    return templates.TemplateResponse("animales/nuevo.html", {"request": request, "user": user})
+
+@router.get("/ganadero/{ganadero_id}", response_model=List[ReadAnimal])
+def read_animales_by_ganadero_endpoint(ganadero_id: int, session: SessionDep):
+    return get_animals_by_owner(ganadero_id, session)
+
+# Las rutas con parámetros dinámicos van DESPUÉS de las rutas estáticas
 @router.get("/{animal_id}", response_model=ReadAnimal)
 def read_animal_endpoint(animal_id: int, session: SessionDep):
     animal = get_animal(animal_id, session)
     if not animal:
         raise HTTPException(status_code=404, detail="Animal no encontrado")
     return animal
-
-@router.get("/ganadero/{ganadero_id}", response_model=List[ReadAnimal])
-def read_animales_by_ganadero_endpoint(ganadero_id: int, session: SessionDep):
-    return get_animals_by_owner(ganadero_id, session)
 
 @router.put("/{animal_id}", response_model=ReadAnimal)
 def update_animal_endpoint(animal_id: int, animal_update: UpdateAnimal, session: SessionDep):

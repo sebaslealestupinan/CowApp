@@ -43,7 +43,7 @@
                 {% if eventos %}
                 <div class="timeline">
                     {% for evento in eventos %}
-                    <a href="eventos/detalle/{{ evento.id }}">
+                    <a href="/eventos/detalle/{{ evento.id }}">
                         <div class="box mb-2">
                             <p><strong>{{ evento.fecha }}</strong> - {{ evento.tipo }}</p>
                             <p>{{ evento.observaciones }}</p>

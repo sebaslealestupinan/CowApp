@@ -1,5 +1,4 @@
 {% include "dashboard/header.html" %}
-{% include "dashboard/navbar.html" %}
 
 <section class="section">
     <div class="container">
@@ -50,13 +49,11 @@
                         </div>
 
                         <div class="field">
-                            <label class="label">Imagen de Perfil (URL)</label>
+                            <label class="label-has-text-centered">Cambia tu foto de perfil</label>
                             <div class="control has-icons-left">
-                                <input class="input" type="text" name="image" value="{{ user.imag or '' }}"
-                                    placeholder="URL de la imagen">
-                                <span class="icon is-small is-left">
-                                    <i class="fas fa-image"></i>
-                                </span>
+                                <div class="control">
+                                    <input class="input" type="file" name="image">
+                                </div>
                             </div>
                         </div>
 
@@ -99,7 +96,6 @@
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
 
-        // Clean up empty fields
         if (!data.password) delete data.password;
         if (!data.image) delete data.image;
         if (!data.telefonos) delete data.telefonos;

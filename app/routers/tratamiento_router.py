@@ -49,7 +49,6 @@ veterinario_id: int = Form(...)):
     return RedirectResponse(
         url=f"/veterinario/{veterinario_id}?message=Tratamiento creado exitosamente",
         status_code=303
-        
     )   
 
 @router.get("/read/{tratamiento_id}", response_class=HTMLResponse, name="view_tratamiento_detalle")
@@ -110,3 +109,14 @@ def delete_tratamiento_endpoint(tratamiento_id: int, session: SessionDep):
     if not success:
         raise HTTPException(status_code=404, detail="Tratamiento no encontrado")
     return None
+@router.get("/animal/{animal_id}", response_class=HTMLResponse, name="view_tratamientos_animal")
+async def view_tratamientos_animal(request: Request, animal_id: int, session: SessionDep):
+    tratamientos = get_tratamientos_by_animal(animal_id, session)
+    return templates.TemplateResponse(
+        "animales/detalle.html",
+        {
+            "request": request,
+            "tratamientosList": tratamientos,
+            "animal_id": animal_id
+        }
+    )

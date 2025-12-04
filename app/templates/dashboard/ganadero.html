@@ -46,11 +46,11 @@
                 <div class="box">
                     <h2 class="title is-5">Total Animales Activos</h2>
                     <p class="subtitle">{{ total_animales }}</p>
-                    <button class="button is-primary"
-                        onclick="window.location.href='/animales/nuevo?user_id={{ user.id }}'">
+                    <button class="button is-primary" onclick="window.location.href='/animales/nuevo/{{ user.id }}'">
                         Agregar Animal
                     </button>
-                    <button class="button is-light" onclick="window.location.href='/views/animales'">
+                    <button class="button is-light"
+                        onclick="window.location.href='/views/animales/{{ user.id }}'">
                         Ver Todos los Animales
                     </button>
                 </div>
@@ -75,7 +75,8 @@
                         <p class="title is-5">{{ animal.nombre }}</p>
                         <p>ID: #{{ animal.id }}</p>
                         <p>Raza: {{ animal.raza }}</p>
-                        <a href="/views/animales/{{ animal.id }}" class="button is-small is-info mt-2">Ver Detalle</a>
+                        <a href="/views/animal?animal_id={{ animal.id }}" class="button is-small is-info mt-2">Ver
+                            Detalle</a>
                     </div>
                 </div>
             </div>
