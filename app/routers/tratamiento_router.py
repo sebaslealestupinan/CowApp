@@ -16,6 +16,7 @@ from app.crud.tratamiento_crud import (
 from fastapi.responses import RedirectResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
 from app.models.tratamiento import Tratamiento
+
 router = APIRouter(prefix="/tratamientos", tags=["Tratamientos"])
 templates = Jinja2Templates(directory="app/templates")
 
@@ -46,14 +47,19 @@ veterinario_id: int = Form(...)):
     create_tratamiento(tratamiento, session)
 
     return RedirectResponse(
-        url=f"/veterinario/{veterinario_id}?message={create_tratamiento}",
+        url=f"/veterinario/{veterinario_id}?message=Tratamiento creado exitosamente",
         status_code=303
+        
     )   
 
 @router.get("/read/{tratamiento_id}", response_class=HTMLResponse, name="view_tratamiento_detalle")
-async def view_tratamiento_detalle(request: Request, tratamiento_id: int):
+async def view_tratamiento_detalle(request: Request, tratamiento_id: int, session: SessionDep):
     """Vista de detalle de tratamiento"""
-    return templates.TemplateResponse("tratamientos/detalle.html", {"request": request, "tratamiento_id": tratamiento_id})
+    tratamiento = get_tratamiento(tratamiento_id, session)
+    if not tratamiento:
+        raise HTTPException(status_code=404, detail="Tratamiento no encontrado")
+    eventos = get_eventos_by_tratamiento(tratamiento_id, session)
+    return templates.TemplateResponse("tratamientos/detalle.html", {"request": request, "tratamiento": tratamiento, "eventos": eventos})
 
 
 @router.get("/all", response_class=HTMLResponse, name="view_tratamientos_lista")
@@ -82,6 +88,14 @@ async def view_tratamientos_lista(
         "tratamientos": tratamientos,
         "user": user
 })
+
+@router.get("/{tratamiento_id}/evento/nuevo", response_class=HTMLResponse)
+async def nuevo_evento_tratamiento(request: Request, tratamiento_id: int, session: SessionDep):
+    """Vista para registrar un nuevo evento en un tratamiento"""
+    tratamiento = get_tratamiento(tratamiento_id, session)
+    if not tratamiento:
+        return templates.TemplateResponse("error.html", {"request": request, "message": "Tratamiento no encontrado"})
+    return templates.TemplateResponse("tratamientos/evento.html", {"request": request, "tratamiento": tratamiento, "tratamiento_id": tratamiento_id})
 
 @router.put("/update/{tratamiento_id}", response_model=ReadTratamiento)
 def update_tratamiento_endpoint(tratamiento_id: int, tratamiento_update: UpdateTratamiento, session: SessionDep):

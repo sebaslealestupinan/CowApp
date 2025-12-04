@@ -9,6 +9,7 @@ class CreateEvento(SQLModel):
     tipo: str = Field(description="Tipo de evento")
     observaciones: str = Field(description="Observaciones del evento")
     responsable: str = Field(description="Responsable del evento")
+    imagen: Optional[str] = Field(default=None, description="URL de la imagen del evento")
 
 class UpdateEvento(SQLModel):
     tratamiento_id: Optional[int] = None
@@ -23,6 +24,7 @@ class ReadEvento(SQLModel):
     tratamiento_id: int
     fecha: datetime
     estado: str
+    imagen: Optional[str] = None
     tipo: str
     observaciones: str
     responsable: str

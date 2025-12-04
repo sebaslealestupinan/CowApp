@@ -10,9 +10,15 @@
             <div class="column is-one-third-desktop is-half-tablet">
                 <div class="card">
                     <div class="card-image">
+                        {%if tratamiento.imag%}
+                        <figure class="image is-4by3">
+                            <img src="" alt="Imagen Tratamiento">
+                        </figure>
+                        {%else%}
                         <figure class="image is-4by3">
                             <img src="https://placehold.co/600x400?text=Tratamiento" alt="Imagen Tratamiento">
                         </figure>
+                        {%endif%}
                     </div>
                     <div class="card-content">
                         <div class="media">
@@ -25,7 +31,6 @@
                         </div>
 
                         <div class="content">
-                            <!-- Logic to display Tag ID or Vet Name based on user role -->
                             {% if user and user.role == 'Veterinario' %}
                             <p><strong>Tag ID Animal:</strong> {{ tratamiento.animal.tag_id if tratamiento.animal else
                                 'N/A' }}</p>

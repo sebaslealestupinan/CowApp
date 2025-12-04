@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+
+{% block title %}Registrar Evento - Tratamiento{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="columns is-centered">
+        <div class="column is-8">
+            <div class="card">
+                <header class="card-header has-background-primary">
+                    <p class="card-header-title has-text-white">
+                        <span class="icon">
+                            <i class="fas fa-calendar-plus"></i>
+                        </span>
+                        <span>Registrar Evento de Tratamiento</span>
+                    </p>
+                </header>
+                <div class="card-content">
+                    <form id="eventoForm" action="/eventos/" method="POST" enctype="multipart/form-data">
+                        <!-- Hidden field for tratamiento_id -->
+                        <input type="hidden" name="tratamiento_id" id="tratamiento_id" value="{{ tratamiento_id }}">
+
+                        <!-- Tipo de Evento -->
+                        <div class="field">
+                            <label class="label">Tipo de Evento <span class="has-text-danger">*</span></label>
+                            <div class="control has-icons-left">
+                                <div class="select is-fullwidth">
+                                    <select name="tipo" id="tipo" required>
+                                        <option value="">Seleccione un tipo</option>
+                                        <option value="Aplicación de medicamento">Aplicación de medicamento</option>
+                                        <option value="Revisión">Revisión</option>
+                                        <option value="Vacunación">Vacunación</option>
+                                        <option value="Desparasitación">Desparasitación</option>
+                                        <option value="Cirugía">Cirugía</option>
+                                        <option value="Seguimiento">Seguimiento</option>
+                                        <option value="Otro">Otro</option>
+                                    </select>
+                                </div>
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-stethoscope"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Estado -->
+                        <div class="field">
+                            <label class="label">Estado <span class="has-text-danger">*</span></label>
+                            <div class="control has-icons-left">
+                                <div class="select is-fullwidth">
+                                    <select name="estado" id="estado" required>
+                                        <option value="">Seleccione un estado</option>
+                                        <option value="Pendiente">Pendiente</option>
+                                        <option value="Completado">Completado</option>
+                                        <option value="En Progreso">En Progreso</option>
+                                        <option value="Cancelado">Cancelado</option>
+                                    </select>
+                                </div>
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-tasks"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Fecha -->
+                        <div class="field">
+                            <label class="label">Fecha del Evento <span class="has-text-danger">*</span></label>
+                            <div class="control has-icons-left">
+                                <input class="input" type="datetime-local" name="fecha" id="fecha" required>
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-calendar"></i>
+                                </span>
+                            </div>
+                            <p class="help">Seleccione la fecha y hora del evento</p>
+                        </div>
+
+                        <!-- Responsable -->
+                        <div class="field">
+                            <label class="label">Responsable <span class="has-text-danger">*</span></label>
+                            <div class="control has-icons-left">
+                                <input class="input" type="text" name="responsable" id="responsable"
+                                    placeholder="Nombre del responsable" required>
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-user-md"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Observaciones -->
+                        <div class="field">
+                            <label class="label">Observaciones <span class="has-text-danger">*</span></label>
+                            <div class="control">
+                                <textarea class="textarea" name="observaciones" id="observaciones"
+                                    placeholder="Describa los detalles del evento, medicamentos aplicados, dosis, etc."
+                                    rows="5" required></textarea>
+                            </div>
+                            <p class="help">Incluya todos los detalles relevantes del evento</p>
+                        </div>
+                        <!-- imagen -->
+                        <div class="field">
+                            <label class="label">Imagen <span class="has-text-danger">*</span></label>
+                            <div class="control">
+                                <input class="input" type="file" name="imagen" id="imagen">
+                            </div>
+                            <p class="help">Si puedes, sube una imagen del evento</p>
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="field is-grouped is-grouped-centered mt-5">
+                            <div class="control">
+                                <button type="submit" class="button is-primary is-medium">
+                                    <span class="icon">
+                                        <i class="fas fa-save"></i>
+                                    </span>
+                                    <span>Registrar</span>
+                                </button>
+                            </div>
+                            <div class="control">
+                                <a href="/tratamientos/read/{{ tratamiento_id }}" class="button is-light is-medium">
+                                    <span class="icon">
+                                        <i class="fas fa-arrow-left"></i>
+                                    </span>
+                                    <span>Volver</span>
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Información del Tratamiento -->
+            <div class="box mt-4">
+                <h3 class="title is-5">
+                    <span class="icon-text">
+                        <span class="icon has-text-info">
+                            <i class="fas fa-info-circle"></i>
+                        </span>
+                        <span>Información del Tratamiento</span>
+                    </span>
+                </h3>
+                <div id="tratamientoInfo">
+                    <div class="content">
+                        <table class="table is-fullwidth is-striped">
+                            <tbody>
+                                <tr>
+                                    <td><strong>Nombre del Tratamiento:</strong></td>
+                                    <td>{{ tratamiento.nombre_tratamiento }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Diagnóstico:</strong></td>
+                                    <td>{{ tratamiento.diagnostico }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Medicamento:</strong></td>
+                                    <td>{{ tratamiento.medicamento or 'N/A' }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Dosis:</strong></td>
+                                    <td>{{ tratamiento.dosis or 'N/A' }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Estado:</strong></td>
+                                    <td>
+                                        <span
+                                            class="tag {{ 'is-warning' if tratamiento.estado == 'activo' else 'is-success' }}">
+                                            {{ tratamiento.estado }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Establecer fecha actual por defecto
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        document.getElementById('fecha').value = now.toISOString().slice(0, 16);
+    });
+
+    // Validación del formulario
+    document.getElementById('eventoForm').addEventListener('submit', function (e) {
+        const observaciones = document.getElementById('observaciones').value.trim();
+        if (observaciones.length < 10) {
+            e.preventDefault();
+            alert('Las observaciones deben tener al menos 10 caracteres.');
+            return false;
+        }
+    });
+</script>
+{% endblock %}

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Detalle de Tratamiento - {{ tratamiento.nombre_tratamiento }}{% endblock %}
+{% block title %}Detalle de Tratamiento{% endblock %}
 
 {% block content %}
 <div class="columns">
@@ -10,8 +10,21 @@
                 <p class="card-header-title">Información del Tratamiento</p>
             </header>
             <div class="card-content">
-                <div class="content" id="tratamientoInfo">
-                    <p>Cargando...</p>
+                <div class="content">
+                    <p><strong>Nombre:</strong> {{ tratamiento.nombre_tratamiento }}</p>
+                    <p><strong>Diagnóstico:</strong> {{ tratamiento.diagnostico }}</p>
+                    <p><strong>Medicamento:</strong> {{ tratamiento.medicamento or 'N/A' }}</p>
+                    <p><strong>Dosis:</strong> {{ tratamiento.dosis or 'N/A' }}</p>
+                    <p><strong>Fecha Inicio:</strong> {{ tratamiento.fecha_inicio }}</p>
+                    <p><strong>Fecha Fin:</strong> {{ tratamiento.fecha_fin }}</p>
+                    <p><strong>Estado:</strong>
+                        <span class="tag {{ 'is-warning' if tratamiento.estado == 'activo' else 'is-success' }}">
+                            {{ tratamiento.estado }}
+                        </span>
+                    </p>
+                    <p><strong>Veterinario ID:</strong> {{ tratamiento.veterinario_id }}</p>
+                    <p><strong>Animal ID:</strong> <a href="/views/animales/{{ tratamiento.animal_id }}">{{
+                            tratamiento.animal_id }}</a></p>
                 </div>
             </div>
         </div>
@@ -20,78 +33,35 @@
     <div class="column is-half">
         <div class="box">
             <h2 class="title is-4">Eventos / Seguimiento</h2>
-            <button class="button is-small is-info mb-3">Registrar Evento</button>
+            <a href="/tratamientos/{{ tratamiento.id }}/evento/nuevo" class="button is-small is-info mb-3">
+                <span class="icon">
+                    <i class="fas fa-plus"></i>
+                </span>
+                <span>Registrar Evento</span>
+            </a>
             <div id="eventosList">
-                <p>Cargando eventos...</p>
+                {% if eventos %}
+                <div class="timeline">
+                    {% for evento in eventos %}
+                    <a href="eventos/detalle/{{ evento.id }}">
+                        <div class="box mb-2">
+                            <p><strong>{{ evento.fecha }}</strong> - {{ evento.tipo }}</p>
+                            <p>{{ evento.observaciones }}</p>
+                            {% if evento.image %}
+                            <figure class="image is-128x128 mt-2">
+                                <img src="{{ evento.image }}" alt="Imagen del evento">
+                            </figure>
+                            {% endif %}
+                            <p class="is-size-7 has-text-grey">Responsable: {{ evento.responsable }}</p>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p>No hay eventos registrados.</p>
+                {% endif %}
             </div>
         </div>
     </div>
 </div>
-
-<input type="hidden" id="tratamientoId" value="{{ tratamiento_id }}">
-
-{% endblock %}
-
-{% block scripts %}
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const tratamientoId = document.getElementById('tratamientoId').value;
-        loadTratamientoDetails(tratamientoId);
-        loadEventos(tratamientoId);
-    });
-
-    async function loadTratamientoDetails(id) {
-        try {
-            const response = await fetch(`/tratamientos/${id}`);
-            if (!response.ok) throw new Error('Tratamiento no encontrado');
-            const t = await response.json();
-
-            const infoDiv = document.getElementById('tratamientoInfo');
-            infoDiv.innerHTML = `
-                <p><strong>Nombre:</strong> ${tratamiento.nombre_tratamiento}</p>
-                <p><strong>Diagnóstico:</strong> ${tratamiento.diagnostico}</p>
-                <p><strong>Medicamento:</strong> ${tratamiento.medicamento}</p>
-                <p><strong>Dosis:</strong> ${tratamiento.dosis}</p>
-                <p><strong>Fecha Inicio:</strong> ${tratamiento.fecha_inicio}</p>
-                <p><strong>Fecha Fin:</strong> ${tratamiento.fecha_fin}</p>
-                <p><strong>Estado:</strong> <span class="tag ${tratamiento.estado === 'Activo' ? 'is-warning' : 'is-success'}">${t.estado}</span></p>
-                <p><strong>Veterinario ID:</strong> ${tratamiento.veterinario_id}</p>
-                <p><strong>Animal ID:</strong> <a href="/views/animales/${tratamiento.animal_id}">${tratamient.animal_id}</a></p>
-            `;
-        } catch (e) {
-            document.getElementById('tratamientoInfo').innerHTML = '<p class="has-text-danger">Error al cargar información.</p>';
-            console.error(e);
-        }
-    }
-
-    async function loadEventos(tratamientoId) {
-        try {
-            const response = await fetch(`/eventos/tratamiento/${tratamientoId}`);
-            const eventos = await response.json();
-
-            const listDiv = document.getElementById('eventosList');
-            if (eventos.length === 0) {
-                listDiv.innerHTML = '<p>No hay eventos registrados.</p>';
-                return;
-            }
-
-            let html = '<div class="timeline">';
-            eventos.forEach(e => {
-                html += `
-                    <div class="box mb-2">
-                        <p><strong>${e.fecha}</strong> - ${e.tipo}</p>
-                        <p>${e.observaciones}</p>
-                        <p class="is-size-7 has-text-grey">Responsable: ${e.responsable}</p>
-                    </div>
-                `;
-            });
-            html += '</div>';
-            listDiv.innerHTML = html;
-
-        } catch (e) {
-            document.getElementById('eventosList').innerHTML = '<p>Error al cargar eventos.</p>';
-            console.error(e);
-        }
-    }
-</script>
 {% endblock %}

@@ -4,7 +4,7 @@ from typing import List, Optional
 from app.models.evento import Evento
 from app.schemas.evento_schemas import CreateEvento, UpdateEvento
 
-def create_evento(data: CreateEvento, session: Session) -> Evento:
+def create_evento(data, session: Session) -> Evento:
     """
     Crea un nuevo evento.
     """
