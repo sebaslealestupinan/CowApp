@@ -1,8 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request, HTMLResponse
 from fastapi.templating import Jinja2Templates
 from typing import List
-from fastapi.responses import HTMLResponse
-from fastapi import Request
+from fastapi.responses import RedirectResponse, response_class
 from sqlmodel import select
 
 from app.db import SessionDep
@@ -66,3 +65,15 @@ def delete_animal_endpoint(animal_id: int, session: SessionDep):
     if not success:
         raise HTTPException(status_code=404, detail="Animal no encontrado")
     return None
+
+@router.get("/vista/animal/{animal_id}", response_class=HTMLResponse)
+def detalle_animal(request: Request, animal_id: int, session: SessionDep):
+    data = get_animal_with_tratamientos(animal_id, session)
+    return templates.TemplateResponse(
+        "animales/detalles_animal.html",
+        {
+            "request": request,
+            "animal": data["animal"],
+            "tratamientos": data["tratamientos"]
+        }
+    )

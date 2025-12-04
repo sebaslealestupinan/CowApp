@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle de Animal - Cow App{% endblock %}
+
+{% block content %}
+
+<section class="section">
+    <div class="container">
+
+        <div class="columns">
+            <!-- Card del animal -->
+            <div class="column is-one-third">
+                <div class="card cow-card">
+
+                    <header class="card-header cow-card-header">
+                        <p class="card-header-title">
+                            Información del Animal
+                        </p>
+                    </header>
+
+                    {% if animal.imagen %}
+                    <div class="card-image">
+                        <figure class="image is-4by3">
+                            <img src="{{ animal.imagen }}" alt="Imagen del animal">
+                        </figure>
+                    </div>
+                    {% endif %}
+
+                    <div class="card-content">
+                        <div class="content">
+                            <p><strong>Tag ID:</strong> {{ animal.tag_id }}</p>
+                            <p><strong>Nombre:</strong> {{ animal.nombre or '-' }}</p>
+                            <p><strong>Especie:</strong> {{ animal.especie }}</p>
+                            <p><strong>Raza:</strong> {{ animal.raza or '-' }}</p>
+                            <p><strong>Sexo:</strong> {{ animal.sexo }}</p>
+
+                            {% if animal.fecha_nacimiento %}
+                            <p><strong>Fecha de Nacimiento:</strong>
+                                {{ animal.fecha_nacimiento.strftime("%d/%m/%Y") }}
+                            </p>
+                            {% endif %}
+
+                            <p><strong>Propietario ID:</strong> {{ animal.propietario_id }}</p>
+
+                            <p>
+                                <strong>Estado:</strong>
+                                <span class="tag {{ 'is-success' if animal.activo else 'is-danger' }}">
+                                    {{ "Activo" if animal.activo else "Inactivo" }}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <footer class="card-footer">
+                        <a href="#" class="card-footer-item has-text-info">Editar</a>
+                        <a href="/tratamientos/delete/{{ animal.id }}" class="card-footer-item has-text-danger">
+                            Eliminar
+                        </a>
+                    </footer>
+
+                </div>
+            </div>
+
+            <!-- Lista de tratamientos -->
+            <div class="column">
+                <div class="box cow-box">
+
+                    <div class="level">
+                        <div class="level-left">
+                            <h2 class="title is-4">Historial de Tratamientos</h2>
+                        </div>
+                        <div class="level-right">
+                            <a href="/views/tratamientos/{{ animal.id }}" class="button is-primary">
+                                Ver Todos
+                            </a>
+                        </div>
+                    </div>
+
+                    {% if tratamientos %}
+                    <table class="table is-fullwidth is-striped cow-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha Inicio</th>
+                                <th>Tratamiento</th>
+                                <th>Diagnóstico</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for t in tratamientos %}
+                            <tr>
+                                <td>{{ t.fecha_inicio.strftime("%d/%m/%Y") }}</td>
+                                <td>{{ t.nombre_tratamiento }}</td>
+                                <td>{{ t.diagnostico }}</td>
+                                <td>
+                                    <span class="tag
+                                        {% if t.estado == 'activo' %}
+                                        is-warning
+                                        {% else %}
+                                        is-success
+                                        {% endif %}">
+                                        {{ t.estado }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="/views/tratamientos/{{ t.id }}" class="button is-small is-light">
+                                        Ver Detalle
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <p class="has-text-grey">No hay tratamientos registrados.</p>
+                    {% endif %}
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}

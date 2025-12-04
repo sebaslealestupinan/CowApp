@@ -7,7 +7,8 @@ from app.models.usuario import Usuario
 from app.models.tratamiento import Tratamiento
 from app.models.mensaje import Mensaje
 from app.models.animal import Animal
-
+from app.db import SessionDep
+from app.crud.tratamiento_crud import get_tratamientos_by_animal
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
 
@@ -100,3 +101,15 @@ async def view_animales(request: Request, ganadero_id: int, session: Session = D
         "animales": animales,
         "user": ganadero
     })
+
+@router.get("/views/tratamientos/{animal_id}", response_class=HTMLResponse, name="view_tratamientos_animal")
+async def view_tratamientos_animal(request: Request, animal_id: int, session: SessionDep):
+    tratamientos = get_tratamientos_by_animal(animal_id, session)
+    return templates.TemplateResponse(
+        "animales/detalle.html",
+        {
+            "request": request,
+            "tratamientosList": tratamientos,
+            "animal_id": animal_id
+        }
+    )
