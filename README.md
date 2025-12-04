@@ -2,6 +2,9 @@
 
 **Cow App** es una aplicación web moderna diseñada para facilitar la gestión y comunicación entre ganaderos y veterinarios. Permite llevar un registro detallado de animales, tratamientos médicos y ofrece un canal de comunicación en tiempo real.
 
+## 🌐 Acceso a la Aplicación
+Puedes acceder a la versión desplegada de la aplicación aquí: [Cow App](https://cowapp-yafm.onrender.com/)
+
 ## 🚀 Características Principales
 
 ### 👨‍🌾 Para Ganaderos
