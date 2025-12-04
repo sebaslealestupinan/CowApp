@@ -3,10 +3,11 @@
 {% block title %}Registrar Evento - Tratamiento{% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container mt-4">
     <div class="columns is-centered">
-        <div class="column is-8">
-            <div class="card">
+        <div class="column is-10-mobile is-8-tablet is-8-desktop">
+
+            <div class="card is-shadowless" style="border: 1px solid #dbdbdb;">
                 <header class="card-header has-background-primary">
                     <p class="card-header-title has-text-white">
                         <span class="icon">
@@ -15,68 +16,75 @@
                         <span>Registrar Evento de Tratamiento</span>
                     </p>
                 </header>
+
                 <div class="card-content">
                     <form id="eventoForm" action="/eventos/" method="POST" enctype="multipart/form-data">
                         <input type="hidden" name="tratamiento_id" id="tratamiento_id" value="{{ tratamiento_id }}">
 
-                        <div class="field">
-                            <label class="label">Tipo de Evento <span class="has-text-danger">*</span></label>
-                            <div class="control has-icons-left">
-                                <div class="select is-fullwidth">
-                                    <select name="tipo" id="tipo" required>
-                                        <option value="">Seleccione un tipo</option>
-                                        <option value="Aplicación de medicamento">Aplicación de medicamento</option>
-                                        <option value="Revisión">Revisión</option>
-                                        <option value="Vacunación">Vacunación</option>
-                                        <option value="Desparasitación">Desparasitación</option>
-                                        <option value="Cirugía">Cirugía</option>
-                                        <option value="Seguimiento">Seguimiento</option>
-                                        <option value="Otro">Otro</option>
-                                    </select>
+                        <div class="columns is-multiline">
+                            <div class="column is-full-mobile is-half-tablet">
+                                <div class="field">
+                                    <label class="label">Tipo de Evento <span class="has-text-danger">*</span></label>
+                                    <div class="control has-icons-left">
+                                        <div class="select is-fullwidth is-medium">
+                                            <select name="tipo" id="tipo" required>
+                                                <option value="">Seleccione un tipo</option>
+                                                <option value="Aplicación de medicamento">Aplicación de medicamento
+                                                </option>
+                                                <option value="Revisión">Revisión</option>
+                                                <option value="Vacunación">Vacunación</option>
+                                                <option value="Desparasitación">Desparasitación</option>
+                                                <option value="Cirugía">Cirugía</option>
+                                                <option value="Seguimiento">Seguimiento</option>
+                                                <option value="Otro">Otro</option>
+                                            </select>
+                                        </div>
+                                        <span class="icon is-small is-left"><i class="fas fa-stethoscope"></i></span>
+                                    </div>
                                 </div>
-                                <span class="icon is-small is-left">
-                                    <i class="fas fa-stethoscope"></i>
-                                </span>
                             </div>
-                        </div>
 
-                        <div class="field">
-                            <label class="label">Estado <span class="has-text-danger">*</span></label>
-                            <div class="control has-icons-left">
-                                <div class="select is-fullwidth">
-                                    <select name="estado" id="estado" required>
-                                        <option value="">Seleccione un estado</option>
-                                        <option value="Pendiente">Pendiente</option>
-                                        <option value="Completado">Completado</option>
-                                        <option value="En Progreso">En Progreso</option>
-                                        <option value="Cancelado">Cancelado</option>
-                                    </select>
+                            <div class="column is-full-mobile is-half-tablet">
+                                <div class="field">
+                                    <label class="label">Estado <span class="has-text-danger">*</span></label>
+                                    <div class="control has-icons-left">
+                                        <div class="select is-fullwidth is-medium">
+                                            <select name="estado" id="estado" required>
+                                                <option value="">Seleccione un estado</option>
+                                                <option value="Pendiente">Pendiente</option>
+                                                <option value="Completado">Completado</option>
+                                                <option value="En Progreso">En Progreso</option>
+                                                <option value="Cancelado">Cancelado</option>
+                                            </select>
+                                        </div>
+                                        <span class="icon is-small is-left"><i class="fas fa-tasks"></i></span>
+                                    </div>
                                 </div>
-                                <span class="icon is-small is-left">
-                                    <i class="fas fa-tasks"></i>
-                                </span>
                             </div>
                         </div>
 
-                        <div class="field">
-                            <label class="label">Fecha del Evento <span class="has-text-danger">*</span></label>
-                            <div class="control has-icons-left">
-                                <input class="input" type="datetime-local" name="fecha" id="fecha" required>
-                                <span class="icon is-small is-left">
-                                    <i class="fas fa-calendar"></i>
-                                </span>
+                        <div class="columns is-multiline">
+                            <div class="column is-full-mobile is-half-tablet">
+                                <div class="field">
+                                    <label class="label">Fecha del Evento <span class="has-text-danger">*</span></label>
+                                    <div class="control has-icons-left">
+                                        <input class="input is-medium" type="datetime-local" name="fecha" id="fecha"
+                                            required>
+                                        <span class="icon is-small is-left"><i class="fas fa-calendar"></i></span>
+                                    </div>
+                                    <p class="help">Seleccione la fecha y hora del evento</p>
+                                </div>
                             </div>
-                            <p class="help">Seleccione la fecha y hora del evento</p>
-                        </div>
 
-                        <div class="field">
-                            <label class="label">Responsable <span class="has-text-danger">*</span></label>
-                            <div class="control has-icons-left">
-                                <input class="input" type="text" name="responsable" id="responsable"
-                                    placeholder="Nombre del responsable" required>
-                                <span class="icon is-small is-left">
-                                    <i class="fas fa-user-md"></i>
-                                </span>
+                            <div class="column is-full-mobile is-half-tablet">
+                                <div class="field">
+                                    <label class="label">Responsable <span class="has-text-danger">*</span></label>
+                                    <div class="control has-icons-left">
+                                        <input class="input is-medium" type="text" name="responsable" id="responsable"
+                                            placeholder="Nombre del responsable" required>
+                                        <span class="icon is-small is-left"><i class="fas fa-user-md"></i></span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -84,7 +92,7 @@
                             <label class="label">Observaciones <span class="has-text-danger">*</span></label>
                             <div class="control">
                                 <textarea class="textarea" name="observaciones" id="observaciones"
-                                    placeholder="Describa los detalles del evento, medicamentos aplicados, dosis, etc."
+                                    placeholder="Describa los detalles del evento, medicamentos aplicados, dosis, etc. Debe tener al menos 10 caracteres."
                                     rows="5" required></textarea>
                             </div>
                             <p class="help">Incluya todos los detalles relevantes del evento</p>
@@ -93,10 +101,10 @@
                         <div class="field">
                             <label class="label">Imagen (Opcional)</label>
                             <div class="control">
-                                <div class="file has-name is-fullwidth">
+                                <div class="file has-name is-fullwidth is-medium">
                                     <label class="file-label">
                                         <input class="file-input" type="file" name="image" id="image">
-                                        <span class="file-cta">
+                                        <span class="file-cta is-primary">
                                             <span class="file-icon">
                                                 <i class="fas fa-upload"></i>
                                             </span>
@@ -113,20 +121,17 @@
                             <p class="help">Sube una imagen o evidencia del evento (máx. 5MB)</p>
                         </div>
 
-                        <div class="field is-grouped is-grouped-centered mt-5">
+                        <div class="field is-grouped is-grouped-centered mt-6">
                             <div class="control">
-                                <button type="submit" class="button is-primary is-medium">
-                                    <span class="icon">
-                                        <i class="fas fa-save"></i>
-                                    </span>
-                                    <span>Registrar</span>
+                                <button type="submit" class="button is-primary is-medium is-rounded">
+                                    <span class="icon"><i class="fas fa-save"></i></span>
+                                    <span>Registrar Evento</span>
                                 </button>
                             </div>
                             <div class="control">
-                                <a href="/tratamientos/read/{{ tratamiento_id }}" class="button is-light is-medium">
-                                    <span class="icon">
-                                        <i class="fas fa-arrow-left"></i>
-                                    </span>
+                                <a href="/tratamientos/read/{{ tratamiento_id }}"
+                                    class="button is-light is-medium is-rounded">
+                                    <span class="icon"><i class="fas fa-arrow-left"></i></span>
                                     <span>Volver</span>
                                 </a>
                             </div>
@@ -137,47 +142,46 @@
 
             ---
 
-            <div class="box mt-4">
-                <h3 class="title is-5">
+            <div class="box mt-5 has-background-white-ter">
+                <h3 class="title is-5 has-text-primary">
                     <span class="icon-text">
-                        <span class="icon has-text-info">
+                        <span class="icon has-text-primary">
                             <i class="fas fa-info-circle"></i>
                         </span>
-                        <span>Información del Tratamiento</span>
+                        <span>Detalles del Tratamiento Actual</span>
                     </span>
                 </h3>
-                <div id="tratamientoInfo">
-                    <div class="content">
-                        <table class="table is-fullwidth is-striped">
-                            <tbody>
-                                <tr>
-                                    <td><strong>Nombre del Tratamiento:</strong></td>
-                                    <td>{{ tratamiento.nombre_tratamiento }}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Diagnóstico:</strong></td>
-                                    <td>{{ tratamiento.diagnostico }}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Medicamento:</strong></td>
-                                    <td>{{ tratamiento.medicamento or 'N/A' }}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Dosis:</strong></td>
-                                    <td>{{ tratamiento.dosis or 'N/A' }}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Estado:</strong></td>
-                                    <td>
-                                        <span
-                                            class="tag {{ 'is-warning' if tratamiento.estado == 'activo' else 'is-success' }}">
-                                            {{ tratamiento.estado }}
-                                        </span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="content">
+                    <table class="table is-fullwidth is-striped is-hoverable is-bordered">
+                        <tbody>
+                            <tr>
+                                <td class="has-text-weight-bold is-narrow">Nombre del Tratamiento:</td>
+                                <td>{{ tratamiento.nombre_tratamiento }}</td>
+                            </tr>
+                            <tr>
+                                <td class="has-text-weight-bold is-narrow">Diagnóstico:</td>
+                                <td>{{ tratamiento.diagnostico }}</td>
+                            </tr>
+                            <tr>
+                                <td class="has-text-weight-bold is-narrow">Medicamento:</td>
+                                <td>{{ tratamiento.medicamento or 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="has-text-weight-bold is-narrow">Dosis:</td>
+                                <td>{{ tratamiento.dosis or 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="has-text-weight-bold is-narrow">Estado:</td>
+                                <td>
+                                    <span
+                                        class="tag is-medium 
+                                        {% if tratamiento.estado == 'activo' %}is-warning{% elif tratamiento.estado == 'completado' %}is-success{% else %}is-info{% endif %}">
+                                        {{ tratamiento.estado | capitalize }}
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -200,6 +204,8 @@
                 if (fileInput.files.length > 0) {
                     const fileName = document.getElementById('fileName');
                     fileName.textContent = fileInput.files[0].name;
+                } else {
+                    document.getElementById('fileName').textContent = 'Ningún archivo subido';
                 }
             };
         }

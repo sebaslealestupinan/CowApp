@@ -1,4 +1,4 @@
-/* static/css/ganadero.css
+/* static/css/dashboard.css
    Version revisada: arreglos tipográficos para Estadísticas principales
    Mantiene paleta tierra / compatibilidad con Bulma.
 */
@@ -17,9 +17,7 @@
     --warning: #ff9800;
     --danger: #d9534f;
     --stats-title-size: 1.05rem;
-    /* tamaño base del título en cajas */
     --stats-value-size: 1.6rem;
-    /* tamaño del número/valor */
     --stats-line-height: 1.1;
 }
 
@@ -36,6 +34,87 @@ body {
     -moz-osx-font-smoothing: grayscale;
     margin: 0;
     padding: 0;
+}
+
+/* ========== NAVBAR STYLES ========== */
+.custom-navbar {
+    background: linear-gradient(135deg, var(--earth-primary) 0%, var(--earth-acc) 100%);
+    box-shadow: 0 4px 12px rgba(88, 64, 31, 0.15);
+    padding: 0.5rem 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.navbar-user-profile {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+}
+
+.navbar-user-profile .image {
+    flex-shrink: 0;
+}
+
+.navbar-user-profile .image img {
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    object-fit: cover;
+    width: 48px;
+    height: 48px;
+}
+
+.navbar-user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
+.navbar-user-name {
+    color: var(--white);
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.navbar-user-role {
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 0.75rem;
+    margin: 0;
+    line-height: 1.2;
+    text-transform: capitalize;
+}
+
+.custom-navbar .navbar-burger {
+    color: var(--white);
+    height: auto;
+    width: auto;
+}
+
+.custom-navbar .navbar-burger:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.custom-navbar .navbar-menu {
+    background-color: transparent;
+}
+
+.custom-navbar .navbar-item {
+    color: var(--white);
+    font-weight: 600;
+    transition: all 0.2s ease;
+    border-radius: 8px;
+    margin: 0 0.25rem;
+}
+
+.custom-navbar .navbar-item:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: var(--white);
+}
+
+.custom-navbar .navbar-item .icon {
+    margin-right: 0.35rem;
 }
 
 /* Container */
@@ -62,9 +141,7 @@ body {
     letter-spacing: -0.2px;
 }
 
-/* Boxes: estadísticas principales -------------------------
-   Aquí corregimos tipografía: títulos, subtítulos y valor grande.
------------------------------------------------------------*/
+/* Boxes: estadísticas principales */
 .box {
     background: linear-gradient(180deg, #ffffff, #fffdf9);
     border-radius: 10px;
@@ -73,9 +150,7 @@ body {
     padding: 1rem;
 }
 
-/* Selector específico para evitar conflicto con Bulma .title / .subtitle */
 .box .title.is-5 {
-    /* Título de la tarjeta (ej. "Animales Muertos") */
     font-size: var(--stats-title-size);
     font-weight: 800;
     color: var(--earth-primary);
@@ -85,7 +160,6 @@ body {
     text-rendering: optimizeLegibility;
 }
 
-/* Subtitulo que contiene los números (ej. "Total: 10") */
 .box .subtitle {
     display: block;
     font-size: 0.95rem;
@@ -97,7 +171,6 @@ body {
     text-overflow: ellipsis;
 }
 
-/* Valor destacado — estilo especial para números grandes */
 .box .subtitle.value {
     font-size: var(--stats-value-size);
     font-weight: 900;
@@ -107,9 +180,6 @@ body {
     line-height: var(--stats-line-height);
 }
 
-/* Si usas <p class="subtitle">Total: {{ muertos_count }}</p>
-   y quieres el número en grande, usa <p class="subtitle value">10</p>
-   o deja el CSS para seleccionar así: */
 .box .subtitle strong {
     font-size: var(--stats-value-size);
     font-weight: 900;
@@ -119,7 +189,6 @@ body {
     line-height: var(--stats-line-height);
 }
 
-/* Lista dentro de las cajas: legible y compacta */
 .box ul {
     margin: 0.4rem 0 0 1rem;
     padding: 0;
@@ -132,12 +201,11 @@ body {
     margin-bottom: 0.35rem;
 }
 
-/* Botones dentro de box — no interferir con tamaño */
 .box .button {
     border-radius: 8px;
 }
 
-/* Cards de animales -------------------------------------- */
+/* Cards de animales */
 .columns.is-multiline {
     gap: 1.25rem;
 }
@@ -241,7 +309,7 @@ body {
     transform: translateY(-3px);
 }
 
-/* Modal / chat styles (conservador) */
+/* Modal / chat styles */
 .modal-card {
     border-radius: 12px;
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
@@ -324,8 +392,33 @@ body {
     color: var(--text-muted);
 }
 
-/* Responsive tweaks */
-@media (max-width: 1023px) {
+/* ========== RESPONSIVE STYLES ========== */
+
+/* Mobile navbar adjustments */
+@media screen and (max-width: 1023px) {
+    .custom-navbar {
+        padding: 0.5rem 1rem;
+    }
+
+    .navbar-user-info {
+        display: none;
+    }
+
+    .custom-navbar .navbar-menu {
+        background: linear-gradient(135deg, var(--earth-primary) 0%, var(--earth-acc) 100%);
+        box-shadow: none;
+        padding-top: 0.5rem;
+    }
+
+    .custom-navbar .navbar-item {
+        color: var(--white);
+        padding: 0.75rem 1rem;
+    }
+
+    .custom-navbar .navbar-item:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
     .inbox-container {
         padding: 1.25rem;
     }
@@ -341,6 +434,13 @@ body {
 
     .inbox-header h1 {
         font-size: 1.4rem;
+    }
+}
+
+/* Tablet and up - show user info */
+@media screen and (min-width: 769px) {
+    .navbar-user-profile {
+        padding: 0.25rem 0;
     }
 }
 
