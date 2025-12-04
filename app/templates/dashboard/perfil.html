@@ -1,123 +1,164 @@
 {% include "dashboard/header.html" %}
 
-<section class="section">
+<section class="section is-medium has-background-white-ter" style="background-color: #f7f3ed;">
     <div class="container">
         <div class="columns is-centered">
-            <div class="column is-half">
-                <div class="box">
-                    <h1 class="title has-text-centered">Perfil de Usuario</h1>
+            <div class="column is-10-mobile is-8-tablet is-5-desktop">
+
+                <div class="card p-4 has-background-white has-shadow-medium"
+                    style="border-radius: 14px; border: 2px solid #a87e5b;">
+
+                    <h1 class="title is-4 has-text-centered mb-5" style="font-weight: 700; color: #38761d;">
+                        <span class="icon is-medium"><i class="fas fa-seedling"></i></span>
+                        Perfil de Usuario
+                    </h1>
 
                     <div class="has-text-centered mb-5">
-                        <figure class="image is-128x128 is-inline-block">
+                        <figure class="image is-128x128 is-inline-block p-1"
+                            style="border-radius: 50%; box-shadow: 0 0 0 6px #8c735c; background-color: #38761d;">
                             <img class="is-rounded"
                                 src="{{ user.imag or 'https://bulma.io/images/placeholders/128x128.png' }}"
-                                alt="Imagen de perfil">
+                                alt="Imagen de perfil" style="object-fit: cover;">
                         </figure>
+                        <p class="is-size-6 mt-2 has-text-grey-darker">{{ user.name }}</p>
                     </div>
 
                     <form id="formPerfil">
+
                         <div class="field">
-                            <label class="label">Nombre Completo</label>
+                            <label class="label has-text-grey-dark">Nombre Completo</label>
                             <div class="control has-icons-left">
-                                <input class="input" type="text" name="name" value="{{ user.name }}" required
-                                    minlength="2">
-                                <span class="icon is-small is-left">
-                                    <i class="fas fa-user"></i>
-                                </span>
+                                <input class="input is-medium is-rounded" type="text" name="name"
+                                    value="{{ user.name }}" required minlength="2" style="border-color: #d8c29b;">
+                                <span class="icon is-left is-medium" style="color: #8c735c;"><i
+                                        class="fas fa-user"></i></span>
                             </div>
                         </div>
 
                         <div class="field">
-                            <label class="label">Correo Electrónico</label>
+                            <label class="label has-text-grey-dark">Correo Electrónico</label>
                             <div class="control has-icons-left">
-                                <input class="input" type="email" name="email" value="{{ user.email }}" required>
-                                <span class="icon is-small is-left">
-                                    <i class="fas fa-envelope"></i>
-                                </span>
+                                <input class="input is-medium is-rounded" type="email" name="email"
+                                    value="{{ user.email }}" required style="border-color: #d8c29b;">
+                                <span class="icon is-left is-medium" style="color: #8c735c;"><i
+                                        class="fas fa-envelope"></i></span>
                             </div>
                         </div>
 
                         <div class="field">
-                            <label class="label">Teléfono</label>
+                            <label class="label has-text-grey-dark">Teléfono</label>
                             <div class="control has-icons-left">
-                                <input class="input" type="tel" name="telefonos" value="{{ user.telefonos or '' }}"
-                                    placeholder="Ingrese su teléfono">
-                                <span class="icon is-small is-left">
-                                    <i class="fas fa-phone"></i>
-                                </span>
+                                <input class="input is-medium is-rounded" type="tel" name="telefonos"
+                                    value="{{ user.telefonos or '' }}" placeholder="Ingrese su teléfono"
+                                    style="border-color: #d8c29b;">
+                                <span class="icon is-left is-medium" style="color: #8c735c;"><i
+                                        class="fas fa-phone"></i></span>
                             </div>
                         </div>
 
                         <div class="field">
-                            <label class="label-has-text-centered">Cambia tu foto de perfil</label>
-                            <div class="control has-icons-left">
-                                <div class="control">
-                                    <input class="input" type="file" name="image">
+                            <label class="label has-text-grey-dark">Cambiar foto de perfil</label>
+                            <div class="control">
+                                <div class="file has-name is-fullwidth is-medium">
+                                    <label class="file-label">
+                                        <input class="file-input" type="file" name="image" id="profile-image">
+                                        <span class="file-cta is-success">
+                                            <span class="file-icon"><i class="fas fa-cloud-upload-alt"></i></span>
+                                            <span class="file-label">Seleccionar imagen…</span>
+                                        </span>
+                                        <span class="file-name" id="profile-file-name"
+                                            style="border-color: #d8c29b;">Ningún archivo subido</span>
+                                    </label>
                                 </div>
                             </div>
                         </div>
 
                         <div class="field">
-                            <label class="label">Nueva Contraseña (Opcional)</label>
+                            <label class="label has-text-grey-dark">Nueva Contraseña (Opcional)</label>
                             <div class="control has-icons-left">
-                                <input class="input" type="password" name="password"
-                                    placeholder="Dejar en blanco para mantener la actual">
-                                <span class="icon is-small is-left">
-                                    <i class="fas fa-lock"></i>
-                                </span>
+                                <input class="input is-medium is-rounded" type="password" name="password"
+                                    placeholder="Dejar en blanco para mantener la actual"
+                                    style="border-color: #d8c29b;">
+                                <span class="icon is-left is-medium" style="color: #8c735c;"><i
+                                        class="fas fa-lock"></i></span>
                             </div>
                         </div>
 
                         <input type="hidden" id="userId" value="{{ user.id }}">
 
-                        <div class="field is-grouped is-grouped-centered mt-5">
-                            <div class="control">
-                                <button type="submit" class="button is-primary">Actualizar Perfil</button>
+                        <div class="field is-grouped is-grouped-multiline is-grouped-centered mt-6">
+                            <div class="control is-expanded"> <button type="submit"
+                                    class="button is-success is-medium is-rounded is-fullwidth">
+                                    <span class="icon"><i class="fas fa-save"></i></span>
+                                    <span>Actualizar Perfil</span>
+                                </button>
                             </div>
                             <div class="control">
-                                <button type="button" class="button is-light" onclick="history.back()">Cancelar</button>
+                                <button type="button" class="button is-light is-medium is-rounded is-fullwidth-mobile"
+                                    onclick="history.back()">
+                                    <span class="icon"><i class="fas fa-arrow-left"></i></span>
+                                    <span>Volver</span>
+                                </button>
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
+    </div>
+</section>
 
-        {% include "dashboard/footer.html" %}
+{% include "dashboard/footer.html" %}
 
-        <script>
-            document.getElementById('formPerfil').addEventListener('submit', async (e) => {
-                e.preventDefault();
-
-                const userId = document.getElementById('userId').value;
-                const form = e.target;
-                const formData = new FormData(form);
-
-                // Remove empty fields to avoid sending "null" strings or empty files
-                for (const [key, value] of formData.entries()) {
-                    if (value instanceof File && value.size === 0) {
-                        formData.delete(key);
-                    } else if (typeof value === 'string' && value.trim() === '') {
-                        formData.delete(key);
-                    }
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Lógica para mostrar el nombre del archivo subido (File Input de Bulma)
+        const fileInput = document.getElementById('profile-image');
+        if (fileInput) {
+            fileInput.onchange = () => {
+                const fileNameSpan = document.getElementById('profile-file-name');
+                if (fileInput.files.length > 0) {
+                    fileNameSpan.textContent = fileInput.files[0].name;
+                } else {
+                    fileNameSpan.textContent = 'Ningún archivo subido';
                 }
+            };
+        }
 
-                try {
-                    const response = await fetch(`/users/${userId}`, {
-                        method: 'PUT',
-                        body: formData
-                    });
+        // Lógica de envío del formulario (NO MODIFICADA)
+        document.getElementById('formPerfil').addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-                    if (response.ok) {
-                        alert('Perfil actualizado exitosamente');
-                        location.reload();
-                    } else {
-                        const error = await response.json();
-                        alert('Error: ' + (error.detail || 'Error al actualizar perfil'));
-                    }
-                } catch (e) {
-                    console.error(e);
-                    alert('Error de conexión');
+            const userId = document.getElementById('userId').value;
+            const form = e.target;
+            const formData = new FormData(form);
+
+            // Remove empty fields to avoid sending "null" strings or empty files
+            for (const [key, value] of formData.entries()) {
+                if (value instanceof File && value.size === 0) {
+                    formData.delete(key);
+                } else if (typeof value === 'string' && value.trim() === '') {
+                    formData.delete(key);
                 }
-            });
-        </script>
+            }
+
+            try {
+                const response = await fetch(`/users/${userId}`, {
+                    method: 'PUT',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    alert('Perfil actualizado exitosamente');
+                    location.reload();
+                } else {
+                    const error = await response.json();
+                    alert('Error: ' + (error.detail || 'Error al actualizar perfil'));
+                }
+            } catch (e) {
+                console.error(e);
+                alert('Error de conexión');
+            }
+        });
+    });
+</script>

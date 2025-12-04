@@ -3,78 +3,241 @@
 
 {%block head%}
 <link rel="stylesheet" href="/static/css/dashboard.css">
+<style>
+    /* 1. Fondo con profundidad: Elimina la sensación de vacío en escritorio */
+    body {
+        background: linear-gradient(135deg, #f9f7f4 0%, #f0ead6 100%);
+        min-height: 100vh;
+        color: #4a4a4a;
+    }
+
+    /* 2. Tarjetas (Boxes y Cards): Efecto físico y táctil */
+    .box,
+    .card,
+    .treatment-card {
+        background-color: #ffffff !important;
+        border: 1px solid rgba(140, 115, 92, 0.15);
+        /* Borde tierra sutil */
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        /* Sombra suave */
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    /* Micro-interacción: "Lift" al pasar el mouse */
+    .box:hover,
+    .card:hover,
+    .treatment-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+        border-color: rgba(140, 115, 92, 0.4);
+    }
+
+    /* 3. Tipografía y Encabezados */
+    .main-title {
+        color: #38761d;
+        /* Verde Corporativo/Campo */
+        font-weight: 800;
+        letter-spacing: -0.5px;
+    }
+
+    /* 4. Paleta de Colores Psicológica (Estados) */
+    /* Muertes: Terracota (Serio, Tierra) */
+    .text-dead {
+        color: #c05d4b !important;
+    }
+
+    .bg-dead-light {
+        background-color: #fcf1f0;
+    }
+
+    /* Nacimientos: Verde Bosque (Prosperidad) */
+    .text-birth {
+        color: #38761d !important;
+    }
+
+    .bg-birth-light {
+        background-color: #eef6ee;
+    }
+
+    /* Activos: Azul Profundo (Confianza/Tech) */
+    .text-active {
+        color: #205c8b !important;
+    }
+
+    .bg-active-light {
+        background-color: #f0f6fa;
+    }
+
+    /* 5. Imágenes de Animales */
+    .card-image img {
+        object-fit: cover;
+        height: 220px;
+        /* Altura fija para uniformidad */
+        width: 100%;
+        border-bottom: 1px solid #f0ead6;
+    }
+
+    /* 6. Botón Flotante Premium */
+    .floating-actions .magic-btn {
+        width: 65px;
+        height: 65px;
+        background-color: #38761d;
+        color: white;
+        font-size: 1.6rem;
+        border-radius: 50%;
+        border: none;
+        box-shadow: 0 6px 20px rgba(56, 118, 29, 0.4);
+        /* Sombra con color */
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .floating-actions .magic-btn:hover {
+        transform: scale(1.1);
+        background-color: #2b5c17;
+    }
+
+    /* 7. Ajustes de Listas y Scroll */
+    .content ul {
+        margin-left: 0;
+        list-style: none;
+    }
+
+    .content ul li {
+        padding: 8px 0;
+        border-bottom: 1px solid #f5f5f5;
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    /* Estilo para los resultados de búsqueda de chat */
+    .user-result-item {
+        display: flex;
+        align-items: center;
+        padding: 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .user-result-item:hover {
+        background-color: #f5f5f5;
+    }
+
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #e0dacc;
+        color: #8c735c;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 12px;
+    }
+</style>
 {%endblock%}
 
-<!-- Main Dashboard for Ganadero -->
-<main class="inbox-container">
-    <div class="inbox-header">
-        <h1>Gestión de Ganadero</h1>
+<main class="inbox-container container is-fluid py-5">
+    <div class="inbox-header mb-5">
+        <h1 class="title is-3 main-title">
+            <span class="icon is-medium mr-2"><i class="fas fa-tractor"></i></span>
+            Gestión de Ganadero
+        </h1>
+        <p class="subtitle is-6 has-text-grey">Vista general de tu producción</p>
     </div>
 
-    <!-- Estadísticas principales -->
-    <section class="section">
-        <div class="columns">
-            <div class="column">
-                <div class="box">
-                    <h2 class="title is-5">Animales Muertos</h2>
-                    <div class="content">
-                        <p class="subtitle">Total: {{ muertos_count }}</p>
-                        <ul>
-                            {% for animal in muertos %}
-                            <li>ID: {{ animal.id }} - {{ animal.nombre }} ({{ animal.raza }})</li>
-                            {% else %}
-                            <li>No hay animales muertos.</li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-            </div>
+    <section class="section p-0 mb-6">
+        <div class="columns is-multiline is-variable is-4">
 
-            <div class="column">
-                <div class="box">
-                    <h2 class="title is-5">Nacimientos</h2>
-                    <div class="content">
-                        <p class="subtitle">Total: {{ nacimientos_count }}</p>
-                        <ul>
-                            {% for nacimiento in nacimientos %}
-                            <li>ID: {{ nacimiento.id }} - {{ nacimiento.nombre }} ({{ nacimiento.fecha_nacimiento }})
-                            </li>
-                            {% else %}
-                            <li>No hay nacimientos registrados.</li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <div class="column">
-                <div class="box">
-                    <h2 class="title is-5">Total Animales Activos</h2>
-                    <div class="content">
-                        <p class="subtitle">{{ total_animales }}</p>
-                        <div class="buttons">
-                            <button class="button is-primary"
-                                onclick="window.location.href='/animales/nuevo?user_id={{ user.id }}'">
-                                Agregar Animal
-                            </button>
-                            <button class="button is-light"
-                                onclick="window.location.href='/views/animales/{{ user.id }}'">
-                                Ver Todos los Animales
-                            </button>
+            <div class="column is-full-mobile is-half-tablet is-one-third-desktop">
+                <div class="box h-100">
+                    <div class="is-flex is-align-items-center mb-3">
+                        <div class="icon is-large bg-dead-light text-dead mr-3"
+                            style="border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-skull-crossbones fa-lg"></i>
                         </div>
+                        <h2 class="title is-5 mb-0 text-dead">Animales Muertos</h2>
+                    </div>
+                    <div class="content">
+                        <p class="subtitle is-4 has-text-weight-bold text-dead mb-3">{{ muertos_count }}</p>
+                        <div style="max-height: 120px; overflow-y: auto; scrollbar-width: thin;">
+                            <ul>
+                                {% for animal in muertos %}
+                                <li><strong>ID: {{ animal.id }}</strong> - {{ animal.nombre }} ({{ animal.raza }})</li>
+                                {% else %}
+                                <li class="has-text-grey-light">No hay animales muertos.</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="column is-full-mobile is-half-tablet is-one-third-desktop">
+                <div class="box h-100">
+                    <div class="is-flex is-align-items-center mb-3">
+                        <div class="icon is-large bg-birth-light text-birth mr-3"
+                            style="border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-baby fa-lg"></i>
+                        </div>
+                        <h2 class="title is-5 mb-0 text-birth">Nacimientos</h2>
+                    </div>
+                    <div class="content">
+                        <p class="subtitle is-4 has-text-weight-bold text-birth mb-3">{{ nacimientos_count }}</p>
+                        <div style="max-height: 120px; overflow-y: auto; scrollbar-width: thin;">
+                            <ul>
+                                {% for nacimiento in nacimientos %}
+                                <li><strong>ID: {{ nacimiento.id }}</strong> - {{ nacimiento.nombre }} <br><span
+                                        class="is-size-7 has-text-grey">{{ nacimiento.fecha_nacimiento }}</span></li>
+                                {% else %}
+                                <li class="has-text-grey-light">No hay nacimientos registrados.</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="column is-full-mobile is-half-tablet is-one-third-desktop">
+                <div class="box h-100 is-flex is-flex-direction-column is-justify-content-between">
+                    <div>
+                        <div class="is-flex is-align-items-center mb-3">
+                            <div class="icon is-large bg-active-light text-active mr-3"
+                                style="border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-cow fa-lg"></i>
+                            </div>
+                            <h2 class="title is-5 mb-0 text-active">Total Activos</h2>
+                        </div>
+                        <p class="subtitle is-3 has-text-weight-bold text-active">{{ total_animales }}</p>
+                    </div>
+                    <div class="buttons is-fullwidth mt-4">
+                        <button class="button is-success is-rounded is-fullwidth has-text-weight-semibold"
+                            style="background-color: #38761d; border: none;"
+                            onclick="window.location.href='/animales/nuevo?user_id={{ user.id }}'">
+                            <span class="icon"><i class="fas fa-plus"></i></span>
+                            <span>Agregar Animal</span>
+                        </button>
+                        <button class="button is-light is-rounded is-fullwidth"
+                            onclick="window.location.href='/views/animales/{{ user.id }}'">
+                            Ver Todos
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Lista de Animales -->
-    <section class="section">
-        <h2 class="title is-4">Mis Animales</h2>
-        <div class="columns is-multiline">
+    <section class="section p-0 mb-6">
+        <h2 class="title is-4 mb-4" style="color: #8c735c;">Mis Animales</h2>
+        <div class="columns is-multiline is-variable is-4">
             {% for animal in all_animales %}
-            <div class="column is-one-third-desktop is-half-tablet">
-                <div class="card">
+            <div class="column is-full-mobile is-half-tablet is-one-quarter-desktop">
+                <div class="card h-100">
                     <div class="card-image">
                         <figure class="image is-4by3">
                             <img src="{{ animal.imagen or 'https://placehold.co/600x400?text=Animal' }}"
@@ -82,68 +245,74 @@
                         </figure>
                     </div>
                     <div class="card-content">
-                        <p class="title is-5">{{ animal.nombre }}</p>
-                        <p>ID: #{{ animal.id }}</p>
-                        <p>Raza: {{ animal.raza }}</p>
-                        <a href="/animales/vista/{{ animal.id }}" class="button is-small is-info mt-2">Ver
-                            Detalle</a>
+                        <p class="title is-5 mb-2">{{ animal.nombre }}</p>
+                        <p class="is-size-7 has-text-grey mb-1"><strong>ID:</strong> #{{ animal.id }}</p>
+                        <p class="is-size-7 has-text-grey mb-3"><strong>Raza:</strong> {{ animal.raza }}</p>
+                        <a href="/animales/vista/{{ animal.id }}" class="button is-small is-rounded is-fullwidth"
+                            style="background-color: #e0dacc; color: #4a4a4a; border: none;">
+                            Ver Detalle
+                        </a>
                     </div>
                 </div>
             </div>
             {% else %}
-            <div class="column">
-                <p>No hay animales para mostrar.</p>
+            <div class="column is-full">
+                <div class="notification is-light">No hay animales para mostrar.</div>
             </div>
             {% endfor %}
         </div>
     </section>
 
-    <!-- Tratamientos -->
-    <section class="section">
-        <h2 class="title is-4">Tratamientos con Eventos Pendientes</h2>
+    <section class="section p-0">
+        <h2 class="title is-4 mb-4" style="color: #8c735c;">Tratamientos Pendientes</h2>
         <div class="treatment-list">
             {% for t in tratamientos %}
-            <a href="/tratamientos/read/{{ t.id }}" class="treatment-card">
-                <div class="card-content">
-                    <p class="title is-5">{{ t.nombre_tratamiento }}</p>
-                    <p>Animal: {{ t.animal.nombre }} (ID: {{ t.animal.id }})</p>
-                    <p>Estado: {{ t.estado }}</p>
+            <a href="/tratamientos/read/{{ t.id }}" class="treatment-card p-4 mb-3 is-flex is-align-items-center"
+                style="text-decoration: none; color: inherit;">
+                <div class="icon is-large bg-active-light has-text-grey mr-4"
+                    style="border-radius: 50%; min-width: 50px; min-height: 50px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-stethoscope fa-lg"></i>
+                </div>
+                <div style="flex-grow: 1;">
+                    <p class="title is-6 mb-1 text-birth">{{ t.nombre_tratamiento }}</p>
+                    <p class="is-size-7 has-text-grey">Animal: <strong>{{ t.animal.nombre }}</strong> (ID: {{
+                        t.animal.id }})</p>
+                </div>
+                <div class="has-text-right">
+                    <span class="tag is-medium is-light is-rounded">{{ t.estado }}</span>
                 </div>
             </a>
             {% else %}
-            <p>No hay tratamientos con eventos pendientes.</p>
+            <div class="notification is-success is-light">No hay tratamientos con eventos pendientes.</div>
             {% endfor %}
         </div>
     </section>
 </main>
 
-<!-- Floating Actions (único, fuera de loops) - CHAT DESHABILITADO
-<div class="floating-actions">
+<div class="floating-actions" style="position: fixed; bottom: 30px; right: 30px; z-index: 9999;">
     <button class="magic-btn secondary" title="Chat" onclick="openChatModal()">
         <i class="fa-regular fa-comments"></i>
     </button>
 </div>
--->
 
-<!-- Chat Modal (único) - CHAT DESHABILITADO
 <div id="chatModal" class="modal">
     <div class="modal-background" onclick="closeChatModal()"></div>
     <div class="modal-card">
-        <header class="modal-card-head">
-            <p class="modal-card-title">Chats</p>
+        <header class="modal-card-head" style="background-color: #38761d;">
+            <p class="modal-card-title has-text-white">Chats</p>
             <button class="delete" aria-label="close" onclick="closeChatModal()"></button>
         </header>
         <section class="modal-card-body">
             <div class="field">
                 <div class="control has-icons-left">
-                    <input class="input" type="text" id="userSearchInput" placeholder="Buscar usuario por nombre..."
-                        onkeyup="searchUsers()">
+                    <input class="input is-rounded" type="text" id="userSearchInput"
+                        placeholder="Buscar usuario por nombre..." onkeyup="searchUsers()">
                     <span class="icon is-small is-left"><i class="fas fa-search"></i></span>
                 </div>
             </div>
             <div id="searchResults" class="list is-hoverable mb-4"></div>
             <hr>
-            <p class="subtitle is-6">Conversaciones Recientes</p>
+            <p class="subtitle is-6 has-text-weight-bold" style="color: #8c735c;">Conversaciones Recientes</p>
             <div id="recentChats" class="list is-hoverable">
                 <div class="empty-state has-text-centered p-3"><span class="is-size-7 has-text-grey">No hay
                         conversaciones recientes</span></div>
@@ -151,11 +320,9 @@
         </section>
     </div>
 </div>
--->
 
 <link rel="stylesheet" href="/static/css/dashboard.css">
 
-<!-- CHAT FUNCTIONS DESHABILITADAS
 <script>
     // variable JS segura con id del usuario actual (serializada)
     const CURRENT_USER_ID = {{ user.id | tojson }};
@@ -260,6 +427,5 @@
         }
     }
 </script>
--->
 
 {% include "dashboard/footer.html" %}
