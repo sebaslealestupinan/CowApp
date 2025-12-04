@@ -1,33 +1,32 @@
 {% include "dashboard/header.html" %}
+{% include "dashboard/nav_vet.html" %}
 
-{% include "dashboard/navbar.html" %}
+{%block head%}
+<link rel="stylesheet" href="/static/css/veterinario_dashboard.css">
+{%endblock%}
 
 <main class="inbox-container">
     <div class="inbox-header">
         <h1>Gestión de Tratamientos</h1>
         <div class="filter-tabs">
-            <button class="tab active"
-                onclick="window.location.href='/views/tratamientos?veterinario_id={{ user.id }}&user_id={{ user.id }}'">Todos</button>
+            <a class="button is-primary"
+                href='/tratamientos/all?veterinario_id={{ user.id }}&user_id={{ user.id }}'>Todos</a>
         </div>
     </div>
 
-    <div class="treatment-list">
-
+    <div class=" treatment-list">
         {% for t in tratamientos %}
         {% if t.fecha_fin != current_date and t.veterinario_id == user.id %}
-        <a href="/veterinario/{{ user.id }}/tratamiento/{{ t.id }}"
+        <a href="/tratamientos/read/{{ t.id }}"
             class="treatment-card {{ 'attention' if t.estado == 'atencion' else '' }}">
-
             {% if t.animal.imagen %}
             <div class="card-image">
                 <img src="{{ t.animal.imagen }}" alt="Foto del animal">
             </div>
             {% endif %}
-
             <div class="card-content">
                 <div class="card-header-row">
                     <span class="animal-id">ID: #{{ t.animal.id }}</span>
-
                     {% if t.estado == "atencion" %}
                     <span class="status-badge attention">Atención Requerida</span>
                     {% elif t.estado == "nuevo" %}
@@ -36,31 +35,26 @@
                     <span class="status-badge normal">En Seguimiento</span>
                     {% endif %}
                 </div>
-
                 <h3 class="diagnosis">{{ t.diagnostico }}</h3>
                 <p class="farmer-name">
                     <i class="fa-regular fa-user"></i>
                     Gan. {{ t.animal.propietario.nombre }}
                 </p>
             </div>
-
             <div class="card-action">
                 <i class="fa-solid fa-chevron-right"></i>
             </div>
-
         </a>
         {% endif %}
         {% endfor %}
-
     </div>
 </main>
 
-<!-- Floating Buttons -->
+<!-- Floating Actions -->
 <div class="floating-actions">
-    <button class="magic-btn secondary" title="Mensaje al Ganadero">
-        <i class="fa-regular fa-envelope"></i>
+    <button class="magic-btn secondary" title="Chat" onclick="openChatModal()">
+        <i class="fa-regular fa-comments"></i>
     </button>
-
     <button class="magic-btn primary" title="Nuevo Tratamiento"
         onclick="window.location.href='/veterinario/{{ user.id }}/tratamiento/nuevo'">
         <i class="fa-solid fa-plus"></i>
@@ -68,13 +62,147 @@
     </button>
 </div>
 
+<!-- Chat Modal -->
+<div id="chatModal" class="modal">
+    <div class="modal-background" onclick="closeChatModal()"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Chats</p>
+            <button class="delete" aria-label="close" onclick="closeChatModal()"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="field">
+                <div class="control has-icons-left">
+                    <input class="input" type="text" id="userSearchInput" placeholder="Buscar usuario por nombre..."
+                        onkeyup="searchUsers()">
+                    <span class="icon is-small is-left"><i class="fas fa-search"></i></span>
+                </div>
+            </div>
+            <div id="searchResults" class="list is-hoverable mb-4"></div>
+            <hr>
+            <p class="subtitle is-6">Conversaciones Recientes</p>
+            <div id="recentChats" class="list is-hoverable">
+                <div class="empty-state has-text-centered p-3">
+                    <span class="is-size-7 has-text-grey">No hay conversaciones recientes</span>
+                </div>
+            </div>
+        </section>
+    </div>
 </div>
 
-{% if alert %}
+<link rel="stylesheet" href="/static/css/dashboard.css">
+<link rel="stylesheet" href="/static/css/chat.css">
+
 <script>
-    alert("{{ alert }}");
+    const message = "{{ message }}";
+    const CURRENT_USER_ID = Number("{{ user.id }}");
+
+    if (message) {
+        alert(message);
+    }
+
+    function startChat(receiverId) {
+        window.location.href = `/chat/${CURRENT_USER_ID}/${receiverId}`;
+    }
+
+    function formatTime(timestamp) {
+        if (!timestamp) return '';
+        const date = new Date(timestamp);
+        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function openChatModal() {
+        document.getElementById('chatModal').classList.add('is-active');
+        loadRecentChats();
+    }
+    function closeChatModal() {
+        document.getElementById('chatModal').classList.remove('is-active');
+    }
+
+    let searchTimeout;
+    function searchUsers() {
+        clearTimeout(searchTimeout);
+        const query = document.getElementById('userSearchInput').value.trim();
+        if (!query) {
+            document.getElementById('searchResults').innerHTML = '';
+            return;
+        }
+        searchTimeout = setTimeout(async () => {
+            try {
+                const resp = await fetch(`/users/?search=${encodeURIComponent(query)}`);
+                if (!resp.ok) throw new Error('Network error');
+                const users = await resp.json();
+
+                const resultsContainer = document.getElementById('searchResults');
+                resultsContainer.innerHTML = '';
+
+                if (!users || users.length === 0) {
+                    resultsContainer.innerHTML = '<div class="p-2 has-text-grey">No se encontraron usuarios</div>';
+                    return;
+                }
+
+                users.forEach(u => {
+                    if (u.id === CURRENT_USER_ID) return;
+                    const div = document.createElement('div');
+                    div.className = 'user-result-item';
+                    div.onclick = () => startChat(u.id);
+                    div.innerHTML = `
+                        <div class="user-avatar"><i class="fas fa-user"></i></div>
+                        <div class="user-info">
+                          <h4>${u.name}</h4>
+                          <p>${u.role}</p>
+                        </div>
+                    `;
+                    resultsContainer.appendChild(div);
+                });
+            } catch (err) {
+                console.error('Error searching users:', err);
+            }
+        }, 300);
+    }
+
+    async function loadRecentChats() {
+        try {
+            const resp = await fetch(`/chat/conversations/${CURRENT_USER_ID}`);
+            if (!resp.ok) throw new Error('Network error');
+            const conversations = await resp.json();
+
+            const container = document.getElementById('recentChats');
+            container.innerHTML = '';
+
+            if (!conversations || conversations.length === 0) {
+                container.innerHTML = '<div class="empty-state has-text-centered p-3"><span class="is-size-7 has-text-grey">No hay conversaciones recientes</span></div>';
+                return;
+            }
+
+            conversations.forEach(chat => {
+                const div = document.createElement('div');
+                div.className = 'user-result-item';
+                div.onclick = () => startChat(chat.user_id);
+                div.innerHTML = `
+                    <div class="user-avatar"><i class="fas fa-user"></i></div>
+                    <div class="user-info" style="flex:1;">
+                        <div class="is-flex is-justify-content-space-between">
+                            <h4>${chat.user_name}</h4>
+                            <span class="is-size-7 has-text-grey">${formatTime(chat.last_message_time)}</span>
+                        </div>
+                        <div class="is-flex is-justify-content-space-between">
+                            <p class="is-size-7 has-text-grey-light" style="max-width:150px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                                ${chat.last_message || ''}
+                            </p>
+                            ${chat.unread_count > 0 ? `<span class="tag is-danger is-rounded is-light">${chat.unread_count}</span>` : ''}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        } catch (err) {
+            console.error('Error loading recent chats:', err);
+        }
+    }
+
 </script>
-{% endif %}
 
 
-{%include "dashboard/footer.html" %}
+
+{% include "dashboard/footer.html" %}

@@ -52,13 +52,15 @@ def get_user(user_id: int, session: Session) -> Optional[Usuario]:
     return session.get(Usuario, user_id)
 
 
-def get_users(session: Session, role: Optional[str] = None) -> List[Usuario]:
+def get_users(session: Session, role: Optional[str] = None, search: Optional[str] = None) -> List[Usuario]:
     """
-    Obtiene la lista de todos los Usuarios, opcionalmente filtrados por rol.
+    Obtiene la lista de todos los Usuarios, opcionalmente filtrados por rol y nombre.
     """
     query = select(Usuario)
     if role:
         query = query.where(Usuario.role == role)
+    if search:
+        query = query.where(Usuario.name.ilike(f"%{search}%"))
     return session.exec(query).all()
 
 

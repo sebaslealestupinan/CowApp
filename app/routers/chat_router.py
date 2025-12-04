@@ -1,4 +1,4 @@
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Request, Depends, HTTPException
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Request, Depends, HTTPException, Query
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from typing import List
@@ -13,17 +13,37 @@ from app.crud.chat_crud import (
     get_user_conversations,
     mark_messages_as_read
 )
+from app.crud.user_crud import get_user
 
 router = APIRouter(prefix="/chat", tags=["Chat"])
 
 templates = Jinja2Templates("app/templates")
 
-@router.get("/", response_class=HTMLResponse)
-async def chat_page(request: Request):
-    return templates.TemplateResponse(
-        "chat/chat.html",
-        {"request": request}
-    )
+@router.get("/{sender_id}/{receiver_id}", response_class=HTMLResponse)
+async def chat_conversation(
+    request: Request, 
+    receiver_id: int, 
+    session: SessionDep,
+    sender_id: int
+):
+
+    receiver = get_user(receiver_id, session)
+    if not receiver:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    sender = get_user(sender_id, session)
+    if not sender:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+    if sender_id == receiver_id:
+        raise HTTPException(status_code=400, detail="No puedes chatear contigo mismo, triste mente :(")
+    
+    return templates.TemplateResponse("chat/chat.html", {
+        "request": request,
+        "sender_id": sender_id,
+        "receiver_id": receiver_id,
+        "receiver_name": receiver.name,
+        "sender_name": sender.name
+    })
 
 @router.get("/conversations/{user_id}", response_model=List[ConversationSummary])
 def get_conversations_endpoint(user_id: int, session: SessionDep):

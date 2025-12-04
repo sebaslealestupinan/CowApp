@@ -9,8 +9,25 @@ from app.routers import (user_router, chat_router, web_router,
     animal_router, tratamiento_router, eventos_router, auth_router, views_router)
 from app.service_and_config.cloudinary import MIDDLEWARE
 
+import httpx
+import asyncio
+
+ping_url = "https://cowapp-yafm.onrender.com/"
+minuts = 14
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    async def keep_awake():
+        while True:
+            try:
+                async with httpx.AsyncClient() as client:
+                    await client.get(ping_url, timeout=10)
+                    print("Ping enviado para evitar que se duerma Render.")
+            except Exception as e:
+                print("Error enviando ping:", e)
+            await asyncio.sleep(minuts * 60)
+    
+    asyncio.create_task(keep_awake())
     print("Inicializando base de datos COW...")
     create_data_base()
     print("Db lista.")
@@ -23,13 +40,11 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# Add SessionMiddleware
 app.add_middleware(
     SessionMiddleware,
     secret_key=MIDDLEWARE
 )
 
-# Mount static files
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 
@@ -39,7 +54,6 @@ templates = Jinja2Templates(directory="app/templates")
 async def read_root(request: Request):
     return templates.TemplateResponse("paginaPrincipal.html", {"request": request})
 
-# Routers - web_router debe ir ANTES de veterinario_router para evitar conflictos de rutas
 
 app.include_router(views_router.router)
 app.include_router(auth_router.router)

@@ -1,0 +1,450 @@
+/* =========================================
+   DASHBOARD VETERINARIO - COW APP STYLES
+   ========================================= */
+
+/* Paleta Cow App y Colores Semánticos */
+:root {
+    --color-primary-earth: #4B5320;
+    /* Verde Olivo Oscuro */
+    --color-secondary-soft: #F5F5DC;
+    /* Fondo Beige Muy Claro */
+    --color-accent-clinical: #00A9E0;
+    /* Azul Celeste Brillante (Alertas/Chat) */
+    --text-dark: #2A2A2A;
+    --text-muted: #7F8C8D;
+    --white: #ffffff;
+    --shadow-soft: 0 6px 20px rgba(0, 0, 0, 0.08);
+    /* Sombra más definida */
+    --radius-md: 12px;
+
+    /* Colores Semánticos */
+    --color-success: #5CB85C;
+    /* Normal/Sano */
+    --color-warning: #FF9800;
+    /* Seguimiento */
+    --color-danger: #D9534F;
+    /* Atención Requerida */
+}
+
+
+/* Base Layout (Asumiendo que el body usa este color) */
+body {
+    background-color: var(--color-secondary-soft);
+    font-family: 'Inter', sans-serif;
+    /* Recomendación de fuente limpia */
+}
+
+/* Inbox Container & Header */
+.inbox-container {
+    padding: 2.5rem 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.inbox-header h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    /* Mayor énfasis en el título */
+    color: var(--text-dark);
+}
+
+/* Filtros/Tabs */
+.filter-tabs button {
+    background-color: transparent;
+    border: none;
+    padding: 8px 16px;
+    font-weight: 600;
+    color: var(--text-muted);
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+}
+
+.filter-tabs button.active {
+    color: var(--color-primary-earth);
+    border-bottom-color: var(--color-primary-earth);
+}
+
+/* =========================================
+   TARJETAS DE TRATAMIENTO (INBOX STYLE)
+   ========================================= */
+.treatment-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+}
+
+.treatment-card {
+    background: var(--white);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-soft);
+    border: 1px solid #e9e9e9;
+
+    /* Cambiamos a flex para una vista más limpia estilo "lista de correo" */
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    transition: all 0.3s ease;
+}
+
+.treatment-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Indicador lateral para atención requerida */
+.treatment-card.attention {
+    border-left: 6px solid var(--color-danger);
+    border-color: var(--color-danger);
+    /* Borde superior más sutil */
+}
+
+.card-image {
+    padding: 1rem 1rem 0;
+    /* Espacio para que la imagen se vea limpia */
+}
+
+.card-image img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    /* Bordes suaves */
+}
+
+.card-content {
+    padding: 1.5rem;
+    flex-grow: 1;
+    /* Asegura que el contenido use todo el espacio vertical */
+}
+
+.animal-id {
+    font-weight: 700;
+    color: var(--color-primary-earth);
+    font-size: 1rem;
+}
+
+/* Estilos de Insignias (Badges) */
+.status-badge {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.status-badge.attention {
+    background-color: var(--color-danger);
+    /* Rojo */
+    color: var(--white);
+}
+
+.status-badge.new-event {
+    background-color: var(--color-accent-clinical);
+    /* Azul Clínico */
+    color: var(--white);
+}
+
+.status-badge.normal {
+    background-color: var(--color-warning);
+    /* Naranja/Amarillo para seguimiento activo */
+    color: var(--text-dark);
+}
+
+.diagnosis {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--text-dark);
+}
+
+.farmer-name {
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.card-action {
+    padding: 1rem 1.5rem;
+    background-color: #f9f9f9;
+    border-top: 1px solid #f0f0f0;
+    text-align: right;
+    color: var(--color-primary-earth);
+    font-size: 1.1rem;
+}
+
+/* =========================================
+   ACCIONES FLOTANTES (MAGIC BUTTONS)
+   ========================================= */
+.floating-actions {
+    /* Mantener estilos de posición */
+    bottom: 2rem;
+    right: 2rem;
+    /* Invertir el orden para que el "Nuevo Tratamiento" esté abajo/más accesible */
+    flex-direction: column-reverse;
+}
+
+.magic-btn {
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.magic-btn.primary {
+    background-color: var(--color-primary-earth);
+    /* Verde Olivo (Nuevo Tratamiento) */
+    color: white;
+}
+
+.magic-btn.secondary {
+    background-color: var(--color-accent-clinical);
+    /* Azul Clínico (Chat/Mensajes) */
+    color: white;
+    font-size: 1.25rem;
+}
+
+/* =========================================
+   MODAL (CHAT) STYLES
+   ========================================= */
+.modal-card {
+    border-radius: var(--radius-md);
+}
+
+.modal-card-head {
+    background-color: var(--color-primary-earth);
+    /* Encabezado Verde Olivo */
+}
+
+.user-result-item {
+    padding: 10px 12px;
+    border-radius: 8px;
+    /* Bordes redondeados en items de lista */
+}
+
+.user-avatar {
+    background-color: var(--color-secondary-soft);
+    /* Fondo beige para el avatar */
+    color: var(--color-primary-earth);
+}
+
+/* =========================================
+   NAVBAR STYLES (Estilo Cow App)
+   ========================================= */
+
+.custom-navbar {
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+    /* Sombra suave y limpia */
+    padding: 0.5rem 1rem;
+    height: auto;
+    min-height: 4.5rem;
+    /* Altura cómoda para el dedo */
+}
+
+/* Marca / Logo */
+.brand-logo img {
+    max-height: 3rem !important;
+    /* Controlamos el tamaño del logo */
+}
+
+.brand-text {
+    font-weight: 800;
+    color: var(--color-primary-earth);
+    /* Verde Olivo */
+    font-size: 1.2rem;
+    margin-left: 0.5rem;
+}
+
+/* Píldora de Perfil (Profile Pill) */
+.navbar-item.profile-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #f9f9f9;
+    border-radius: 30px;
+    padding: 5px 15px 5px 5px;
+    margin-right: 10px;
+    transition: all 0.2s ease;
+    color: var(--text-dark);
+    font-weight: 600;
+}
+
+.navbar-item.profile-pill:hover {
+    background-color: #eef5e6;
+    /* Verde muy suave al pasar el mouse */
+    color: var(--color-primary-earth);
+}
+
+.user-avatar-nav {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid var(--white);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #ddd;
+}
+
+.user-avatar-nav img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    max-height: none !important;
+    /* Sobrescribe reglas de Bulma */
+}
+
+/* Botón Cerrar Sesión */
+.button.is-logout {
+    background-color: transparent;
+    border: 1px solid #e0e0e0;
+    color: var(--text-muted);
+    transition: all 0.2s;
+}
+
+.button.is-logout:hover {
+    background-color: #fff0f0;
+    border-color: #ff3860;
+    color: #ff3860;
+}
+
+/* AJUSTES PARA MÓVIL */
+@media screen and (max-width: 1023px) {
+    .navbar-menu {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        padding: 1rem;
+        border-radius: 0 0 12px 12px;
+    }
+
+    .navbar-item.profile-pill {
+        margin: 10px 0;
+        width: 100%;
+        /* Ocupa todo el ancho en móvil */
+        justify-content: flex-start;
+        background-color: transparent;
+    }
+
+    .button.is-logout {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+
+.modal-card {
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 450px;
+    /* Tamaño ideal para un chat de lista */
+}
+
+.modal-card-head {
+    background-color: var(--color-primary-earth);
+    /* Verde Olivo */
+    border-bottom: none;
+    border-radius: 12px 12px 0 0;
+}
+
+.modal-card-title {
+    color: var(--white);
+    font-weight: 700;
+}
+
+/* Botón cerrar del modal */
+.delete {
+    background-color: rgba(255, 255, 255, 0.25);
+    transition: background-color 0.2s;
+}
+
+.delete:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Campo de Búsqueda */
+.field .input {
+    border-radius: 8px;
+    border-color: #ddd;
+    box-shadow: none;
+}
+
+/* Items de Usuario (Resultados de Búsqueda y Chats Recientes) */
+.user-result-item {
+    padding: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-radius: 6px;
+    margin-bottom: 4px;
+    /* Pequeña separación visual */
+}
+
+.user-result-item:hover {
+    background-color: var(--color-secondary-soft);
+    /* Beige suave en hover */
+}
+
+.user-avatar {
+    min-width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--color-primary-earth);
+    /* Avatar Verde Olivo */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    font-size: 1.1rem;
+}
+
+.user-info {
+    flex: 1;
+    overflow: hidden;
+}
+
+.user-info h4 {
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0;
+}
+
+.user-info p {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+/* Estilos Específicos para Conversaciones Recientes */
+#recentChats .user-result-item {
+    border-bottom: 1px solid #f0f0f0;
+    /* Separador sutil */
+}
+
+#recentChats .user-result-item:last-child {
+    border-bottom: none;
+}
+
+/* Insignia de Mensajes No Leídos */
+.tag.is-danger.is-rounded.is-light {
+    background-color: var(--color-accent-clinical);
+    /* Azul Clínico */
+    color: var(--white);
+    font-weight: 700;
+    font-size: 0.75rem;
+    height: 1.5rem;
+    padding: 0 0.6rem;
+    border-radius: 9999px;
+    line-height: 1.5rem;
+}
+
+/* Estado Vacío */
+.empty-state {
+    color: var(--text-muted) !important;
+}
+
+/* Ajustes de tipografía para subtítulos */
+.subtitle.is-6 {
+    font-weight: 600;
+    color: var(--color-primary-earth);
+    margin-top: 1.5rem;
+}

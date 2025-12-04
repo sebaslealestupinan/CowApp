@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Detalle de Tratamiento - Cow App{% endblock %}
+{% block title %}Detalle de Tratamiento - {{ tratamiento.nombre_tratamiento }}{% endblock %}
 
 {% block content %}
 <div class="columns">
@@ -48,15 +48,15 @@
 
             const infoDiv = document.getElementById('tratamientoInfo');
             infoDiv.innerHTML = `
-                <p><strong>Nombre:</strong> ${t.nombre_tratamiento}</p>
-                <p><strong>Diagnóstico:</strong> ${t.diagnostico}</p>
-                <p><strong>Medicamento:</strong> ${t.medicamento}</p>
-                <p><strong>Dosis:</strong> ${t.dosis}</p>
-                <p><strong>Fecha Inicio:</strong> ${t.fecha_inicio}</p>
-                <p><strong>Fecha Fin:</strong> ${t.fecha_fin}</p>
-                <p><strong>Estado:</strong> <span class="tag ${t.estado === 'Activo' ? 'is-warning' : 'is-success'}">${t.estado}</span></p>
-                <p><strong>Veterinario ID:</strong> ${t.veterinario_id}</p>
-                <p><strong>Animal ID:</strong> <a href="/views/animales/${t.animal_id}">${t.animal_id}</a></p>
+                <p><strong>Nombre:</strong> ${tratamiento.nombre_tratamiento}</p>
+                <p><strong>Diagnóstico:</strong> ${tratamiento.diagnostico}</p>
+                <p><strong>Medicamento:</strong> ${tratamiento.medicamento}</p>
+                <p><strong>Dosis:</strong> ${tratamiento.dosis}</p>
+                <p><strong>Fecha Inicio:</strong> ${tratamiento.fecha_inicio}</p>
+                <p><strong>Fecha Fin:</strong> ${tratamiento.fecha_fin}</p>
+                <p><strong>Estado:</strong> <span class="tag ${tratamiento.estado === 'Activo' ? 'is-warning' : 'is-success'}">${t.estado}</span></p>
+                <p><strong>Veterinario ID:</strong> ${tratamiento.veterinario_id}</p>
+                <p><strong>Animal ID:</strong> <a href="/views/animales/${tratamiento.animal_id}">${tratamient.animal_id}</a></p>
             `;
         } catch (e) {
             document.getElementById('tratamientoInfo').innerHTML = '<p class="has-text-danger">Error al cargar información.</p>';

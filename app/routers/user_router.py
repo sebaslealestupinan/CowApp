@@ -24,8 +24,8 @@ def create_user_endpoint(data: CreateUser, session: SessionDep):
 
 
 @router.get("/", response_model=List[Usuario])
-def read_users_endpoint(session: SessionDep, role: Optional[str] = Query(None, description="Filtrar por rol")):
-    return get_users(session, role)
+def read_users_endpoint(session: SessionDep, role: Optional[str] = Query(None, description="Filtrar por rol"), search: Optional[str] = Query(None, description="Buscar por nombre")):
+    return get_users(session, role, search)
 
 
 @router.get("/{user_id}", response_model=Usuario)

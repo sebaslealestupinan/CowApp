@@ -1,6 +1,10 @@
 {% include "dashboard/header.html" %}
 {% include "dashboard/navbar.html" %}
 
+{%block head%}
+<link rel="stylesheet" href="/static/css/dashboard.css">
+{%endblock%}
+
 <!-- Main Dashboard for Ganadero -->
 <main class="inbox-container">
     <div class="inbox-header">
@@ -15,67 +19,75 @@
                     <h2 class="title is-5">Animales Muertos</h2>
                     <p class="subtitle">Total: {{ muertos_count }}</p>
                     <ul>
-                        {% for a in muertos %}
-                        <li>ID: {{ a.id }} - {{ a.nombre }} ({{ a.raza }})</li>
+                        {% for animal in muertos %}
+                        <li>ID: {{ animal.id }} - {{ animal.nombre }} ({{ animal.raza }})</li>
                         {% else %}
                         <li>No hay animales muertos.</li>
                         {% endfor %}
                     </ul>
                 </div>
             </div>
+
             <div class="column">
                 <div class="box">
                     <h2 class="title is-5">Nacimientos</h2>
                     <p class="subtitle">Total: {{ nacimientos_count }}</p>
                     <ul>
-                        {% for a in nacimientos %}
-                        <li>ID: {{ a.id }} - {{ a.nombre }} ({{ a.fecha_nacimiento }})</li>
+                        {% for nacimiento in nacimientos %}
+                        <li>ID: {{ nacimiento.id }} - {{ nacimiento.nombre }} ({{ nacimiento.fecha_nacimiento }})</li>
                         {% else %}
                         <li>No hay nacimientos registrados.</li>
                         {% endfor %}
                     </ul>
                 </div>
             </div>
+
             <div class="column">
                 <div class="box">
                     <h2 class="title is-5">Total Animales Activos</h2>
                     <p class="subtitle">{{ total_animales }}</p>
                     <button class="button is-primary"
-                        onclick="window.location.href='/animales/nuevo?user_id={{ user.id }}'">Agregar
-                        Animal</button>
-                    <button class="button is-light" onclick="window.location.href='/views/animales'">Ver Todos los
-                        Animales</button>
+                        onclick="window.location.href='/animales/nuevo?user_id={{ user.id }}'">
+                        Agregar Animal
+                    </button>
+                    <button class="button is-light" onclick="window.location.href='/views/animales'">
+                        Ver Todos los Animales
+                    </button>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Lista de Animales del Ganadero -->
+    <!-- Lista de Animales -->
     <section class="section">
         <h2 class="title is-4">Mis Animales</h2>
         <div class="columns is-multiline">
-            {% for a in all_animales %}
+            {% for animal in all_animales %}
             <div class="column is-one-third-desktop is-half-tablet">
                 <div class="card">
                     <div class="card-image">
                         <figure class="image is-4by3">
-                            <img src="{{ a.photo_url or 'https://placehold.co/600x400?text=Animal' }}"
-                                alt="Foto del animal">
+                            <img src="{{ animal.photo_url or 'https://placehold.co/600x400?text=Animal' }}"
+                                alt="Foto de {{ animal.nombre }}">
                         </figure>
                     </div>
                     <div class="card-content">
-                        <p class="title is-5">{{ a.nombre }}</p>
-                        <p>ID: #{{ a.id }}</p>
-                        <p>Raza: {{ a.raza }}</p>
-                        <a href="/views/animales/{{ a.id }}" class="button is-small is-info mt-2">Ver Detalle</a>
+                        <p class="title is-5">{{ animal.nombre }}</p>
+                        <p>ID: #{{ animal.id }}</p>
+                        <p>Raza: {{ animal.raza }}</p>
+                        <a href="/views/animales/{{ animal.id }}" class="button is-small is-info mt-2">Ver Detalle</a>
                     </div>
                 </div>
+            </div>
+            {% else %}
+            <div class="column">
+                <p>No hay animales para mostrar.</p>
             </div>
             {% endfor %}
         </div>
     </section>
 
-    <!-- Tratamientos con eventos pendientes -->
+    <!-- Tratamientos -->
     <section class="section">
         <h2 class="title is-4">Tratamientos con Eventos Pendientes</h2>
         <div class="treatment-list">
@@ -93,5 +105,146 @@
         </div>
     </section>
 </main>
+
+<!-- Floating Actions (único, fuera de loops) -->
+<div class="floating-actions">
+    <button class="magic-btn secondary" title="Chat" onclick="openChatModal()">
+        <i class="fa-regular fa-comments"></i>
+    </button>
+</div>
+
+<!-- Chat Modal (único) -->
+<div id="chatModal" class="modal">
+    <div class="modal-background" onclick="closeChatModal()"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Chats</p>
+            <button class="delete" aria-label="close" onclick="closeChatModal()"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="field">
+                <div class="control has-icons-left">
+                    <input class="input" type="text" id="userSearchInput" placeholder="Buscar usuario por nombre..."
+                        onkeyup="searchUsers()">
+                    <span class="icon is-small is-left"><i class="fas fa-search"></i></span>
+                </div>
+            </div>
+            <div id="searchResults" class="list is-hoverable mb-4"></div>
+            <hr>
+            <p class="subtitle is-6">Conversaciones Recientes</p>
+            <div id="recentChats" class="list is-hoverable">
+                <div class="empty-state has-text-centered p-3"><span class="is-size-7 has-text-grey">No hay
+                        conversaciones recientes</span></div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<link rel="stylesheet" href="/static/css/dashboard.css">
+
+<script>
+    // variable JS segura con id del usuario actual (serializada)
+    const CURRENT_USER_ID = {{ user.id | tojson }};
+
+    function startChat(receiverId) {
+        window.location.href = `/chat/${CURRENT_USER_ID}/${receiverId}`;
+    }
+
+    function formatTime(timestamp) {
+        if (!timestamp) return '';
+        const date = new Date(timestamp);
+        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function openChatModal() {
+        document.getElementById('chatModal').classList.add('is-active');
+        loadRecentChats();
+    }
+    function closeChatModal() {
+        document.getElementById('chatModal').classList.remove('is-active');
+    }
+
+    let searchTimeout;
+    function searchUsers() {
+        clearTimeout(searchTimeout);
+        const query = document.getElementById('userSearchInput').value.trim();
+        if (!query) {
+            document.getElementById('searchResults').innerHTML = '';
+            return;
+        }
+        searchTimeout = setTimeout(async () => {
+            try {
+                const resp = await fetch(`/users/?search=${encodeURIComponent(query)}`);
+                if (!resp.ok) throw new Error('Network error');
+                const users = await resp.json();
+
+                const resultsContainer = document.getElementById('searchResults');
+                resultsContainer.innerHTML = '';
+
+                if (!users || users.length === 0) {
+                    resultsContainer.innerHTML = '<div class="p-2 has-text-grey">No se encontraron usuarios</div>';
+                    return;
+                }
+
+                users.forEach(u => {
+                    if (u.id === CURRENT_USER_ID) return; // no mostrarme a mí mismo
+                    const div = document.createElement('div');
+                    div.className = 'user-result-item';
+                    div.onclick = () => startChat(u.id);
+                    div.innerHTML = `
+            <div class="user-avatar"><i class="fas fa-user"></i></div>
+            <div class="user-info">
+              <h4>${u.name}</h4>
+              <p>${u.role}</p>
+            </div>
+          `;
+                    resultsContainer.appendChild(div);
+                });
+            } catch (err) {
+                console.error('Error searching users:', err);
+            }
+        }, 300);
+    }
+
+    async function loadRecentChats() {
+        try {
+            const resp = await fetch(`/chat/conversations/${CURRENT_USER_ID}`);
+            if (!resp.ok) throw new Error('Network error');
+            const conversations = await resp.json();
+
+            const container = document.getElementById('recentChats');
+            container.innerHTML = '';
+
+            if (!conversations || conversations.length === 0) {
+                container.innerHTML = '<div class="empty-state has-text-centered p-3"><span class="is-size-7 has-text-grey">No hay conversaciones recientes</span></div>';
+                return;
+            }
+
+            conversations.forEach(chat => {
+                const div = document.createElement('div');
+                div.className = 'user-result-item';
+                div.onclick = () => startChat(chat.user_id);
+                div.innerHTML = `
+          <div class="user-avatar"><i class="fas fa-user"></i></div>
+          <div class="user-info" style="flex:1;">
+            <div class="is-flex is-justify-content-space-between">
+              <h4>${chat.user_name}</h4>
+              <span class="is-size-7 has-text-grey">${formatTime(chat.last_message_time)}</span>
+            </div>
+            <div class="is-flex is-justify-content-space-between">
+              <p class="is-size-7 has-text-grey-light" style="max-width:150px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                ${chat.last_message || ''}
+              </p>
+              ${chat.unread_count > 0 ? `<span class="tag is-danger is-rounded is-light">${chat.unread_count}</span>` : ''}
+            </div>
+          </div>
+        `;
+                container.appendChild(div);
+            });
+        } catch (err) {
+            console.error('Error loading recent chats:', err);
+        }
+    }
+</script>
 
 {% include "dashboard/footer.html" %}
