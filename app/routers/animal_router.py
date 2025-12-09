@@ -76,4 +76,3 @@ def delete_animal_endpoint(animal_id: int, ganadero_id: int, session: SessionDep
     
     # Retornamos None con status 204 para compatibilidad con AJAX
     return None
-

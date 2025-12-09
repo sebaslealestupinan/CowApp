@@ -2,14 +2,14 @@ from fastapi import APIRouter, Request, Depends
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlmodel import Session, select, func
-from app.db import get_session
+from app.db import get_session, SessionDep
 from app.models.usuario import Usuario
 from app.models.tratamiento import Tratamiento
 from app.models.mensaje import Mensaje
 from app.models.animal import Animal
 from app.db import SessionDep
 from app.crud.tratamiento_crud import get_tratamientos_by_animal
-from app.crud.animal_crud import get_animal_with_tratamientos
+from app.crud.animal_crud import get_animal_with_tratamientos, get_animal
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
 
@@ -87,10 +87,12 @@ async def view_perfil(request: Request, user_id: int, session: Session = Depends
 
 
 @router.get("/views/animal", response_class=HTMLResponse, name="view_animal_detalle")
-async def view_animal_detalle(request: Request, animal_id: int):
+async def view_animal_detalle(request: Request, animal_id: int, session:SessionDep):
+    detalle_animal = get_animal(animal_id, session)
     """Vista de detalle de animal"""
     
-    return templates.TemplateResponse("animales/detalle.html", {"request": request, "animal_id": animal_id})
+    return templates.TemplateResponse("animales/detalles_animal.html", 
+    {"request": request, "animal": detalle_animal})
 
 @router.get("/views/animales/{ganadero_id}", response_class=HTMLResponse, name="view_animales")
 async def view_animales(request: Request, ganadero_id: int, session: Session = Depends(get_session)):
